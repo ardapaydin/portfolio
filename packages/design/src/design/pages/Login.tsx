@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { CreateUser } from "../../utils/api/auth";
+import { LoginUser } from "../../utils/api/auth";
+import { setToken } from "../utils/user";
 
 const validate = (form: { [key: string]: string }) => {
     const errors: { [key: string]: string[] } = {};
@@ -15,19 +16,20 @@ const validate = (form: { [key: string]: string }) => {
     return errors;
 };
 
-export default function Register() {
+export default function Login() {
     const [form, setForm] = useState({
-        firstName: "",
-        lastName: "",
         email: "",
         password: "",
     });
+    const { registered, redirect } = Object.fromEntries(new URLSearchParams(window.location.search))
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const request = async () => {
-        const response = await CreateUser(form.email, form.password, form.firstName, form.lastName)
+        const response = await LoginUser(form.email, form.password)
         if (response?.data?.success) {
-            window.location.href = "/auth/login?registered=true"
-        } else setErrors(response?.data.errors || {})
+            setToken(response.data.data.token);
+            window.location.href = redirect || "/";
+        }
+        else setErrors(response?.data.errors || {})
     }
 
     useEffect(() => {
@@ -41,36 +43,14 @@ export default function Register() {
         <div className="flex flex-1">
             <div className="w-full md:w-2/5 flex items-center justify-center bg-[#242424]/50 backdrop-blur-sm">
                 <div className="w-full max-w-md mx-auto flex flex-col px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-                    <h2 className="text-3xl font-bold mb-6 text-white text-center">Create Your Account</h2>
+                    <h2 className="text-3xl font-bold mb-6 text-white text-center">
+                        Login to Your Account
+                    </h2>
+                    {registered === "true" && <p className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded mb-6 text-center">
+                        We sent you a confirmation email. Please check your inbox to confirm your account.
+                    </p>}
+
                     <div className="flex flex-col gap-6 w-full">
-                        <div className="flex flex-col gap-4 text-left">
-                            <label htmlFor="firstName" className="mb-1 text-sm font-medium text-gray-200">First Name</label>
-                            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName[0]}</p>}
-                            <input
-                                id="firstName"
-                                type="text"
-                                name="firstName"
-                                placeholder="First Name"
-                                autoComplete="given-name"
-                                value={form.firstName}
-                                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                                className="px-4 py-3 rounded-lg bg-[#313131] border-b-3 border-[#242323] text-white focus:outline-none focus:ring-2 focus:ring-green-400/50 transition"
-                            />
-                        </div>
-                        <div className="flex flex-col text-left">
-                            <label htmlFor="lastName" className="mb-1 text-sm font-medium text-gray-200">Last Name</label>
-                            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName[0]}</p>}
-                            <input
-                                id="lastName"
-                                type="text"
-                                name="lastName"
-                                placeholder="Last Name"
-                                autoComplete="family-name"
-                                value={form.lastName}
-                                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                                className="px-4 py-3 rounded-lg bg-[#313131] border-b-3 border-[#242323] text-white focus:outline-none focus:ring-2 focus:ring-green-400/50 transition"
-                            />
-                        </div>
                         <div className="flex flex-col text-left">
                             <label htmlFor="email" className="mb-1 text-sm font-medium text-gray-200">Email</label>
                             {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
@@ -104,13 +84,10 @@ export default function Register() {
                             disabled={Object.keys(errors).length > 0 || !form.email || !form.password}
                             className="mt-4 w-full disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed py-2 rounded-lg bg-green-500 border-b-6 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
                         >
-                            Register
+                            Login
                         </button>
                         <p className="text-sm text-gray-400 text-center">
-                            Do you have an account?{" "}
-                            <a href="/auth/login" className="text-green-500 hover:underline">
-                                Sign In
-                            </a>
+                            Don't have an account? <a href="/auth/register" className="text-green-400 hover:underline">Sign up</a>
                         </p>
                     </div>
                 </div>

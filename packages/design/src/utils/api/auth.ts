@@ -13,3 +13,10 @@ export function CreateUser(
     lastName: !lastName ? undefined : lastName,
   });
 }
+
+export function LoginUser(email: string, password: string) {
+  return axios.post("/auth/login", {
+    email,
+    password,
+  });
+}

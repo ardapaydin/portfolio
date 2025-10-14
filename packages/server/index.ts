@@ -2,6 +2,14 @@ import "dotenv/config";
 import express from "express";
 const app = express();
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: number };
+    }
+  }
+}
+
 console.log("Starting server...");
 if (!process.env.PORT) throw new Error("PORT is not defined in .env");
 

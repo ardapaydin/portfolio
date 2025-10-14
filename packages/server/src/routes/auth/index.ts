@@ -9,6 +9,7 @@ import {
   ComparePassword,
   EncryptPassword,
 } from "../../helpers/encryptions/password";
+import { signToken } from "../../helpers/jwt";
 const router = express.Router();
 
 router.post(
@@ -39,8 +40,19 @@ router.post(
           email: ["Email or password is incorrect."],
         },
       });
+    if (!user.emailVerified)
+      return res.status(400).json({
+        success: false,
+        message: "email not verified",
+        errors: {
+          email: ["Please verify your email before logging in."],
+        },
+      });
 
-    res.json({ success: true, data: { id: user.id } });
+    res.json({
+      success: true,
+      data: { id: user.id, token: signToken(user.id) },
+    });
   }
 );
 
@@ -72,7 +84,7 @@ router.post(
         name: `${firstName || ""} ${lastName || ""}`.trim() || null,
       })
       .$returningId();
-    res.json({ success: true, data: user });
+    res.json({ success: true, data: { id: user.id } });
   }
 );
 
