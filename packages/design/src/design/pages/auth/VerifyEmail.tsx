@@ -1,4 +1,4 @@
-import { useVerfyEmail } from "../../utils/api/queries";
+import { useVerfyEmail } from "../../../utils/api/queries";
 import { useEffect } from "react";
 
 export default function VerifyEmail() {

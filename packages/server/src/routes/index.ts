@@ -7,9 +7,11 @@ import { verifyToken } from "../helpers/jwt";
 router.use((req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
-    const userId = verifyToken(authHeader.split(" ")[1]);
-    res.setHeader("X-User-Id", userId.id);
-    req.user = { id: parseInt(userId.id) };
+    try {
+      const { id } = verifyToken(authHeader.split(" ")[1]);
+      res.setHeader("X-User-Id", id);
+      req.user = { id };
+    } catch (err) {}
   }
 
   next();

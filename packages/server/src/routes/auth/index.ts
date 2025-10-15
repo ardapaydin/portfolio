@@ -11,10 +11,27 @@ import {
 } from "../../helpers/encryptions/password";
 import { signToken } from "../../helpers/jwt";
 import { createToken } from "../../helpers/email/verification";
+import { requireNoAuth } from "../../helpers/middlewares/auth";
 const router = express.Router();
+
+router.get("/me", async (req, res) => {
+  if (!req.user) return res.json({});
+  const [user] = await db
+    .select({
+      id: usersTable.id,
+      email: usersTable.email,
+      name: usersTable.name,
+      emailVerified: usersTable.emailVerified,
+      createdAt: usersTable.createdAt,
+    })
+    .from(usersTable)
+    .where(eq(usersTable.id, req.user.id));
+  res.json({ user });
+});
 
 router.post(
   "/login",
+  requireNoAuth,
   (req, res, next) => BodyValidationMiddleware(req, res, next, loginSchema),
   async (req, res) => {
     const { email, password } = req.body;
@@ -58,6 +75,7 @@ router.post(
 
 router.post(
   "/register",
+  requireNoAuth,
   (req, res, next) => BodyValidationMiddleware(req, res, next, registerSchema),
   async (req, res) => {
     const { email, password, firstName, lastName } = req.body;
