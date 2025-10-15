@@ -32,10 +32,11 @@ export function useUser() {
 
 export function useTemplate(template: string) {
   return useQuery({
-    queryKey: ["data"],
+    queryKey: ["template", template],
     queryFn: async () => {
+      if (!template) return null;
       const res = await axios.get("/templates/" + template);
-      return res.data?.data?.default;
+      return res.data.data;
     },
   });
 }

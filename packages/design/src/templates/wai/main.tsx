@@ -1,9 +1,12 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 
 export default function TemplateWai() {
-    const qc = useQueryClient();
-    const data = qc.getQueryData<any>(["data"]);
+    const queryState = useQuery({
+        queryKey: ["data"],
+        queryFn: async () => { },
+    })
+    const data = queryState?.data as any;
     return (
         <div
             className="w-full h-screen flex flex-col md:flex-row text-white"

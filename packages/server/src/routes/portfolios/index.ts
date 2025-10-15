@@ -81,7 +81,7 @@ router.get("/", requireAuth, async (req, res) => {
 
 router.get("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
-  const [portfolio] = await db
+  let [portfolio] = await db
     .select()
     .from(portfolioTable)
     .where(
@@ -94,6 +94,7 @@ router.get("/:id", requireAuth, async (req, res) => {
       message: "Portfolio not found or you do not have access to it",
     });
   }
+  portfolio.data = JSON.parse(portfolio.data as any);
 
   res.json(portfolio);
 });
