@@ -12,6 +12,44 @@ export const portfolioTemplates = [
     name: "Wai",
     description: "Just a simple and clean portfolio template.",
     data: {
+      fields: {
+        name: {
+          type: "string",
+          label: "Name",
+        },
+        jobTitle: {
+          type: "string",
+          label: "Job Title",
+        },
+        picture: {
+          type: "image",
+          label: "Profile Picture",
+        },
+        bio: {
+          type: "text",
+          label: "Bio",
+        },
+        links: {
+          type: "list",
+          label: "Links",
+          item: {
+            name: { type: "string", label: "Display Name" },
+            url: { type: "string", label: "URL" },
+          },
+        },
+        projects: {
+          type: "list",
+          label: "Projects",
+          item: {
+            name: { type: "string", label: "Project Name" },
+            url: { type: "string", label: "Project URL" },
+          },
+        },
+        backgroundColor: { type: "color", label: "Background Color" },
+        primaryTextColor: { type: "color", label: "Primary Text Color" },
+        secondaryTextColor: { type: "color", label: "Secondary Text Color" },
+        boxColor: { type: "color", label: "Box Color" },
+      },
       default: {
         name: "Wai",
         jobTitle: "Job Title",

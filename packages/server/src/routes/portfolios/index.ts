@@ -6,7 +6,7 @@ import { portfolioTable } from "../../database/schemas/portfolio";
 import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { createPortfolioSchema } from "../../helpers/validations/portfolio/create";
 import { db } from "../../database/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { portfolioTemplates } from "../../helpers/data/templates";
 
 router.post(
@@ -53,6 +53,7 @@ router.post(
         name,
         subdomain,
         template,
+        data: portfolioTemplates.find((t) => t.id === template)?.data?.default,
       })
       .$returningId();
 
@@ -76,6 +77,25 @@ router.get("/", requireAuth, async (req, res) => {
   );
 
   res.json(portfolios);
+});
+
+router.get("/:id", requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const [portfolio] = await db
+    .select()
+    .from(portfolioTable)
+    .where(
+      and(eq(portfolioTable.id, id), eq(portfolioTable.userId, req.user!.id))
+    );
+
+  if (!portfolio) {
+    return res.status(404).json({
+      success: false,
+      message: "Portfolio not found or you do not have access to it",
+    });
+  }
+
+  res.json(portfolio);
 });
 
 export default router;

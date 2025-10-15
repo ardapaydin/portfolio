@@ -32,7 +32,7 @@ createRoot(document.getElementById('root')!).render(
       {
         (() => {
           const subdomain = window.location.hostname.split('.')[0];
-          if (subdomain === '/localhost' || subdomain === 'design') return <BrowserRouter>
+          if (subdomain === 'localhost' || subdomain === 'design') return <BrowserRouter>
             <App />
           </BrowserRouter>;
 

@@ -1,0 +1,36 @@
+import { Eye } from "lucide-react";
+import type { TypeTemplate } from "../../../types/template";
+import CreatePortfolio from "../dialogs/CreatePortfolio";
+
+export default function TemplateBox({ template }: { template: TypeTemplate }) {
+    return (
+        <div className="flex flex-col bg-[#2a2a2a] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <div className="relative h-64 w-full">
+                <img src={`/templates/${template.id}.png`} draggable={false} className="w-full h-64 rounded-t-lg object-cover mb-4" />
+                <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded flex items-center gap-1 cursor-pointer hover:bg-black/70 transition" onClick={() => {
+                    window.open("/template?template=" + template.id, "_blank")
+                }}>
+                    <Eye className="w-4" />
+                    Preview
+                </div>
+            </div>
+            <div className="flex-1 p-4">
+                <h2 className="text-xl font-bold mb-2">{template.name}</h2>
+                <p className="text-gray-300">{template.description}</p>
+
+                <div className="justify-between flex">
+                    <span className="text-sm text-gray-400 mt-4">
+                        Fields: {template.fieldSize}
+                    </span>
+                    <CreatePortfolio templateId={template.id}>
+                        <button
+                            className="mt-4 py-1 px-2 rounded-lg bg-green-500 border-b-6 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
+                        >
+                            Use Template
+                        </button>
+                    </CreatePortfolio>
+                </div>
+            </div>
+        </div>
+    )
+}

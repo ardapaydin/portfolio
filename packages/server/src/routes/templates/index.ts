@@ -11,4 +11,16 @@ router.get("/:id", async (req, res) => {
       .json({ success: false, message: "Template not found" });
   res.json(template);
 });
+
+router.get("/", async (req, res) => {
+  res.json({
+    templates: portfolioTemplates.map((t) => ({
+      id: t.id,
+      name: t.name,
+      description: t.description,
+      fieldSize: Object.keys(t.data.fields).length,
+    })),
+  });
+});
+
 export default router;

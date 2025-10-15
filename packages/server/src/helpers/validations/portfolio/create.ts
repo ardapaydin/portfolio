@@ -1,6 +1,5 @@
 import z from "zod";
 import { portfolioTemplates } from "../../data/templates";
-
 export const createPortfolioSchema = z.object({
   name: z
     .string()

@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/mysql-core";
 import { usersTable } from "./users";
 
-export const portfolioTable = mysqlTable("portfolio", {
+export const portfolioTable = mysqlTable("portfolios", {
   id: varchar("id", { length: 36 })
     .primaryKey()
     .notNull()

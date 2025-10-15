@@ -2,6 +2,7 @@ import axios from "axios";
 import { getToken } from "../../design/utils/user";
 import { useQuery } from "@tanstack/react-query";
 import type { TypeUser } from "../../design/types/user";
+import type { TypeTemplate } from "../../design/types/template";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -35,6 +36,27 @@ export function useTemplate(template: string) {
     queryFn: async () => {
       const res = await axios.get("/templates/" + template);
       return res.data?.data?.default;
+    },
+  });
+}
+
+export function useTemplates() {
+  return useQuery({
+    queryKey: ["templates"],
+    queryFn: async () => {
+      const res = await axios.get("/templates");
+      return res.data as { templates: TypeTemplate[] };
+    },
+    retry: false,
+  });
+}
+
+export function usePortfolio(id: string) {
+  return useQuery({
+    queryKey: ["portfolio", id],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios/" + id);
+      return res.data;
     },
   });
 }

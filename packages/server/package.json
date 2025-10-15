@@ -7,7 +7,8 @@
     "dev": "nodemon --watch *.ts --ext ts --exec ts-node index.ts",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:push": "drizzle-kit push",
-    "drizzle:migrate": "drizzle-kit migrate"
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:run": "drizzle-kit generate && drizzle-kit push"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
