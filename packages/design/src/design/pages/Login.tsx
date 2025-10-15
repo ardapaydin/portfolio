@@ -21,7 +21,7 @@ export default function Login() {
         email: "",
         password: "",
     });
-    const { registered, redirect } = Object.fromEntries(new URLSearchParams(window.location.search))
+    const { registered, redirect, verified } = Object.fromEntries(new URLSearchParams(window.location.search))
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const request = async () => {
         const response = await LoginUser(form.email, form.password)
@@ -48,6 +48,10 @@ export default function Login() {
                     </h2>
                     {registered === "true" && <p className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded mb-6 text-center">
                         We sent you a confirmation email. Please check your inbox to confirm your account.
+                    </p>}
+
+                    {verified === "true" && <p className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded mb-6 text-center">
+                        Your email has been verified. You can now log in.
                     </p>}
 
                     <div className="flex flex-col gap-6 w-full">

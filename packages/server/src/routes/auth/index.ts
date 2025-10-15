@@ -3,7 +3,7 @@ import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { loginSchema } from "../../helpers/validations/auth/login";
 import { registerSchema } from "../../helpers/validations/auth/register";
 import { db } from "../../database/db";
-import { usersTable } from "../../database";
+import { emailVerificationTable, usersTable } from "../../database";
 import { eq } from "drizzle-orm";
 import {
   ComparePassword,
@@ -88,5 +88,38 @@ router.post(
     res.json({ success: true, data: { id: user.id } });
   }
 );
+
+router.post("/verify-email", async (req, res) => {
+  const { token } = req.body;
+  if (!token)
+    return res
+      .status(400)
+      .json({ success: false, message: "Token is required" });
+  const [encoded] = token.split(".");
+  const decoded = JSON.parse(Buffer.from(encoded, "base64").toString("utf-8"));
+  const [record] = await db
+    .select()
+    .from(emailVerificationTable)
+    .where(eq(emailVerificationTable.token, token));
+  if (!record)
+    return res.status(400).json({ success: false, message: "Invalid token" });
+  const { email } = decoded;
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+  if (!user)
+    return res.status(400).json({ success: false, message: "Invalid token" });
+
+  await db
+    .update(usersTable)
+    .set({ emailVerified: true })
+    .where(eq(usersTable.email, email));
+
+  await db
+    .delete(emailVerificationTable)
+    .where(eq(emailVerificationTable.token, token));
+  res.json({ success: true });
+});
 
 export default router;
