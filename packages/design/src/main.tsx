@@ -32,7 +32,6 @@ createRoot(document.getElementById('root')!).render(
         {
           (() => {
             const subdomain = window.location.hostname.split('.')[0];
-            console.log(subdomain);
             if (subdomain === 'localhost' || subdomain === 'design') return <App />;
             return <div />;
           })()

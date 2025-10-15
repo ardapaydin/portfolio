@@ -10,6 +10,7 @@ import {
   EncryptPassword,
 } from "../../helpers/encryptions/password";
 import { signToken } from "../../helpers/jwt";
+import { createToken } from "../../helpers/email/verification";
 const router = express.Router();
 
 router.post(
@@ -48,7 +49,6 @@ router.post(
           email: ["Please verify your email before logging in."],
         },
       });
-
     res.json({
       success: true,
       data: { id: user.id, token: signToken(user.id) },
@@ -84,6 +84,7 @@ router.post(
         name: `${firstName || ""} ${lastName || ""}`.trim() || null,
       })
       .$returningId();
+    await createToken(email);
     res.json({ success: true, data: { id: user.id } });
   }
 );
