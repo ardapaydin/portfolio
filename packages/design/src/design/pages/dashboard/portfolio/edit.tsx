@@ -1,4 +1,4 @@
-import EditSidebar from "@/design/components/dashboard/template/editsidebar";
+import EditSidebar from "@/design/components/dashboard/template/editSidebar";
 import Error from "@/design/components/error";
 import Loading from "@/design/components/loading";
 import TemplateWai from "@/templates/wai/main";

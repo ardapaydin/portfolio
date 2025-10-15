@@ -13,7 +13,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #313131;
+  background-color: rgb(94, 86, 86);
   border-radius: 4px;
 }
 
@@ -132,6 +132,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

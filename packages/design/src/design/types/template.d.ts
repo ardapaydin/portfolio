@@ -5,4 +5,9 @@ export type TypeTemplate = {
   fieldSize: number;
   data: Record<string, any>;
   createdAt: string;
+  fields: Record<
+    string,
+    { label: string; type: string; item: { name: string; url: string }[] }
+  >;
+  [key: string]: any;
 };

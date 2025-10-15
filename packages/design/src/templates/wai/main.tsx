@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { Image } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 
 export default function TemplateWai({ d }: { d?: any }) {
@@ -7,6 +9,9 @@ export default function TemplateWai({ d }: { d?: any }) {
         queryFn: async () => { },
     })
     const data = d || queryState?.data as any;
+
+    const { id } = useParams();
+
     return (
         <div
             className="w-full h-screen flex flex-col md:flex-row text-white"
@@ -35,6 +40,14 @@ export default function TemplateWai({ d }: { d?: any }) {
                                 src={data?.picture}
                             />
                         }
+
+                        {(id && !data?.picture) && (
+                            <div className="flex items-center border-2 cursor-pointer bg-white/5 border-dashed justify-center rounded-lg w-32 h-32">
+                                <div className="text-center text-sm opacity-50">
+                                    <Image className="w-12 h-12" />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <p className="mt-8 text-lg leading-relaxed" style={{
