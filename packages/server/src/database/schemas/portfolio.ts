@@ -16,6 +16,7 @@ export const portfolioTable = mysqlTable("portfolio", {
   userId: varchar("user_id", { length: 36 })
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
   subdomain: varchar("subdomain", { length: 255 }).notNull().unique(),
   template: varchar("template", { length: 100 }).notNull(),
   data: json("data")

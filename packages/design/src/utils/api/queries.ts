@@ -28,3 +28,13 @@ export function useUser() {
     retry: false,
   });
 }
+
+export function useTemplate(template: string) {
+  return useQuery({
+    queryKey: ["data"],
+    queryFn: async () => {
+      const res = await axios.get("/templates/" + template);
+      return res.data?.data?.default;
+    },
+  });
+}

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { CreateUser } from "../../../utils/api/auth";
-import { useUser } from "../../../utils/api/queries";
 
 const validate = (form: { [key: string]: string }) => {
     const errors: { [key: string]: string[] } = {};
