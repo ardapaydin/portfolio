@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
 
-export default function TemplateWai() {
+export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
         queryKey: ["data"],
         queryFn: async () => { },
     })
-    const data = queryState?.data as any;
+    const data = d || queryState?.data as any;
     return (
         <div
             className="w-full h-screen flex flex-col md:flex-row text-white"
