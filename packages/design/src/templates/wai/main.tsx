@@ -36,11 +36,24 @@ export default function TemplateWai({ d }: { d?: any }) {
                                 }}
                                 className="text-lg italic opacity-70 break-words w-96">{data?.jobTitle}</p>
                         </div>
-                        {data?.picture &&
+                        {(data?.picture && !id) &&
                             <img
                                 className="w-32 h-32 object-cover rounded-full border-4 border-white/20"
-                                src={data?.picture}
+                                src={`${import.meta.env.VITE_S3_URL}attachments/${data.picture}`}
                             />
+                        }
+
+                        {(id && data.picture) && <Attachments onSelect={(uuid: string) => {
+                            qc.setQueryData(["data"], {
+                                ...qc.getQueryData(["data"]),
+                                picture: uuid
+                            })
+                        }}>
+                            <img
+                                className="w-32 h-32 object-cover rounded-full cursor-pointer border-4 border-white/20"
+                                src={`${import.meta.env.VITE_S3_URL}attachments/${data.picture}`}
+                            />
+                        </Attachments>
                         }
 
                         {(id && !data?.picture) && (

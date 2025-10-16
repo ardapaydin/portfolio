@@ -38,7 +38,7 @@ router.get("/:portfolioId", requireAuth, async (req, res) => {
     .from(portfolioTable)
     .where(
       and(
-        eq(portfolioTable.id, portfolioId as string),
+        eq(portfolioTable.id, portfolioId),
         eq(portfolioTable.userId, req.user!.id)
       )
     );
@@ -51,7 +51,7 @@ router.get("/:portfolioId", requireAuth, async (req, res) => {
   const attachments = await db
     .select()
     .from(attachmentsTable)
-    .where(eq(attachmentsTable.relatedPortfolioId, portfolio.id));
+    .where(eq(attachmentsTable.relatedPortfolioId, portfolioId));
 
   return res.status(200).json(attachments);
 });
@@ -96,7 +96,7 @@ router.post("/", requireAuth, async (req, res) => {
       .status(404)
       .json({ success: false, message: "portfolio not found or inaccessible" });
   const id = crypto.randomUUID();
-  const s3Key = `attachments/${portfolio.id}/${id}-${file.name}`;
+  const s3Key = `attachments/${id}`;
   await s3.send(
     new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME!,

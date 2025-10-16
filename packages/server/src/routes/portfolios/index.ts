@@ -46,7 +46,7 @@ router.post(
         },
       });
 
-    const newPortfolio = await db
+    const [newPortfolio] = await db
       .insert(portfolioTable)
       .values({
         userId: req.user!.id,
@@ -57,7 +57,7 @@ router.post(
       })
       .$returningId();
 
-    res.json({ success: true, portfolio: newPortfolio[0] });
+    res.json({ success: true, portfolio: newPortfolio });
   }
 );
 
@@ -95,7 +95,6 @@ router.get("/:id", requireAuth, async (req, res) => {
     });
   }
   portfolio.data = JSON.parse(portfolio.data as any);
-
   res.json(portfolio);
 });
 

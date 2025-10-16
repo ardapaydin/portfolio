@@ -1,12 +1,15 @@
 import { useRef, useState } from "react";
-import { Image, UploadCloud } from "lucide-react";
+import { Image } from "lucide-react";
 import { UploadPicture } from "@/utils/api/attachments";
 import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import type { TypeAttachment } from "@/design/types/attachment";
 
 export default function UploadAttachment({ onSelect }: { onSelect: (uuid: string) => void; }) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const { id } = useParams();
+    const qc = useQueryClient();
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -18,6 +21,18 @@ export default function UploadAttachment({ onSelect }: { onSelect: (uuid: string
         formdata.append("file", file);
 
         const r = await UploadPicture(formdata)
+        if (r.data.success) {
+            const attachmentList = qc.getQueryData(["attachments", id]) as TypeAttachment[];
+            qc.setQueryData(["attachments", id], [
+                ...attachmentList,
+                {
+                    name: file.name,
+                    id: r.data.id,
+                    createdAt: new Date()
+                }
+            ]);
+            onSelect(r.data?.id)
+        }
     };
 
     return (

@@ -1,12 +1,10 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import MainAttachments from "./Attachments/Main";
 import { ListCollapse, Plus } from "lucide-react";
 import UploadAttachment from "./Attachments/Upload";
 
 export default function Attachments({ children, onSelect }: { children: React.ReactNode, onSelect: (uuid: string) => void; }) {
-    const { id } = useParams();
     const [isOpen, setIsOpen] = useState(false);
     const [page, setPage] = useState("attachments")
 

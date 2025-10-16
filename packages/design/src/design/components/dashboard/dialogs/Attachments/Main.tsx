@@ -18,7 +18,28 @@ export default function MainAttachments({ onSelect }: { onSelect: (uuid: string)
             </p>
         </div>
     )
+
     return (
-        <div></div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-auto max-h-96">
+            {attachments.data
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .map((attachment) => (
+                    <button
+                        type="button"
+                        key={attachment.id}
+                        onClick={() => onSelect(attachment.id)}
+                        className="relative rounded-lg overflow-hidden cursor-pointer"
+                    >
+                        <img
+                            src={`${import.meta.env.VITE_S3_URL}attachments/${attachment.id}`}
+                            className="w-full h-40 object-cover bg-gray-100 transition-transform"
+                            draggable={false}
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-3 py-2 text-white text-xs truncate">
+                            {attachment.name}
+                        </div>
+                    </button>
+                ))}
+        </div>
     )
 }
