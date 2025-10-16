@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Image } from "lucide-react";
 import { useParams } from "react-router-dom";
 import Markdown from 'react-markdown'
 import MarkdownComponents from "../global/Markdown";
+import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -10,7 +11,7 @@ export default function TemplateWai({ d }: { d?: any }) {
         queryFn: async () => { },
     })
     const data = d || queryState?.data as any;
-
+    const qc = useQueryClient();
     const { id } = useParams();
 
     return (
@@ -43,11 +44,18 @@ export default function TemplateWai({ d }: { d?: any }) {
                         }
 
                         {(id && !data?.picture) && (
-                            <div className="flex items-center border-2 cursor-pointer bg-white/5 border-dashed justify-center rounded-lg w-32 h-32">
-                                <div className="text-center text-sm opacity-50">
-                                    <Image className="w-12 h-12" />
+                            <Attachments onSelect={(uuid: string) => {
+                                qc.setQueryData(["data"], {
+                                    ...qc.getQueryData(["data"]),
+                                    picture: uuid
+                                })
+                            }}>
+                                <div className="flex items-center border-2 cursor-pointer bg-white/5 border-dashed justify-center rounded-lg w-32 h-32">
+                                    <div className="text-center text-sm opacity-50">
+                                        <Image className="w-12 h-12" />
+                                    </div>
                                 </div>
-                            </div>
+                            </Attachments>
                         )}
                     </div>
 

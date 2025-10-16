@@ -36,7 +36,10 @@ export default function EditSidebar() {
             qc.setQueryData(["portfolio", id, "draft"], { ...draft.data, data, updatedAt: new Date().toISOString(), updating: false });
             window.onbeforeunload = null;
         }, 1000);
-        return () => clearTimeout(timeout);
+        return () => {
+            window.onbeforeunload = null;
+            clearTimeout(timeout)
+        };
     }, [data, draft.data?.data]);
     if (portfolio.isLoading || template.isLoading || !template.data || draft.isLoading) return;
 

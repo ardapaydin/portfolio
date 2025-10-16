@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { TypeUser } from "../../design/types/user";
 import type { TypeTemplate } from "../../design/types/template";
 import type { TypeDraft } from "@/design/types/draft";
+import type { TypeAttachment } from "@/design/types/attachment";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -69,6 +70,16 @@ export function usePortfolioDraft(id: string) {
     queryFn: async () => {
       const res = await axios.get("/portfolios/" + id + "/draft");
       return res.data as TypeDraft;
+    },
+  });
+}
+
+export function GetAttachments(id: string) {
+  return useQuery({
+    queryKey: ["attachments", id],
+    queryFn: async () => {
+      const res = await axios.get("/attachments/" + id);
+      return res.data as TypeAttachment[];
     },
   });
 }
