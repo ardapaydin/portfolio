@@ -2,13 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import { ErrorStyle } from "../validations/error";
 import { ZodObject } from "zod";
 
-export default function BodyValidationMiddleware(
+export default async function BodyValidationMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
   schema: ZodObject
 ) {
-  const validationResult = schema.safeParse(req.body);
+  const validationResult = await schema.safeParseAsync(req.body);
 
   if (!validationResult.success) {
     const { error } = validationResult;

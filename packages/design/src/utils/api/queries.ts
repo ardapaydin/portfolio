@@ -5,6 +5,7 @@ import type { TypeUser } from "../../design/types/user";
 import type { TypeTemplate } from "../../design/types/template";
 import type { TypeDraft } from "@/design/types/draft";
 import type { TypeAttachment } from "@/design/types/attachment";
+import type { TypePortfolio } from "@/design/types/portfolio";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -51,6 +52,16 @@ export function useTemplates() {
       return res.data as { templates: TypeTemplate[] };
     },
     retry: false,
+  });
+}
+
+export function usePortfolios() {
+  return useQuery({
+    queryKey: ["portfolios"],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios");
+      return res.data as TypePortfolio[];
+    },
   });
 }
 

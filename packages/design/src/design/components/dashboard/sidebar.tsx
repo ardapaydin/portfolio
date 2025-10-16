@@ -1,7 +1,6 @@
 import { Home, LayoutTemplate, Menu } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Step from "./step";
 import User from "./user";
 
 export default function Sidebar() {
@@ -22,7 +21,6 @@ export default function Sidebar() {
                         <Menu />
                     </button>
                 </div>
-                {collapsed || <Step />}
                 <div className="p-4 flex flex-col gap-2 border-b border-[#262626]">
                     {[
                         { name: "Portfolios", href: "/dashboard", icon: <Home /> },

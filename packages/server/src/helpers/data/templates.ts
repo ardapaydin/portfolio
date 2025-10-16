@@ -1,4 +1,7 @@
 import z from "zod";
+import { db } from "../../database/db";
+import { attachmentsTable } from "../../database";
+import { eq } from "drizzle-orm";
 const link = z.object({
   name: z.string().min(2).max(100),
   url: z.url("Invalid URL").refine((val) => /^https?:\/\//.test(val), {
@@ -78,7 +81,7 @@ export const portfolioTemplates = [
           .string()
           .min(2)
           .max(100, "Job title must be between 2 and 100 characters"),
-        picture: z.uuid().nullable().optional(),
+        picture: z.uuid().nullable().optional().refine(findImage),
         bio: z.string().max(500, "Bio must be at most 500 characters"),
         links: z.array(link).max(10, "You can add up to 10 links"),
         projects: z.array(link).max(20, "You can add up to 20 projects"),
@@ -98,3 +101,12 @@ export const portfolioTemplates = [
     },
   },
 ];
+
+async function findImage(arg: string | undefined | null): Promise<boolean> {
+  if (!arg) return true;
+  const [findId] = await db
+    .select()
+    .from(attachmentsTable)
+    .where(eq(attachmentsTable.id, arg));
+  return !!findId;
+}
