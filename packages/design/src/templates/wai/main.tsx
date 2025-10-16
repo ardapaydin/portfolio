@@ -51,7 +51,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                         )}
                     </div>
 
-                    <p className="mt-8 text-lg leading-relaxed break-words" style={{
+                    <p className="mt-2 text-lg leading-relaxed break-words" style={{
                         color: data?.primaryTextColor
                     }}>
                         <Markdown components={MarkdownComponents()}>{data?.bio}</Markdown>

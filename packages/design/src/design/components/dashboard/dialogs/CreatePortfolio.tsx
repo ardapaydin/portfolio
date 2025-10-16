@@ -37,8 +37,9 @@ export default function CreatePortfolio({ children, templateId }: { children: Re
                             setErrors({})
                             setForm({ ...form, name: e.target.value })
                         }} />
+                        <p className="text-sm text-gray-400">The name of your portfolio. You can change this later. <span className="font-mono text-red-400">Minimum 3 characters.</span></p>
                         {form.name &&
-                            <p className="text-sm text-gray-400">
+                            <p className="text-xs text-gray-400">
                                 Subdomain will be: <span className="font-mono text-green-400">{form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}</span>
                             </p>
                         }

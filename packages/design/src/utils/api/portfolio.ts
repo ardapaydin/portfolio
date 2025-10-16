@@ -13,3 +13,7 @@ export function NewPortfolio(name: string, template: string) {
 export function SaveToDraft(id: string, data: any) {
   return axios.post("/portfolios/" + id + "/draft", data);
 }
+
+export function DeleteDraft(id: string) {
+  return axios.delete("/portfolios/" + id + "/draft");
+}

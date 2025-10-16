@@ -17,14 +17,14 @@ export default function TemplateBox({ template }: { template: TypeTemplate }) {
             <div className="flex-1 p-4">
                 <h2 className="text-xl font-bold mb-2">{template.name}</h2>
                 <p className="text-gray-300">{template.description}</p>
-
-                <div className="justify-between flex">
-                    <span className="text-sm text-gray-400 mt-4">
+                <hr className="my-4 border-[#282828]" />
+                <div className="justify-between flex items-end">
+                    <span className="text-sm text-gray-400">
                         Fields: {template.fieldSize}
                     </span>
                     <CreatePortfolio templateId={template.id}>
                         <button
-                            className="mt-4 py-1 px-2 rounded-lg bg-green-500 border-b-6 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
+                            className="py-0.5 px-2 rounded-lg bg-green-500 border-b-8 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
                         >
                             Use Template
                         </button>

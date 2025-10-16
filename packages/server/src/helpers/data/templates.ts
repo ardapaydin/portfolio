@@ -1,7 +1,9 @@
 import z from "zod";
 const link = z.object({
   name: z.string().min(2).max(100),
-  url: z.url("Invalid URL"),
+  url: z.url("Invalid URL").refine((val) => /^https?:\/\//.test(val), {
+    message: "URL must start with http or https",
+  }),
 });
 
 const hexRegex = /^#([0-9A-Fa-f]{6})$/;
@@ -28,6 +30,7 @@ export const portfolioTemplates = [
         bio: {
           type: "text",
           label: "Bio",
+          markdown: true,
         },
         links: {
           type: "list",

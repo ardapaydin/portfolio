@@ -4,4 +4,5 @@ export type TypeDraft = {
   data: any;
   createdAt: string;
   updatedAt: string;
+  updating?: boolean;
 };

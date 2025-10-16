@@ -7,7 +7,12 @@ export type TypeTemplate = {
   createdAt: string;
   fields: Record<
     string,
-    { label: string; type: string; item: { name: string; url: string }[] }
+    {
+      markdown: boolean;
+      label: string;
+      type: string;
+      item: { name: string; url: string }[];
+    }
   >;
   [key: string]: any;
 };

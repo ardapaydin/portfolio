@@ -28,14 +28,16 @@ export default function EditSidebar() {
     }).data as TypeTemplate | undefined;
 
     useEffect(() => {
-        if (!data) return;
+        if (JSON.stringify(draft.data?.data) === JSON.stringify(data)) return;
         window.onbeforeunload = () => true;
-        const timeout = setTimeout(() => {
-            SaveToDraft(id!, data)
+        const timeout = setTimeout(async () => {
+            qc.setQueryData(["portfolio", id, "draft"], { ...draft.data, data, updating: true });
+            await SaveToDraft(id!, data);
+            qc.setQueryData(["portfolio", id, "draft"], { ...draft.data, data, updatedAt: new Date().toISOString(), updating: false });
             window.onbeforeunload = null;
         }, 1000);
         return () => clearTimeout(timeout);
-    }, [data]);
+    }, [data, draft.data?.data]);
     if (portfolio.isLoading || template.isLoading || !template.data || draft.isLoading) return;
 
     const keys = Object.keys(template.data.fields).filter((key) => template.data?.fields[key].type != "image");
@@ -49,7 +51,10 @@ export default function EditSidebar() {
                             .filter((field) => field.type != "image")
                             .map((field, i) => (
                                 <div key={field.label} className="mb-4">
-                                    <label className="block text-sm font-medium mb-1">{field.label}</label>
+                                    <div className="flex items-center gap-1 mb-1">
+                                        <label className="block text-sm font-medium">{field.label}</label>
+                                        {field.markdown && <span className="text-xs bg-gray-600/25 text-white/30 px-1 rounded">Markdown Supported</span>}
+                                    </div>
                                     {field.type === "text" && (
                                         <textarea
                                             className="w-full p-2 rounded-lg bg-[#333] border-[#262626] border-4 focus:outline-none"
@@ -72,7 +77,7 @@ export default function EditSidebar() {
                                             {data?.[keys[i]].map((item: { name: string, url: string }, index: number) => (
                                                 <div
                                                     onClick={() => setSelectedList({ key: keys[i], index, mode: "edit", value: item })}
-                                                    key={index} className="flex w-full items-center justify-between px-3 gap-2 bg-[#333]/50 p-2 rounded-md hover:bg-[#333]/70 transition cursor-pointer">
+                                                    key={index} className="flex w-full items-center justify-between px-3 gap-2 bg-[#333]/50 p-2 rounded-md border-[#262626] border-2 hover:bg-[#333]/70 transition cursor-pointer">
                                                     <p className="truncate">{item.name}</p>
                                                     <ArrowRight className="w-4 min-w-4 mt-1" />
                                                 </div>
@@ -90,7 +95,7 @@ export default function EditSidebar() {
                                     {field.type === "color" && (
                                         <div className="flex items-center gap-2">
                                             <div
-                                                className="min-w-8 h-8 rounded-md border-[#262626] border-4 cursor-pointer"
+                                                className="min-w-8 h-8 rounded-lg border-[#262626] border-2 cursor-pointer"
                                                 style={{ backgroundColor: data ? data[keys[i]] : "#000000" }}
                                                 onClick={() => {
                                                     const input = document.getElementById(`color-input-${keys[i]}`) as HTMLInputElement | null;
@@ -99,7 +104,7 @@ export default function EditSidebar() {
                                             ></div>
                                             <input
                                                 type="text"
-                                                className="w-full px-2 py-1 rounded bg-[#333] border-[#262626] border-4 focus:outline-none"
+                                                className="w-full px-2 py-1 rounded-lg bg-[#333] border-[#262626] border-4 focus:outline-none"
                                                 value={data ? data[keys[i]] : "#000000"}
                                                 onChange={(e) => updateField(keys[i], e.target.value)}
                                             />
