@@ -4,7 +4,7 @@ import Loading from "@/design/components/loading";
 import TemplateWai from "@/templates/wai/main";
 import { usePortfolio, useTemplate } from "@/utils/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 export default function EditPortfolio() {
     const { id } = useParams();
@@ -12,6 +12,7 @@ export default function EditPortfolio() {
     const template = useTemplate(portfolio?.template!);
     const qc = useQueryClient();
     if (isLoading || template.isLoading) return <Loading />;
+    if (!portfolio?.name) return <Navigate to="/dashboard" replace />;
     qc.setQueryData(["data"], portfolio?.data);
     return (
         <div className="flex flex-1 h-screen">
