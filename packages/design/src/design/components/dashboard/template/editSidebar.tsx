@@ -41,7 +41,7 @@ export default function EditSidebar() {
     const keys = Object.keys(template.data.fields).filter((key) => template.data?.fields[key].type != "image");
     return (
         <div className="p-4">
-            <div className="w-96 h-full bg-black/20 px-8 py-8 rounded-lg shadow-lg overflow-y-auto">
+            <div className="w-96 h-full border-[#262626] border-2 bg-[#222222] px-8 py-8 rounded-lg shadow-lg overflow-y-auto">
                 {selectedList && <ListSidebar keyName={selectedList.key} mode={selectedList.mode} value={selectedList.value} index={selectedList.index} setSelectedList={setSelectedList} />}
                 {!selectedList && (
                     <>
@@ -52,7 +52,7 @@ export default function EditSidebar() {
                                     <label className="block text-sm font-medium mb-1">{field.label}</label>
                                     {field.type === "text" && (
                                         <textarea
-                                            className="w-full p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none"
+                                            className="w-full p-2 rounded-lg bg-[#333] border-[#262626] border-4 focus:outline-none"
                                             rows={4}
                                             onChange={(e) => updateField(keys[i], e.target.value)}
                                             value={data ? data[keys[i]] : ""}
@@ -61,7 +61,7 @@ export default function EditSidebar() {
                                     {field.type === "string" && (
                                         <input
                                             type="text"
-                                            className="w-full p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none"
+                                            className="w-full p-2 rounded-lg bg-[#333] border-[#262626] border-4 focus:outline-none"
                                             onChange={(e) => updateField(keys[i], e.target.value)}
                                             value={data ? data[keys[i]] : ""}
                                         />
@@ -90,7 +90,7 @@ export default function EditSidebar() {
                                     {field.type === "color" && (
                                         <div className="flex items-center gap-2">
                                             <div
-                                                className="min-w-8 h-8 rounded-md border border-[#333] cursor-pointer"
+                                                className="min-w-8 h-8 rounded-md border-[#262626] border-4 cursor-pointer"
                                                 style={{ backgroundColor: data ? data[keys[i]] : "#000000" }}
                                                 onClick={() => {
                                                     const input = document.getElementById(`color-input-${keys[i]}`) as HTMLInputElement | null;
@@ -99,7 +99,7 @@ export default function EditSidebar() {
                                             ></div>
                                             <input
                                                 type="text"
-                                                className="w-full px-2 py-1 rounded bg-[#333] border border-[#333] focus:outline-none"
+                                                className="w-full px-2 py-1 rounded bg-[#333] border-[#262626] border-4 focus:outline-none"
                                                 value={data ? data[keys[i]] : "#000000"}
                                                 onChange={(e) => updateField(keys[i], e.target.value)}
                                             />

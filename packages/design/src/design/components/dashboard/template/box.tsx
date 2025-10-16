@@ -4,7 +4,7 @@ import CreatePortfolio from "../dialogs/CreatePortfolio";
 
 export default function TemplateBox({ template }: { template: TypeTemplate }) {
     return (
-        <div className="flex flex-col bg-[#2a2a2a] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div className="flex flex-col bg-[#222222] rounded-lg border-2 border-[#252525] shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="relative h-64 w-full">
                 <img src={`/templates/${template.id}.png`} draggable={false} className="w-full h-64 rounded-t-lg object-cover mb-4" />
                 <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded flex items-center gap-1 cursor-pointer hover:bg-black/70 transition" onClick={() => {

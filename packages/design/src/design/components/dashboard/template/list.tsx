@@ -42,12 +42,12 @@ export default function ListSidebar({ keyName, mode, value, index, setSelectedLi
                                 qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
                                 if (mode === "create") setCreate({ ...create, name: e.target.value });
                             }}
-                            className="w-full p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none"
+                            className="w-full p-2 rounded-lg bg-[#333] border-2 border-[#262626] focus:outline-none"
                         />
 
                         <label className="mb-1 text-sm font-medium text-gray-200">URL</label>
                         <div className="flex items-center">
-                            <span className="px-2 py-2 rounded-l-lg bg-[#222] border border-r-0 border-[#333] text-gray-400 select-none">
+                            <span className="px-2 py-2 rounded-l-lg bg-[#222] border-2 border-r-0 border-[#262626] text-gray-400 select-none">
                                 https://
                             </span>
                             <input
@@ -68,7 +68,7 @@ export default function ListSidebar({ keyName, mode, value, index, setSelectedLi
                                     }
                                 }}
                                 required
-                                className="w-full p-2 rounded-r-lg bg-[#333] border border-[#333] focus:outline-none"
+                                className="w-full p-2 rounded-r-lg bg-[#333] border-2 border-[#262626] focus:outline-none"
                                 placeholder="your-site.com"
                             />
                         </div>

@@ -32,7 +32,11 @@ export default function CreatePortfolio({ children, templateId }: { children: Re
                     <h2 className="text-2xl font-bold">Create Portfolio</h2>
                     <div className="flex flex-col gap-2">
                         <label className="font-semibold">Name</label>
-                        <input type="text" className="p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                        {errors.name && <p className="text-sm text-red-400">{errors.name[0]}</p>}
+                        <input type="text" className="p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none" value={form.name} onChange={(e) => {
+                            setErrors({})
+                            setForm({ ...form, name: e.target.value })
+                        }} />
                         {form.name &&
                             <p className="text-sm text-gray-400">
                                 Subdomain will be: <span className="font-mono text-green-400">{form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}</span>
@@ -41,7 +45,7 @@ export default function CreatePortfolio({ children, templateId }: { children: Re
                     </div>
                     <div className="justify-end flex">
                         <button className="mt-4 py-2 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-green-500 disabled:cursor-not-allowed px-4 max-w-min rounded-lg bg-green-500 border-b-6 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
-                            disabled={!form.name}
+                            disabled={!form.name || form.name.length < 3 || Object.keys(errors).length > 0}
                             onClick={create}
                         >
                             Create
@@ -49,6 +53,6 @@ export default function CreatePortfolio({ children, templateId }: { children: Re
                     </div>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }
