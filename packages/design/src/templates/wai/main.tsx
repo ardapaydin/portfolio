@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "lucide-react";
 import { useParams } from "react-router-dom";
-
+import Markdown from 'react-markdown'
+import MarkdownComponents from "../global/Markdown";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -52,12 +53,14 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <p className="mt-8 text-lg leading-relaxed break-words" style={{
                         color: data?.primaryTextColor
-                    }}>{data?.bio}</p>
+                    }}>
+                        <Markdown components={MarkdownComponents()}>{data?.bio}</Markdown>
+                    </p>
 
                     <Section title="Links">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
                             {data?.links.map((link: { name: string, url: string }) => (
-                                <li key={link.name}>
+                                <li key={link.name} style={{ color: data?.secondaryTextColor }}>
                                     <a href={link.url} className="underline break-words hover:text-blue-400 transition-colors">{link.name}</a>
                                 </li>
                             ))}
@@ -67,7 +70,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                     <Section title="Projects">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
                             {data?.projects.map((project: { name: string, url: string }) => (
-                                <li key={project.name}>
+                                <li key={project.name} style={{ color: data?.secondaryTextColor }}>
                                     <a href={project.url} className="underline break-words hover:text-blue-400 transition-colors">{project.name}</a>
                                 </li>
                             ))}

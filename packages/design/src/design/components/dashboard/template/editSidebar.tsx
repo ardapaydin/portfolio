@@ -29,7 +29,11 @@ export default function EditSidebar() {
 
     useEffect(() => {
         if (!data) return;
-        const timeout = setTimeout(() => SaveToDraft(id!, data), 1000);
+        window.onbeforeunload = () => true;
+        const timeout = setTimeout(() => {
+            SaveToDraft(id!, data)
+            window.onbeforeunload = null;
+        }, 1000);
         return () => clearTimeout(timeout);
     }, [data]);
     if (portfolio.isLoading || template.isLoading || !template.data || draft.isLoading) return;
@@ -80,6 +84,34 @@ export default function EditSidebar() {
                                             >
                                                 Add New Item
                                             </div>
+                                        </div>
+                                    )}
+
+                                    {field.type === "color" && (
+                                        <div className="flex items-center gap-2">
+                                            <div
+                                                className="min-w-8 h-8 rounded-md border border-[#333] cursor-pointer"
+                                                style={{ backgroundColor: data ? data[keys[i]] : "#000000" }}
+                                                onClick={() => {
+                                                    const input = document.getElementById(`color-input-${keys[i]}`) as HTMLInputElement | null;
+                                                    input?.click();
+                                                }}
+                                            ></div>
+                                            <input
+                                                type="text"
+                                                className="w-full px-2 py-1 rounded bg-[#333] border border-[#333] focus:outline-none"
+                                                value={data ? data[keys[i]] : "#000000"}
+                                                onChange={(e) => updateField(keys[i], e.target.value)}
+                                            />
+                                            <input
+                                                id={`color-input-${keys[i]}`}
+                                                type="color"
+                                                className="w-0 h-0 p-0 opacity-0 absolute"
+                                                style={{ pointerEvents: "none" }}
+                                                tabIndex={-1}
+                                                onChange={(e) => updateField(keys[i], e.target.value)}
+                                                value={data ? data[keys[i]] : "#000000"}
+                                            />
                                         </div>
                                     )}
                                 </div>
