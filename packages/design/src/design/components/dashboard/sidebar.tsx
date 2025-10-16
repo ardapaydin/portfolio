@@ -1,25 +1,31 @@
 import { Home, LayoutTemplate, Menu } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import User from "./user";
 
 export default function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
 
+    useEffect(() => {
+        if (window.innerWidth < 768) setCollapsed(true);
+    }, []);
+
     return (
-        <div className={`h-screen flex flex-col ${collapsed ? "w-20" : "w-80"} border-r-3 border-[#262626] bg-[#222222] text-white transition-all duration-200`}>
+        <div className={`h-screen flex flex-col ${collapsed ? "w-20" : "w-80"} border-r-3 border-[#262626] bg-[#222222] text-white ${window.innerWidth > 768 ? "transition-all" : ""} duration-200`}>
             <div>
                 <div className="flex items-center justify-between p-4 border-b-4 border-[#262626]">
                     <span className={`font-bold text-lg transition-opacity duration-200 ${collapsed ? "opacity-0 w-0" : "opacity-100 w-auto px-3"}`}>
                         {import.meta.env.VITE_APP_NAME}
                     </span>
-                    <button
-                        className="p-2 rounded hover:bg-[#262626]/50 transition z-20 cursor-pointer"
-                        onClick={() => setCollapsed((c) => !c)}
-                        aria-label="Toggle sidebar"
-                    >
-                        <Menu />
-                    </button>
+                    {(window.innerWidth > 768) && (
+                        <button
+                            className="p-2 rounded hover:bg-[#262626]/50 transition z-20 cursor-pointer"
+                            onClick={() => setCollapsed((c) => !c)}
+                            aria-label="Toggle sidebar"
+                        >
+                            <Menu />
+                        </button>
+                    )}
                 </div>
                 <div className="p-4 flex flex-col gap-2 border-b border-[#262626]">
                     {[
