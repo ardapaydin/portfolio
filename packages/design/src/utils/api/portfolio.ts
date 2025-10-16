@@ -9,3 +9,7 @@ export function NewPortfolio(name: string, template: string) {
     name,
   });
 }
+
+export function SaveToDraft(id: string, data: any) {
+  return axios.post("/portfolios/" + id + "/draft", data);
+}

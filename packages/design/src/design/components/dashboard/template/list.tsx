@@ -46,18 +46,32 @@ export default function ListSidebar({ keyName, mode, value, index, setSelectedLi
                         />
 
                         <label className="mb-1 text-sm font-medium text-gray-200">URL</label>
-                        <input
-                            type="text"
-                            value={data ? data[keyName][index!]?.url : ""}
-                            onChange={(e) => {
-                                const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];
-                                newList[index!] = { ...newList[index!], url: e.target.value };
-                                qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
-                                if (mode === "create") setCreate({ ...create, url: e.target.value });
-                            }}
-                            className="w-full p-2 rounded-lg bg-[#333] border border-[#333] focus:outline-none"
-                        />
-
+                        <div className="flex items-center">
+                            <span className="px-2 py-2 rounded-l-lg bg-[#222] border border-r-0 border-[#333] text-gray-400 select-none">
+                                https://
+                            </span>
+                            <input
+                                type="text"
+                                value={
+                                    mode === "create"
+                                        ? create.url.replace(/^https?:\/\//, "")
+                                        : (data ? data[keyName][index!]?.url.replace(/^https?:\/\//, "") : "")
+                                }
+                                onChange={(e) => {
+                                    const urlValue = "https://" + e.target.value.replace(/^https?:\/\//, "");
+                                    if (mode === "create") {
+                                        setCreate({ ...create, url: urlValue });
+                                    } else {
+                                        const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];
+                                        newList[index!] = { ...newList[index!], url: urlValue };
+                                        qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
+                                    }
+                                }}
+                                required
+                                className="w-full p-2 rounded-r-lg bg-[#333] border border-[#333] focus:outline-none"
+                                placeholder="your-site.com"
+                            />
+                        </div>
                         <div className="flex gap-4 mt-4 justify-end">
                             {mode === "edit" && <button
                                 onClick={() => {

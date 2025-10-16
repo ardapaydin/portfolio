@@ -99,4 +99,7 @@ router.get("/:id", requireAuth, async (req, res) => {
   res.json(portfolio);
 });
 
+import DraftRouter from "./draft";
+router.use("/", DraftRouter);
+
 export default router;

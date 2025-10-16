@@ -1,10 +1,11 @@
 import type { TypeTemplate } from "@/design/types/template";
-import { usePortfolio, useTemplate } from "@/utils/api/queries";
+import { usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
+import { SaveToDraft } from "@/utils/api/portfolio";
 
 export default function EditSidebar() {
     const { id } = useParams();
@@ -12,16 +13,27 @@ export default function EditSidebar() {
     const portfolio = usePortfolio(id!);
     const template = useTemplate(portfolio?.data?.template!) as { data: TypeTemplate | undefined, isLoading: boolean };
     const qc = useQueryClient();
-    if (portfolio.isLoading || template.isLoading || !template.data) return;
+    const draft = usePortfolioDraft(id!);
     const updateField = (fieldId: string, value: any) => {
         const newData = { ...qc.getQueryData<any>(["data"]), [fieldId]: value };
         qc.setQueryData(["data"], newData);
-        console.log(newData);
     }
+    useEffect(() => {
+        if ((draft.data?.createdAt || "") > portfolio.data?.updatedAt && draft.data?.data) qc.setQueryData(["data"], draft.data.data);
+    }, [draft.data, portfolio.data?.updatedAt]);
+
     const data = useQuery({
         queryKey: ["data"],
         queryFn: async () => ({} as TypeTemplate),
     }).data as TypeTemplate | undefined;
+
+    useEffect(() => {
+        if (!data) return;
+        const timeout = setTimeout(() => SaveToDraft(id!, data), 1000);
+        return () => clearTimeout(timeout);
+    }, [data]);
+    if (portfolio.isLoading || template.isLoading || !template.data || draft.isLoading) return;
+
     const keys = Object.keys(template.data.fields).filter((key) => template.data?.fields[key].type != "image");
     return (
         <div className="p-4">
@@ -57,8 +69,8 @@ export default function EditSidebar() {
                                                 <div
                                                     onClick={() => setSelectedList({ key: keys[i], index, mode: "edit", value: item })}
                                                     key={index} className="flex w-full items-center justify-between px-3 gap-2 bg-[#333]/50 p-2 rounded-md hover:bg-[#333]/70 transition cursor-pointer">
-                                                    {item.name}
-                                                    <ArrowRight className="w-4 mt-1" />
+                                                    <p className="truncate">{item.name}</p>
+                                                    <ArrowRight className="w-4 min-w-4 mt-1" />
                                                 </div>
                                             ))}
 

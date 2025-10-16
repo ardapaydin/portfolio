@@ -53,18 +53,14 @@ export const portfolioTemplates = [
       default: {
         name: "Wai",
         jobTitle: "Job Title",
-        picture: "",
+        picture: null,
         bio: "Lorem ipsum dolor sit amet consectetur adipisicing elit. In provident voluptatem, porro soluta labore quaerat minima maxime at et necessitatibus eos iusto culpa placeat temporibus sit cumque ipsum deleniti obcaecati!",
         links: [
-          { name: "GitHub", url: "#" },
-          { name: "LinkedIn", url: "#" },
-          { name: "Twitter", url: "#" },
+          { name: "GitHub", url: "https://github.com" },
+          { name: "LinkedIn", url: "https://linkedin.com" },
+          { name: "Twitter", url: "https://x.com" },
         ],
-        projects: [
-          { name: "Project 1", url: "#" },
-          { name: "Project 2", url: "#" },
-          { name: "Project 3", url: "#" },
-        ],
+        projects: [{ name: "Project 1", url: "https://example.com" }],
         backgroundColor: "#313030",
         primaryTextColor: "#ffffff",
         secondaryTextColor: "#ffffff",
@@ -79,23 +75,22 @@ export const portfolioTemplates = [
           .string()
           .min(2)
           .max(100, "Job title must be between 2 and 100 characters"),
-        picture: z.uuid().optional(),
+        picture: z.uuid().nullable().optional(),
         bio: z.string().max(500, "Bio must be at most 500 characters"),
         links: z.array(link).max(10, "You can add up to 10 links"),
         projects: z.array(link).max(20, "You can add up to 20 projects"),
-        backgroundColor: z.regex(
-          hexRegex,
-          "Background color mus tbe a valid hex color"
-        ),
-        primaryTextColor: z.regex(
-          hexRegex,
-          "Primary text color must be a valid hex color"
-        ),
-        secondaryTextColor: z.regex(
-          hexRegex,
-          "Secondary text color must be a valid hex color"
-        ),
-        boxColor: z.regex(hexRegex, "Box color must be a valid hex color"),
+        backgroundColor: z
+          .string()
+          .regex(hexRegex, "Background color mus tbe a valid hex color"),
+        primaryTextColor: z
+          .string()
+          .regex(hexRegex, "Primary text color must be a valid hex color"),
+        secondaryTextColor: z
+          .string()
+          .regex(hexRegex, "Secondary text color must be a valid hex color"),
+        boxColor: z
+          .string()
+          .regex(hexRegex, "Box color must be a valid hex color"),
       }),
     },
   },

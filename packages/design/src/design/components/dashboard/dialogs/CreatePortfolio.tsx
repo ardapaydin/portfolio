@@ -20,6 +20,7 @@ export default function CreatePortfolio({ children, templateId }: { children: Re
         else {
             setErrors({});
             setIsOpen(false);
+            window.location.href = `/dashboard/portfolio/${req.data.portfolio.id}/edit`;
         }
     };
 

@@ -25,14 +25,14 @@ export default function TemplateWai({ d }: { d?: any }) {
                 }}>
                     <div className="flex flex-col md:flex-row items-center md:justify-between gap-6">
                         <div>
-                            <h1 className="text-3xl font-extrabold mb-2"
+                            <h1 className="text-3xl font-extrabold mb-2 truncate w-96"
                                 style={{ color: data?.primaryTextColor }}
                             >{data?.name}</h1>
                             <p
                                 style={{
                                     color: data?.secondaryTextColor
                                 }}
-                                className="text-lg italic opacity-70">{data?.jobTitle}</p>
+                                className="text-lg italic opacity-70 break-words w-96">{data?.jobTitle}</p>
                         </div>
                         {data?.picture &&
                             <img
@@ -50,7 +50,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                         )}
                     </div>
 
-                    <p className="mt-8 text-lg leading-relaxed" style={{
+                    <p className="mt-8 text-lg leading-relaxed break-words" style={{
                         color: data?.primaryTextColor
                     }}>{data?.bio}</p>
 
@@ -58,7 +58,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
                             {data?.links.map((link: { name: string, url: string }) => (
                                 <li key={link.name}>
-                                    <a href={link.url} className="underline hover:text-blue-400 transition-colors">{link.name}</a>
+                                    <a href={link.url} className="underline break-words hover:text-blue-400 transition-colors">{link.name}</a>
                                 </li>
                             ))}
                         </ul>
@@ -68,7 +68,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
                             {data?.projects.map((project: { name: string, url: string }) => (
                                 <li key={project.name}>
-                                    <a href={project.url} className="underline hover:text-blue-400 transition-colors">{project.name}</a>
+                                    <a href={project.url} className="underline break-words hover:text-blue-400 transition-colors">{project.name}</a>
                                 </li>
                             ))}
                         </ul>
