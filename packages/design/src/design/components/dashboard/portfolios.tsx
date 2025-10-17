@@ -1,6 +1,7 @@
 import { usePortfolios } from "@/utils/api/queries"
-import { Pencil } from "lucide-react";
+import { Pencil, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import UpdatePortfolio from "./dialogs/UpdatePortfolio";
 
 export default function Portfolios() {
     const portfolios = usePortfolios();
@@ -34,7 +35,7 @@ export default function Portfolios() {
 
                     <hr className="border-[#303030] mt-2" />
 
-                    <div className="flex gap-2 px-8 pb-6 pt-4">
+                    <div className="flex gap-2 justify-between items-center px-8 pb-6 pt-4">
                         <button
                             onClick={() => {
                                 nav(`/dashboard/portfolio/${portfolio.id}/edit`)
@@ -43,6 +44,11 @@ export default function Portfolios() {
                         >
                             Edit <Pencil className="w-4" />
                         </button>
+
+                        <UpdatePortfolio portfolioId={portfolio.id}>
+                            <Settings className="w-5 cursor-pointer text-muted-foreground hover:text-white transition" />
+                        </UpdatePortfolio>
+
                     </div>
                 </div>
             ))}

@@ -1,10 +1,11 @@
 import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Cloud, Image } from "lucide-react";
+import { Cloud, Image, Settings } from "lucide-react";
 import { useParams } from "react-router-dom";
 import DraftDetails from "../dialogs/DraftDetails";
 import Attachments from "../dialogs/Attachments";
 import type { TypeDraft } from "@/design/types/draft";
+import UpdatePortfolio from "../dialogs/UpdatePortfolio";
 
 export default function Topbar() {
     const { id } = useParams();
@@ -58,23 +59,36 @@ export default function Topbar() {
                 </span>
             </div>
 
-            {draft.data?.updatedAt && (
-                <div className="text-xs text-gray-400 cursor-pointer">
-                    <DraftDetails>
-                        {draft.data?.updating ? (
-                            <div className="flex items-center gap-1">
-                                <Cloud className="w-4 h-4 animate-pulse" />
-                                Saving Draft...
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-1">
-                                <Cloud className="w-4 h-4 inline-block" />
-                                Saved Draft
-                            </div>
-                        )}
-                    </DraftDetails>
-                </div>
-            )}
+            <div className="flex items-center gap-3">
+
+                {(draft.data?.updatedAt != draft.data?.createdAt) && (
+                    <>
+                        <div className="text-xs text-gray-400 cursor-pointer">
+                            <DraftDetails>
+                                {draft.data?.updating ? (
+                                    <div className="flex items-center gap-1">
+                                        <Cloud className="w-4 h-4 animate-pulse" />
+                                        Saving Draft...
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1">
+                                        <Cloud className="w-4 h-4 inline-block" />
+                                        Saved Draft
+                                    </div>
+                                )}
+                            </DraftDetails>
+                        </div>
+                        <hr className="w-3" />
+                    </>
+                )}
+
+
+                <UpdatePortfolio>
+                    <div className="text-muted-foreground hover:text-white transition-all cursor-pointer">
+                        <Settings className="w-5" />
+                    </div>
+                </UpdatePortfolio>
+            </div>
         </div>
     )
 }

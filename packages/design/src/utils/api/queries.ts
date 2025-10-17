@@ -65,13 +65,14 @@ export function usePortfolios() {
   });
 }
 
-export function usePortfolio(id: string) {
+export function usePortfolio(id: string, isEnabled: boolean = true) {
   return useQuery({
     queryKey: ["portfolio", id],
     queryFn: async () => {
       const res = await axios.get("/portfolios/" + id);
       return res.data;
     },
+    enabled: isEnabled,
   });
 }
 

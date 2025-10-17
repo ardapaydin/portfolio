@@ -1,11 +1,11 @@
 import express from "express";
-import { requireAuth } from "../../../helpers/middlewares/auth";
-import { db } from "../../../database/db";
-import { portfolioTable } from "../../../database";
+import { requireAuth } from "../../../../helpers/middlewares/auth";
+import { db } from "../../../../database/db";
+import { portfolioTable } from "../../../../database";
 import { eq } from "drizzle-orm";
-import { draftsTable } from "../../../database/schemas/drafts";
-import { portfolioTemplates } from "../../../helpers/data/templates";
-import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
+import { draftsTable } from "../../../../database/schemas/drafts";
+import { portfolioTemplates } from "../../../../helpers/data/templates";
+import BodyValidationMiddleware from "../../../../helpers/middlewares/validation";
 const router = express.Router();
 
 router.post("/:id/draft", requireAuth, async (req, res) => {

@@ -16,21 +16,7 @@ router.post(
     BodyValidationMiddleware(req, res, next, createPortfolioSchema),
   async (req, res) => {
     const { name, template } = req.body;
-    const subdomain = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const [existing] = await db
-      .select()
-      .from(portfolioTable)
-      .where(eq(portfolioTable.subdomain, subdomain))
-      .limit(1);
-
-    if (existing)
-      return res.status(400).json({
-        success: false,
-        message: "subdomain already exists",
-        errors: {
-          name: ["A portfolio with this name already exists."],
-        },
-      });
+    let subdomain = createSubdomain();
 
     const userPortfolios = await db
       .select()
@@ -80,28 +66,8 @@ router.get("/", requireAuth, async (req, res) => {
   res.json(portfolios);
 });
 
-router.get("/:id", requireAuth, async (req, res) => {
-  const { id } = req.params;
-  let [portfolio] = await db
-    .select()
-    .from(portfolioTable)
-    .where(
-      and(eq(portfolioTable.id, id), eq(portfolioTable.userId, req.user!.id))
-    );
-
-  if (!portfolio) {
-    return res.status(404).json({
-      success: false,
-      message: "Portfolio not found or you do not have access to it",
-    });
-  }
-  portfolio.data = JSON.parse(portfolio.data as any);
-  res.json(portfolio);
-});
-
-import DraftRouter from "./draft";
-import AttachmentRouter from "./attachments";
-router.use("/", DraftRouter);
-router.use("/", AttachmentRouter);
+import idRouter from "./id";
+import createSubdomain from "../../helpers/utils/createSubdomain";
+router.use(idRouter);
 
 export default router;

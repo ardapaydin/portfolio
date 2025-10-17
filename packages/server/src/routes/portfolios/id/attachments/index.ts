@@ -1,7 +1,7 @@
 import express from "express";
-import { requireAuth } from "../../../helpers/middlewares/auth";
-import { db } from "../../../database/db";
-import { attachmentsTable, portfolioTable } from "../../../database";
+import { requireAuth } from "../../../../helpers/middlewares/auth";
+import { db } from "../../../../database/db";
+import { attachmentsTable, portfolioTable } from "../../../../database";
 import { and, eq } from "drizzle-orm";
 const router = express.Router();
 
