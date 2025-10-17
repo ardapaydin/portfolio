@@ -24,6 +24,7 @@ export default function Topbar() {
                     const data = qc.getQueryData(["data"]) as any;
                     qc.setQueryData(["data"], {
                         meta: {
+                            ...data.meta,
                             favicon: uuid,
                         },
                         ...data,
@@ -36,7 +37,23 @@ export default function Topbar() {
                         )}
                     </div>
                 </Attachments>
-                <span className="text-base font-semibold text-gray-100 truncate">
+                <span
+                    className="text-base font-semibold text-gray-100 truncate"
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => {
+                        const title = e.currentTarget.textContent?.trim();
+                        if (!title || title === portfolio?.name) return;
+                        const data = qc.getQueryData(["data"]) as any;
+                        qc.setQueryData(["data"], {
+                            ...data,
+                            meta: {
+                                ...data.meta,
+                                title,
+                            },
+                        });
+                    }}
+                >
                     {portfolio?.name}
                 </span>
             </div>

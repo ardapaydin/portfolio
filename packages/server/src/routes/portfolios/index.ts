@@ -100,6 +100,8 @@ router.get("/:id", requireAuth, async (req, res) => {
 });
 
 import DraftRouter from "./draft";
+import AttachmentRouter from "./attachments";
 router.use("/", DraftRouter);
+router.use("/", AttachmentRouter);
 
 export default router;

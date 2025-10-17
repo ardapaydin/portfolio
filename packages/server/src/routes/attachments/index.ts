@@ -26,36 +26,6 @@ const s3 = new S3Client({
   },
 });
 
-router.get("/:portfolioId", requireAuth, async (req, res) => {
-  const { portfolioId } = req.params;
-  if (!portfolioId)
-    return res
-      .status(400)
-      .json({ success: false, message: "No portfolioId specified" });
-
-  const [portfolio] = await db
-    .select()
-    .from(portfolioTable)
-    .where(
-      and(
-        eq(portfolioTable.id, portfolioId),
-        eq(portfolioTable.userId, req.user!.id)
-      )
-    );
-
-  if (!portfolio)
-    return res
-      .status(404)
-      .json({ success: false, message: "portfolio not found or inaccessible" });
-
-  const attachments = await db
-    .select()
-    .from(attachmentsTable)
-    .where(eq(attachmentsTable.relatedPortfolioId, portfolioId));
-
-  return res.status(200).json(attachments);
-});
-
 router.post("/", requireAuth, async (req, res) => {
   const file = req.files?.file;
   const { portfolioId, type } = req.body;

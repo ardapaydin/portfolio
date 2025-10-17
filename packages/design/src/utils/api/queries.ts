@@ -89,7 +89,7 @@ export function GetAttachments(id: string) {
   return useQuery({
     queryKey: ["attachments", id],
     queryFn: async () => {
-      const res = await axios.get("/attachments/" + id);
+      const res = await axios.get("/portfolios/" + id + "/attachments");
       return res.data as TypeAttachment[];
     },
   });
