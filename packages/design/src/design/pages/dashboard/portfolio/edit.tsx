@@ -16,7 +16,7 @@ export default function EditPortfolio() {
     if (!portfolio?.name) return <Navigate to="/dashboard" replace />;
     qc.setQueryData(["data"], portfolio?.data);
     return (
-        <div className="flex flex-1 h-screen">
+        <div className="flex flex-col md:flex-row flex-1 h-screen">
             <EditSidebar />
             <div className="flex flex-col flex-1 min-h-0 p-4">
                 <Topbar />

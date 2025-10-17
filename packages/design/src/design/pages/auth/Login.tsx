@@ -9,7 +9,7 @@ const validate = (form: { [key: string]: string }) => {
     if (!form.password) errors.password = ["Password is required."];
     else if (form.password.length < 6) errors.password = ["Password must be at least 6 characters."];
     else if (
-        !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(form.password)
+        !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(form.password)
     ) errors.password = [
         "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ];
