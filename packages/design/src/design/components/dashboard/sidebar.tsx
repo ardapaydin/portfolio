@@ -1,4 +1,4 @@
-import { Home, LayoutTemplate, Menu } from "lucide-react";
+import { Home, LayoutTemplate, Menu, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import User from "./user";
@@ -30,7 +30,8 @@ export default function Sidebar() {
                 <div className="p-4 flex flex-col gap-2 border-b border-[#262626]">
                     {[
                         { name: "Portfolios", href: "/dashboard", icon: <Home /> },
-                        { name: "Templates", href: "/dashboard/templates", icon: <LayoutTemplate /> }
+                        { name: "Templates", href: "/dashboard/templates", icon: <LayoutTemplate /> },
+                        { name: "Settings", href: "/dashboard/user", icon: <Settings /> }
                     ].map((item) => (
                         <Link
                             key={item.href}

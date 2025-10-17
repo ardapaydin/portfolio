@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import Markdown from 'react-markdown'
 import MarkdownComponents from "../global/Markdown";
 import Attachments from "@/design/components/dashboard/dialogs/Attachments";
-
+import { HeadProvider, Title, Link } from 'react-head';
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
         queryKey: ["data"],
@@ -13,11 +13,17 @@ export default function TemplateWai({ d }: { d?: any }) {
     const data = d || queryState?.data as any;
     const qc = useQueryClient();
     const { id } = useParams();
-
+    console.log(data.meta)
     return (
         <div
             className="w-full h-screen flex flex-col md:flex-row text-white"
         >
+            <HeadProvider>
+                <Title>{data?.meta?.title}</Title>
+                {data?.meta?.favicon && (
+                    <Link rel="icon" type="image/png" href={`${import.meta.env.VITE_S3_URL}attachments/${data.meta.favicon}`} />
+                )}
+            </HeadProvider>
             <div className="max-w-2xl m-auto w-full flex flex-col">
                 <div
                     style={{ backgroundColor: data?.backgroundColor }}

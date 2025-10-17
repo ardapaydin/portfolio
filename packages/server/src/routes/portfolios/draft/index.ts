@@ -27,7 +27,7 @@ router.post("/:id/draft", requireAuth, async (req, res) => {
   const template = portfolioTemplates.find((t) => t.id === portfolio.template);
 
   const validate = template?.data?.validation!;
-  BodyValidationMiddleware(req, res, () => {}, validate);
+  await BodyValidationMiddleware(req, res, () => {}, validate);
   if (res.headersSent) return;
 
   const [existingDraft] = await db

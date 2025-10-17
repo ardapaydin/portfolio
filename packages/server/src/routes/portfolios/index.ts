@@ -37,12 +37,12 @@ router.post(
       .from(portfolioTable)
       .where(eq(portfolioTable.userId, req.user!.id));
 
-    if (userPortfolios.length >= 3)
+    if (userPortfolios.length >= 6)
       return res.status(400).json({
         success: false,
         message: "user has reached the maximum number of portfolios",
         errors: {
-          name: ["You can only have up to 3 portfolios."],
+          name: ["You can only have up to 6 portfolios."],
         },
       });
 

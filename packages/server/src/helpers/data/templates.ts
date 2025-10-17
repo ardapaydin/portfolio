@@ -8,6 +8,12 @@ const link = z.object({
     message: "URL must start with http or https",
   }),
 });
+const meta = z
+  .object({
+    title: z.string().max(100).optional(),
+    favicon: z.uuid().nullable().refine(findImage).optional(),
+  })
+  .optional();
 
 const hexRegex = /^#([0-9A-Fa-f]{6})$/;
 
@@ -97,6 +103,7 @@ export const portfolioTemplates = [
         boxColor: z
           .string()
           .regex(hexRegex, "Box color must be a valid hex color"),
+        meta,
       }),
     },
   },
