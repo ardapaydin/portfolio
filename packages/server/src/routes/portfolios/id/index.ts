@@ -112,6 +112,27 @@ router.post("/:id/save", requireAuth, async (req, res) => {
   return res.status(200).json({ success: true });
 });
 
+router.delete("/:id", requireAuth, async (req, res) => {
+  const { id } = req.params;
+  const [portfolio] = await db
+    .select()
+    .from(portfolioTable)
+    .where(
+      and(eq(portfolioTable.id, id), eq(portfolioTable.userId, req.user!.id))
+    );
+
+  if (!portfolio)
+    return res.status(404).json({
+      success: false,
+      message: "Portfolio not found or you do not have access to it",
+    });
+
+  if (portfolio.isPublished)
+    deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
+  await db.delete(portfolioTable).where(eq(portfolioTable.id, id));
+  return res.status(200).json({ success: true });
+});
+
 import DraftRouter from "./draft";
 import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
