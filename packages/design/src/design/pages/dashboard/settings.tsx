@@ -2,7 +2,8 @@ import UserAvatar from "@/design/components/user/avatar";
 import { useUser } from "../../../utils/api/queries";
 import Layout from "../../components/dashboard/layout";
 import { Mail, Upload } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { UpdateUser } from "@/utils/api/user";
 
 export default function Settings() {
     const user = useUser();
@@ -12,8 +13,33 @@ export default function Settings() {
         currentPassword: "",
         newPassword: "",
         confirmPassword: ""
-    })
+    });
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+
+    useEffect(() => {
+        const newErrors: { [key: string]: string[] } = {};
+        if (form.name && form.name.length > 60) newErrors.name = ["Name is so long."]
+        if (form.name && form.name.length < 2) newErrors.name = ["Name is so short."]
+        if (!form.email?.trim()) newErrors.email = ["Email is required."];
+        else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/.test(form.email)) newErrors.email = ["Email is invalid."];
+
+        if (form.newPassword) {
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/.test(form.newPassword)) newErrors.newPassword = ["Password must be at least 6 characters, include uppercase, lowercase, number, and special character."];
+            if (form.newPassword !== form.confirmPassword) newErrors.confirmPassword = ["Passwords do not match."];
+        }
+
+        if (form.newPassword && !form.currentPassword) newErrors.currentPassword = ["Please enter your current password to change your password."];
+
+        setErrors(newErrors);
+    }, [form]);
+
+    const submit = async () => {
+        if (!form.name || !form.email) return;
+        const request = await UpdateUser(form.name, form.email, form.currentPassword, form.newPassword);
+        if (request.status == 200) window.location.reload();
+        else setErrors(request.data?.errors || request.data?.message)
+    }
+
     return (
         <Layout>
             <div className="flex-1 h-full md:px-64">
@@ -32,13 +58,14 @@ export default function Settings() {
                         </div>
                     </div>
                 </div>
-
+                {typeof errors == "string" && <p className="text-red-500 text-sm">{errors}</p>}
                 <div className="flex flex-col mt-8 gap-4">
                     <div className="flex flex-col gap-1">
 
                         <label className="text-white/50">Full Name</label>
+                        {errors.name && <p className="text-red-500 text-sm">{errors.name[0]}</p>}
+
                         <input type="text" className="p-2 px-4 rounded-lg bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.name} onChange={(e) => {
-                            setErrors({})
                             setForm({ ...form, name: e.target.value })
                         }} />
 
@@ -46,12 +73,14 @@ export default function Settings() {
                     <div className="flex flex-col gap-1">
 
                         <label className="text-white/50">Email</label>
+                        {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
+
                         <div className="flex bg-[#333] border-2 p-2 gap-2 px-3 rounded-lg border-[#3f3e3e] items-center">
                             <div className="bg-[#111]/50 w-6 h-6 flex items-center justify-center rounded">
                                 <Mail className="w-4" />
                             </div>
-                            <input type="text" className="focus:outline-none z-10" value={form.email} onChange={(e) => {
-                                setErrors({})
+
+                            <input type="text" className="focus:outline-none w-full" value={form.email} onChange={(e) => {
                                 setForm({ ...form, email: e.target.value })
                             }} />
                         </div>
@@ -66,8 +95,9 @@ export default function Settings() {
                     <div className="flex flex-col gap-1">
 
                         <label className="text-white/50">Current Password</label>
-                        <input type="text" placeholder="Add current password" className="p-2 px-4 rounded-lg placeholder:text-muted-foreground bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.currentPassword} onChange={(e) => {
-                            setErrors({})
+                        {errors.currentPassword && <p className="text-red-500 text-sm">{errors.currentPassword[0]}</p>}
+
+                        <input type="password" placeholder="Add current password" className="p-2 px-4 rounded-lg placeholder:text-muted-foreground bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.currentPassword} onChange={(e) => {
                             setForm({ ...form, currentPassword: e.target.value })
                         }} />
 
@@ -75,8 +105,9 @@ export default function Settings() {
                     <div className="flex flex-col gap-1">
 
                         <label className="text-white/50">New Password</label>
-                        <input type="text" className="p-2 px-4 rounded-lg bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.newPassword} onChange={(e) => {
-                            setErrors({})
+                        {errors.newPassword && <p className="text-red-500 text-sm">{errors.newPassword[0]}</p>}
+
+                        <input type="password" className="p-2 px-4 rounded-lg bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.newPassword} onChange={(e) => {
                             setForm({ ...form, newPassword: e.target.value })
                         }} />
 
@@ -84,8 +115,8 @@ export default function Settings() {
                     <div className="flex flex-col gap-1">
 
                         <label className="text-white/50">Confirm New Password</label>
-                        <input type="text" className="p-2 px-4 rounded-lg bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.confirmPassword} onChange={(e) => {
-                            setErrors({})
+                        {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword[0]}</p>}
+                        <input type="password" className="p-2 px-4 rounded-lg bg-[#333] border-2 border-[#3f3e3e] focus:outline-none" value={form.confirmPassword} onChange={(e) => {
                             setForm({ ...form, confirmPassword: e.target.value })
                         }} />
 
@@ -94,9 +125,12 @@ export default function Settings() {
                 </div>
 
                 <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-end">
-                    <div className="border-2 border-[#3f3e3e] p-2 rounded-full px-4 py-1 cursor-pointer hover:bg-[#333] transition bg-[#333]/50">
+                    <button
+                        onClick={submit}
+                        disabled={!!Object.keys(errors).length}
+                        className="border-2 border-[#3f3e3e] p-2 disabled:opacity-50 rounded-full px-4 py-1 cursor-pointer hover:bg-[#333] transition bg-[#333]/50">
                         Save
-                    </div>
+                    </button>
                 </div>
             </div>
         </Layout>

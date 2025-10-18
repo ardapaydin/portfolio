@@ -17,6 +17,18 @@ router.post(
   async (req, res) => {
     const { name, template } = req.body;
     let subdomain = createSubdomain();
+    const [{ emailVerified }] = await db
+      .select({ emailVerified: usersTable.emailVerified })
+      .from(usersTable)
+      .where(eq(usersTable.id, req.user!.id));
+    if (!emailVerified)
+      return res.status(400).json({
+        success: false,
+        message: "email is not verified",
+        errors: {
+          name: ["You must verify your email before creating a portfolio"],
+        },
+      });
 
     const userPortfolios = await db
       .select()
@@ -68,6 +80,7 @@ router.get("/", requireAuth, async (req, res) => {
 
 import idRouter from "./id";
 import createSubdomain from "../../helpers/utils/createSubdomain";
+import { usersTable } from "../../database";
 router.use(idRouter);
 
 export default router;

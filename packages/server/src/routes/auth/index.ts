@@ -88,7 +88,7 @@ router.post(
     if (existingUser)
       return res.status(400).json({
         success: false,
-        message: "email already exits",
+        message: "email already exists",
         errors: {
           email: ["This email is already registered."],
         },

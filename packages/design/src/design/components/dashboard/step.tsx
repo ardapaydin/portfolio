@@ -1,4 +1,4 @@
-import { usePortfolios } from "@/utils/api/queries";
+import { usePortfolios, useUser } from "@/utils/api/queries";
 import { ArrowRight, Check, List, Mail, UploadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -25,11 +25,13 @@ const steps = [
 
 export default function Step() {
     const portfolios = usePortfolios();
-    const [userStep, setUserStep] = useState(1)
+    const user = useUser();
+    const [userStep, setUserStep] = useState(0)
     useEffect(() => {
         if (portfolios.data?.length) setUserStep(2)
         if (portfolios.data?.find(((x) => x.isPublished))) setUserStep(3)
-    }, [portfolios.data])
+        if (!user.data?.user?.emailVerified) setUserStep(0)
+    }, [portfolios.data, user.data])
     if (portfolios.isLoading) return <LoadingSmall />
 
     return (
