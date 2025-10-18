@@ -1,6 +1,6 @@
 import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, Cloud, Image, Loader, Save, Settings } from "lucide-react";
+import { Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
 import { useParams } from "react-router-dom";
 import DraftDetails from "../dialogs/DraftDetails";
 import Attachments from "../dialogs/Attachments";
@@ -8,6 +8,7 @@ import type { TypeDraft } from "@/design/types/draft";
 import UpdatePortfolio from "../dialogs/UpdatePortfolio";
 import { save } from "@/utils/api/portfolio";
 import { useState } from "react";
+import PublishPortfolio from "../dialogs/PublishPortfolio";
 
 export default function Topbar() {
     const { id } = useParams();
@@ -114,6 +115,14 @@ export default function Topbar() {
                         <Save className="w-5" />
                     )}
                 </div>
+
+
+                <PublishPortfolio>
+                    <div className="text-xs border p-2 py-1 rounded-md hover:text-white hover:border-white transition cursor-pointer flex items-center gap-1 text-muted-foreground border-muted-foreground">
+                        <Share className="w-4 h-4" />
+                        Publish
+                    </div>
+                </PublishPortfolio>
             </div>
         </div>
     )

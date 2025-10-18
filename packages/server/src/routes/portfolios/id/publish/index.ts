@@ -40,7 +40,7 @@ router.post("/:id/publish", requireAuth, async (req, res) => {
     .set({ isPublished: true })
     .where(eq(portfolioTable.id, id));
 
-  return res.status(200).json({ success: true });
+  return res.status(200).json({ success: true, domain });
 });
 
 router.get("/:id/state", async (req, res) => {

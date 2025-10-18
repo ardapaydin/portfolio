@@ -86,7 +86,7 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <Section title="Links">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.links.map((link: { name: string, url: string }) => (
+                            {data?.links?.map((link: { name: string, url: string }) => (
                                 <li key={link.name} style={{ color: data?.secondaryTextColor }}>
                                     <a href={link.url} className="underline break-words hover:text-blue-400 transition-colors">{link.name}</a>
                                 </li>
@@ -96,7 +96,7 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <Section title="Projects">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.projects.map((project: { name: string, url: string }) => (
+                            {data?.projects?.map((project: { name: string, url: string }) => (
                                 <li key={project.name} style={{ color: data?.secondaryTextColor }}>
                                     <a href={project.url} className="underline break-words hover:text-blue-400 transition-colors">{project.name}</a>
                                 </li>

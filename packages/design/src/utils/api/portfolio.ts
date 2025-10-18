@@ -25,3 +25,7 @@ export function updatePortfolio(id: string, name: string, subdomain: string) {
 export function save(id: string) {
   return axios.post("/portfolios/" + id + "/save");
 }
+
+export function publish(id: string) {
+  return axios.post("/portfolios/" + id + "/publish");
+}

@@ -25,7 +25,7 @@ router.get("/:id", requireAuth, async (req, res) => {
     });
   }
   portfolio.data = JSON.parse(portfolio.data as any);
-  res.json(portfolio);
+  res.json({ ...portfolio, data: JSON.parse(portfolio.data as any) });
 });
 
 router.put(

@@ -1,0 +1,70 @@
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { publish } from "@/utils/api/portfolio";
+import { Check, CheckCircle2, Copy } from "lucide-react";
+
+export default function PublishPortfolio({ children }: { children: React.ReactNode }) {
+    const { id } = useParams();
+    const [isOpen, setIsOpen] = useState(false);
+    const [siteUrl, setSiteUrl] = useState<string>("");
+    const [copied, setCopied] = useState(false);
+    const handlePublish = async () => {
+        if (!id) return;
+        const pub = await publish(id);
+        if (pub.status === 200) {
+            setSiteUrl(pub.data.domain ?? "");
+            setIsOpen(true);
+        }
+    };
+
+    const handleCopy = () => {
+        if (siteUrl) {
+            navigator.clipboard.writeText(siteUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1000);
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <span onClick={handlePublish}>{children}</span>
+            </DialogTrigger>
+            <DialogContent className="max-w-sm mx-auto rounded-xl shadow-xl p-8 text-center">
+                <div className="flex flex-col items-center gap-3">
+                    <CheckCircle2 className="text-green-500" size={40} />
+                    <h2 className="text-2xl font-bold">Congratulations!</h2>
+                    <p className="text-white/50 mb-2">
+                        Your site is published and live online.
+                    </p>
+                    <div className="flex items-center gap-2 bg-[#333]/50 px-3 py-2 rounded-lg w-full justify-center">
+                        {siteUrl && (
+                            <>
+                                <span className="font-mono text-sm select-all">{siteUrl}</span>
+                                <button
+                                    onClick={handleCopy}
+                                    className="ml-2 p-1 rounded cursor-pointer bg-[#333] transition"
+                                    title="Copy URL"
+                                >
+                                    {copied && (
+                                        <Check className="w-4 h-4 text-green-500" />
+                                    ) || (
+                                            <Copy className="w-4 h-4" />
+                                        )}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                    <a
+                        href={"https://" + siteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 py-2  disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-green-500 disabled:cursor-not-allowed px-4 rounded-lg bg-green-500 border-b-6 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"                    >
+                        View Site
+                    </a>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
