@@ -1,15 +1,18 @@
 import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Cloud, Image, Settings } from "lucide-react";
+import { Check, Cloud, Image, Loader, Save, Settings } from "lucide-react";
 import { useParams } from "react-router-dom";
 import DraftDetails from "../dialogs/DraftDetails";
 import Attachments from "../dialogs/Attachments";
 import type { TypeDraft } from "@/design/types/draft";
 import UpdatePortfolio from "../dialogs/UpdatePortfolio";
+import { save } from "@/utils/api/portfolio";
+import { useState } from "react";
 
 export default function Topbar() {
     const { id } = useParams();
     const { data: portfolio } = usePortfolio(id!);
+    const [[saving, setSaving], [saved, setSaved]] = [useState(false), useState(false)]
     const qc = useQueryClient();
     const draft = usePortfolioDraft(id!);
     const data = useQuery({ queryKey: ["data"], queryFn: () => { } }) as unknown as TypeDraft;
@@ -88,6 +91,29 @@ export default function Topbar() {
                         <Settings className="w-5" />
                     </div>
                 </UpdatePortfolio>
+                <div
+                    onClick={async () => {
+                        setSaving(true);
+                        await save(id!);
+                        setSaving(false);
+                        setSaved(true);
+                        setTimeout(() => {
+                            setSaved(false);
+                            setSaving(false);
+                        }, 2000);
+                    }}
+                    className="text-muted-foreground hover:text-white transition-all cursor-pointer"
+                >
+                    {saving ? (
+                        <Loader className="animate-spin" />
+                    ) : saved ? (
+                        <span className="flex items-center gap-1 text-green-400">
+                            <Check className="w-4" />
+                        </span>
+                    ) : (
+                        <Save className="w-5" />
+                    )}
+                </div>
             </div>
         </div>
     )

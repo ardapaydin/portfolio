@@ -3,7 +3,7 @@ import { requireAuth } from "../../helpers/middlewares/auth";
 import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { updateUserSchema } from "../../helpers/validations/user/update";
 import { db } from "../../database/db";
-import { usersTable } from "../../database";
+import { emailVerificationTable, usersTable } from "../../database";
 import { eq } from "drizzle-orm";
 import { createToken } from "../../helpers/email/verification";
 import {
@@ -35,6 +35,10 @@ router.put(
           message: "email already exists",
           errors: { email: ["This email is already registered"] },
         });
+
+      await db
+        .delete(emailVerificationTable)
+        .where(eq(emailVerificationTable.userId, req.user!.id));
 
       await db
         .update(usersTable)

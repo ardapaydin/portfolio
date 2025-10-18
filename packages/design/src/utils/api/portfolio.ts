@@ -21,3 +21,7 @@ export function DeleteDraft(id: string) {
 export function updatePortfolio(id: string, name: string, subdomain: string) {
   return axios.put("/portfolios/" + id, { name, subdomain });
 }
+
+export function save(id: string) {
+  return axios.post("/portfolios/" + id + "/save");
+}

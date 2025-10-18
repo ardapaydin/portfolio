@@ -6,6 +6,8 @@ import { portfolioTable } from "../../../database/schemas/portfolio";
 import { db } from "../../../database/db";
 import { and, eq } from "drizzle-orm";
 import { draftsTable } from "../../../database";
+import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit";
+import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 
 router.get("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -105,9 +107,9 @@ router.post("/:id/save", requireAuth, async (req, res) => {
 
 import DraftRouter from "./draft";
 import AttachmentRouter from "./attachments";
-import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit";
-import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
+import PublishRouter from "./publish";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
+router.use("/", PublishRouter);
 
 export default router;
