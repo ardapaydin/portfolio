@@ -3,13 +3,18 @@ import { requireAuth } from "../../helpers/middlewares/auth";
 import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { updateUserSchema } from "../../helpers/validations/user/update";
 import { db } from "../../database/db";
-import { emailVerificationTable, usersTable } from "../../database";
+import {
+  emailVerificationTable,
+  portfolioTable,
+  usersTable,
+} from "../../database";
 import { eq } from "drizzle-orm";
 import { createToken } from "../../helpers/email/verification";
 import {
   ComparePassword,
   EncryptPassword,
 } from "../../helpers/encryptions/password";
+import deleteDomain from "../../helpers/cloudflare/pages/deleteDomain";
 const router = express.Router();
 
 router.put(
@@ -45,6 +50,17 @@ router.put(
         .set({ emailVerified: false, email })
         .where(eq(usersTable.id, req.user!.id));
       await createToken(email);
+
+      const findPublishedPortfolios = await db
+        .select()
+        .from(portfolioTable)
+        .where(eq(usersTable.id, req.user!.id));
+      await db
+        .update(portfolioTable)
+        .set({ isPublished: false })
+        .where(eq(portfolioTable.userId, req.user!.id));
+      for (const portfolio of findPublishedPortfolios)
+        deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
     }
 
     if (currentPassword && newPassword) {
