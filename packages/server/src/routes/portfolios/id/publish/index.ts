@@ -1,7 +1,7 @@
 import express from "express";
 import { requireAuth } from "../../../../helpers/middlewares/auth";
 import { db } from "../../../../database/db";
-import { portfolioTable } from "../../../../database";
+import { portfolioTable, usersTable } from "../../../../database";
 import { eq } from "drizzle-orm";
 import getDomain from "../../../../helpers/cloudflare/pages/getDomain";
 import createDomain from "../../../../helpers/cloudflare/pages/createDomain";
@@ -10,6 +10,15 @@ const router = express.Router();
 
 router.post("/:id/publish", requireAuth, async (req, res) => {
   const { id } = req.params;
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, req.user!.id));
+  if (!user.emailVerified)
+    return res.status(403).json({
+      success: false,
+      message: "You must verify your email before creating a portfolio",
+    });
   const [portfolio] = await db
     .select()
     .from(portfolioTable)
