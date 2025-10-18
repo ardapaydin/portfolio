@@ -8,6 +8,8 @@ import { and, eq } from "drizzle-orm";
 import { draftsTable } from "../../../database";
 import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
+import deleteDomain from "../../../helpers/cloudflare/pages/deleteDomain";
+import createDomain from "../../../helpers/cloudflare/pages/createDomain";
 
 router.get("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -62,6 +64,11 @@ router.put(
           message: " subdomain already taken",
           errors: { subdomain: ["Subdomain already taken."] },
         });
+
+      if (portfolio.isPublished) {
+        deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
+        createDomain(subdomain + "." + process.env.DOMAIN);
+      }
     }
 
     await db
