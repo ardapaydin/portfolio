@@ -1,11 +1,11 @@
 import APIRequest from "../APIRequest";
 import { Domain } from "../types/Domains";
 
-export default function createDomain(name: string) {
+export default async function createDomain(name: string) {
   return APIRequest<{
     result: Domain;
   }>(
-    `/pages/projects/${process.env.CLOUDFLARE_PAGES_PROJECT_NAME}/domains`,
+    `accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/pages/projects/${process.env.CLOUDFLARE_PAGES_PROJECT_NAME}/domains`,
     "POST",
     {
       name,

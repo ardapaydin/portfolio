@@ -5,7 +5,7 @@ export default function getDomain(domain: string) {
   return APIRequest<{
     result: Domain;
   }>(
-    `/pages/projects/${process.env.CLOUDFLARE_PAGES_PROJECT_NAME}/domains/${domain}`,
+    `accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/pages/projects/${process.env.CLOUDFLARE_PAGES_PROJECT_NAME}/domains/${domain}`,
     "GET"
   );
 }

@@ -1,4 +1,7 @@
-type APIResponse<T> = T & { errors: { code: number; message: string }[] };
+type APIResponse<T> = T & {
+  success: boolean;
+  errors: { code: number; message: string }[];
+};
 
 export default async function APIRequest<T>(
   endpoint: string,
@@ -7,10 +10,7 @@ export default async function APIRequest<T>(
   options?: RequestInit
 ): Promise<APIResponse<T>> {
   const response = await fetch(
-    "https://api.cloudflare.com/client/v4/accounts/" +
-      process.env.CLOUDFLARE_ACCOUNT_ID +
-      "/" +
-      endpoint,
+    "https://api.cloudflare.com/client/v4/" + endpoint,
     {
       method,
       ...options,
