@@ -16,7 +16,7 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
         queryKey: ["data"],
         queryFn: async () => ({} as TypeTemplate),
     }).data as TypeTemplate | undefined;
-    const [create, setCreate] = useState({ name: "", url: "" });
+    const [create, setCreate] = useState<{ [key: string]: string }>({ name: "", url: "" });
     const validation = () => {
         const isValidUrl = (url: string) => /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/.test(url);
         if (mode === "create") {
@@ -36,18 +36,18 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
             <div className="flex-1">
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col text-left gap-3">
-                        {keys.map((_key, i) => (
+                        {keys.map((key, i) => (
                             <>
                                 <label className="mb-1 text-sm font-medium text-gray-200">{values[i].label}</label>
                                 {values[i].type == "string" &&
                                     <input
                                         type="text"
-                                        value={data ? data[keyName][index!]?.name : ""}
+                                        value={data ? data[keyName][index!]?.[key] : ""}
                                         onChange={(e) => {
                                             const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];
-                                            newList[index!] = { ...newList[index!], name: e.target.value };
+                                            newList[index!] = { ...newList[index!], [key]: e.target.value };
                                             qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
-                                            if (mode === "create") setCreate({ ...create, name: e.target.value });
+                                            if (mode === "create") setCreate({ ...create, [key]: e.target.value });
                                         }}
                                         className="w-full p-2 rounded-lg bg-[#333] border-2 border-[#262626] focus:outline-none"
                                     />
@@ -62,16 +62,16 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
                                             type="text"
                                             value={
                                                 mode === "create"
-                                                    ? create.url.replace(/^https?:\/\//, "")
-                                                    : (data ? data[keyName][index!]?.url.replace(/^https?:\/\//, "") : "")
+                                                    ? create[key].replace(/^https?:\/\//, "")
+                                                    : (data ? data[keyName][index!]?.[key].replace(/^https?:\/\//, "") : "")
                                             }
                                             onChange={(e) => {
                                                 const urlValue = "https://" + e.target.value.replace(/^https?:\/\//, "");
                                                 if (mode === "create") {
-                                                    setCreate({ ...create, url: urlValue });
+                                                    setCreate({ ...create, [key]: urlValue });
                                                 } else {
                                                     const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];
-                                                    newList[index!] = { ...newList[index!], url: urlValue };
+                                                    newList[index!] = { ...newList[index!], [key]: urlValue };
                                                     qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
                                                 }
                                             }}
