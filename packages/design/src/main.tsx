@@ -5,7 +5,7 @@ import App from './design/App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import axios from 'axios'
-import TemplateWai from './templates/wai/main.tsx'
+import View from './view/index.tsx'
 if (process.env.NODE_ENV === "production") axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 else axios.defaults.baseURL = "/api";
 
@@ -31,12 +31,11 @@ createRoot(document.getElementById('root')!).render(
     })}>
       {
         (() => {
-          const subdomain = window.location.hostname.split('.')[0];
-          if (subdomain === 'localhost' || subdomain === 'design') return <BrowserRouter>
+          const subdomain = process.env.NODE_ENV == "production" ? window.location.hostname.split('.')[0] : window.location.pathname.split("/view/")?.[1]
+          if (!subdomain || subdomain == "design") return <BrowserRouter>
             <App />
           </BrowserRouter>;
-
-          return <TemplateWai />;
+          return <View />;
         })()
       }
     </QueryClientProvider>

@@ -1,13 +1,15 @@
 import express from "express";
 const router = express.Router();
 
+import { usersTable } from "../../database";
 import { requireAuth } from "../../helpers/middlewares/auth";
 import { portfolioTable } from "../../database/schemas/portfolio";
 import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { createPortfolioSchema } from "../../helpers/validations/portfolio/create";
 import { db } from "../../database/db";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { portfolioTemplates } from "../../helpers/data/templates";
+import createSubdomain from "../../helpers/utils/createSubdomain";
 
 router.post(
   "/",
@@ -78,9 +80,7 @@ router.get("/", requireAuth, async (req, res) => {
   res.json(portfolios);
 });
 
-import idRouter from "./id";
-import createSubdomain from "../../helpers/utils/createSubdomain";
-import { usersTable } from "../../database";
-router.use(idRouter);
+import publicRouter from "./public";
+router.use(publicRouter);
 
 export default router;
