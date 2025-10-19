@@ -26,7 +26,6 @@ router.get("/:id", requireAuth, async (req, res) => {
       message: "Portfolio not found or you do not have access to it",
     });
   }
-  portfolio.data = JSON.parse(portfolio.data as any);
   res.json({ ...portfolio, data: JSON.parse(portfolio.data as any) });
 });
 
@@ -105,7 +104,7 @@ router.post("/:id/save", requireAuth, async (req, res) => {
     await db
       .update(portfolioTable)
       .set({
-        data: draft.data,
+        data: JSON.parse(draft.data as string),
       })
       .where(eq(portfolioTable.id, id));
 

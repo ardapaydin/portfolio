@@ -95,3 +95,15 @@ export function GetAttachments(id: string) {
     },
   });
 }
+
+export function GetPortfolioState(id: string, isEnabled: boolean = false) {
+  return useQuery({
+    queryKey: ["portfolio", id, "state"],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios/" + id + "/state");
+      return res.data as { status: string | "active" };
+    },
+    enabled: isEnabled,
+    refetchInterval: 15000,
+  });
+}
