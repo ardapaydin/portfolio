@@ -81,6 +81,8 @@ router.get("/", requireAuth, async (req, res) => {
 });
 
 import publicRouter from "./public";
+import idRouter from "./id";
 router.use(publicRouter);
+router.use(idRouter);
 
 export default router;

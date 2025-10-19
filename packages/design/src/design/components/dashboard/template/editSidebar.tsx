@@ -47,7 +47,7 @@ export default function EditSidebar() {
     return (
         <div className="p-4">
             <div className="w-96 h-full border-[#262626] border-2 bg-[#222222] px-8 py-8 rounded-lg shadow-lg overflow-y-auto">
-                {selectedList && <ListSidebar keyName={selectedList.key} mode={selectedList.mode} value={selectedList.value} index={selectedList.index} setSelectedList={setSelectedList} />}
+                {selectedList && <ListSidebar keyName={selectedList.key} mode={selectedList.mode} index={selectedList.index} setSelectedList={setSelectedList} />}
                 {!selectedList && (
                     <>
                         {Object.values(template.data.fields)

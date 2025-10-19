@@ -46,7 +46,7 @@ export const portfolioTemplates = [
           label: "Links",
           item: {
             name: { type: "string", label: "Display Name" },
-            url: { type: "string", label: "URL" },
+            url: { type: "link", label: "URL" },
           },
         },
         projects: {
@@ -54,7 +54,7 @@ export const portfolioTemplates = [
           label: "Projects",
           item: {
             name: { type: "string", label: "Project Name" },
-            url: { type: "string", label: "Project URL" },
+            url: { type: "link", label: "Project URL" },
           },
         },
         backgroundColor: { type: "color", label: "Background Color" },
