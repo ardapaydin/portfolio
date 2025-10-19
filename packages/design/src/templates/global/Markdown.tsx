@@ -10,6 +10,11 @@ export default function MarkdownComponents() {
         li: (props: LiHTMLAttributes<HTMLLIElement>) => (<li {...props} className="my-1">{props.children}</li>),
         ul: (props: HTMLAttributes<HTMLUListElement>) => (<ul {...props} className="list-disc ml-6 my-2">{props.children}</ul>),
         blockquote: (props: BlockquoteHTMLAttributes<HTMLElement>) => (<blockquote {...props} className="border-l-4 pl-4 italic my-2 border-gray-600">{props.children}</blockquote>),
-        img: (props: ImgHTMLAttributes<HTMLImageElement>) => (<p className="my-2">![{props.alt}]({props.src})</p>)
+        img: (props: ImgHTMLAttributes<HTMLImageElement>) => (<p className="my-2">![{props.alt}]({props.src})</p>),
+        hr: () => (<div className="flex gap-1 items-center justify-center w-full">
+            <div className="w-1 bg-muted-foreground h-1 rounded-full" />
+            <div className="w-1 bg-muted-foreground h-1 rounded-full" />
+            <div className="w-1 bg-muted-foreground h-1 rounded-full" />
+        </div>)
     }
 }

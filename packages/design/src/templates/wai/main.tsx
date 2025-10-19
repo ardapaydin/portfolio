@@ -78,11 +78,11 @@ export default function TemplateWai({ d }: { d?: any }) {
                         )}
                     </div>
 
-                    <p className="mt-2 text-lg leading-relaxed break-words" style={{
+                    <div className="mt-2 text-lg leading-relaxed break-words whitespace-normal" style={{
                         color: data?.primaryTextColor
                     }}>
                         <Markdown components={MarkdownComponents()}>{data?.bio}</Markdown>
-                    </p>
+                    </div>
 
                     <Section title="Links">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
