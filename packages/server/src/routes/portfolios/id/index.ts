@@ -135,8 +135,9 @@ router.delete("/:id", requireAuth, async (req, res) => {
 import DraftRouter from "./draft";
 import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
+import StatsRouter from "./stats";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
-router.use("/", PublishRouter);
+router.use("/", StatsRouter);
 
 export default router;

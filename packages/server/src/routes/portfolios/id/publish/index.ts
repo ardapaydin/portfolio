@@ -44,12 +44,15 @@ router.post("/:id/publish", requireAuth, async (req, res) => {
         .json({ success: false, message: "domain request error" });
   }
 
-  await db
-    .update(portfolioTable)
-    .set({ isPublished: true })
-    .where(eq(portfolioTable.id, id));
+  if (!portfolio.isPublished)
+    await db
+      .update(portfolioTable)
+      .set({ isPublished: true })
+      .where(eq(portfolioTable.id, id));
 
-  return res.status(200).json({ success: true, domain });
+  return res
+    .status(200)
+    .json({ success: true, domain, isNew: !domainSetup.result });
 });
 
 router.get("/:id/state", async (req, res) => {
