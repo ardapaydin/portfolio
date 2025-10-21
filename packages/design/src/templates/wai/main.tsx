@@ -5,6 +5,7 @@ import Markdown from 'react-markdown'
 import MarkdownComponents from "../global/Markdown";
 import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
+import CustomLink from "../global/Link";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -14,6 +15,7 @@ export default function TemplateWai({ d }: { d?: any }) {
     const data = d || queryState?.data as any;
     const qc = useQueryClient();
     const { id } = useParams();
+
     return (
         <div
             className="w-full h-screen flex flex-col md:flex-row text-white"
@@ -86,9 +88,11 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <Section title="Links">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.links?.map((link: { name: string, url: string }) => (
+                            {data?.links?.map((link: { name: string, url: string }, i: number) => (
                                 <li key={link.name} style={{ color: data?.secondaryTextColor }}>
-                                    <a href={link.url} className="underline break-words hover:text-blue-400 transition-colors">{link.name}</a>
+                                    <CustomLink href={link.url} linkKey={"links." + i}>
+                                        {link.name}
+                                    </CustomLink>
                                 </li>
                             ))}
                         </ul>
@@ -96,9 +100,11 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <Section title="Projects">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.projects?.map((project: { name: string, url: string }) => (
+                            {data?.projects?.map((project: { name: string, url: string }, i: number) => (
                                 <li key={project.name} style={{ color: data?.secondaryTextColor }}>
-                                    <a href={project.url} className="underline break-words hover:text-blue-400 transition-colors">{project.name}</a>
+                                    <CustomLink href={project.url} linkKey={"projects." + i}>
+                                        {project.name}
+                                    </CustomLink>
                                 </li>
                             ))}
                         </ul>

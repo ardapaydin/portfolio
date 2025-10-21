@@ -6,6 +6,7 @@ import PortfoliosRouter from "./portfolios";
 import TemplatesRouter from "./templates";
 import AttachmentsRouter from "./attachments";
 import UserRouter from "./user";
+import EventRouter from "./event";
 import { verifyToken } from "../helpers/jwt";
 
 router.use((req, res, next) => {
@@ -26,5 +27,6 @@ router.use("/portfolios", PortfoliosRouter);
 router.use("/templates", TemplatesRouter);
 router.use("/attachments", AttachmentsRouter);
 router.use("/user", UserRouter);
+router.use("/data", EventRouter);
 
 export default router;
