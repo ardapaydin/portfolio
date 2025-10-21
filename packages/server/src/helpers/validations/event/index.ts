@@ -7,6 +7,7 @@ const events = {
   clickLink: z.object({
     key: z.string(),
     url: z.url(),
+    name: z.string().optional(),
   }),
 };
 

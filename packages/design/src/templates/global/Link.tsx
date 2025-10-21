@@ -7,14 +7,20 @@ const subdomain = process.env.NODE_ENV == "production" ? window.location.hostnam
 export default function CustomLink({
     linkKey,
     children,
+    name,
     ...props
 }: {
     linkKey: string;
+    name: string;
     children: React.ReactNode;
 } & ComponentProps<'a'>) {
     return (
         <a
-            onClick={() => SendEvent(subdomain, "clickLink", { key: linkKey, url: props.href })}
+            onClick={async (e) => {
+                e.preventDefault()
+                SendEvent(subdomain, "clickLink", { key: linkKey, url: props.href, name })
+                window.open((e.target as HTMLAnchorElement).href, "_blank")
+            }}
             className={cn("underline break-words hover:text-blue-400 transition-colors", props.className)}
             {...props}
         >

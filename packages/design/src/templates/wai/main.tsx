@@ -83,14 +83,14 @@ export default function TemplateWai({ d }: { d?: any }) {
                     <div className="mt-2 text-lg leading-relaxed break-words whitespace-normal" style={{
                         color: data?.primaryTextColor
                     }}>
-                        <Markdown components={MarkdownComponents()}>{data?.bio}</Markdown>
+                        <Markdown components={MarkdownComponents({ dataKey: "bio" })}>{data?.bio}</Markdown>
                     </div>
 
                     <Section title="Links">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.links?.map((link: { name: string, url: string }, i: number) => (
+                            {data?.links?.map((link: { name: string, url: string }) => (
                                 <li key={link.name} style={{ color: data?.secondaryTextColor }}>
-                                    <CustomLink href={link.url} linkKey={"links." + i}>
+                                    <CustomLink href={link.url} linkKey={"links"} name={link.name}>
                                         {link.name}
                                     </CustomLink>
                                 </li>
@@ -100,9 +100,9 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     <Section title="Projects">
                         <ul className="flex flex-col gap-2 ml-6 list-disc">
-                            {data?.projects?.map((project: { name: string, url: string }, i: number) => (
+                            {data?.projects?.map((project: { name: string, url: string }) => (
                                 <li key={project.name} style={{ color: data?.secondaryTextColor }}>
-                                    <CustomLink href={project.url} linkKey={"projects." + i}>
+                                    <CustomLink href={project.url} linkKey={"projects"} name={project.name}>
                                         {project.name}
                                     </CustomLink>
                                 </li>
