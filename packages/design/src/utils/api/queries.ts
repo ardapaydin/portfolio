@@ -144,3 +144,34 @@ export function useValidateResetKey(key: string) {
     },
   });
 }
+
+export function GetPortfolioEventAnalytics(
+  id: string,
+  event: string,
+  from: string,
+  to: string,
+  isEnabled: boolean
+) {
+  return useQuery({
+    queryKey: ["portfolio", id, "event", "analytics", from, to],
+    queryFn: async () => {
+      const res = await axios.get(
+        "/portfolios/" +
+          id +
+          "/event-analytics?event=" +
+          event +
+          "&from=" +
+          from +
+          "&to=" +
+          to
+      );
+      return res.data as {
+        key: string;
+        url: string;
+        name: string;
+        count: number;
+      }[];
+    },
+    enabled: isEnabled,
+  });
+}

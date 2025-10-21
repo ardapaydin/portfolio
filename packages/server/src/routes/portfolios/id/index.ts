@@ -138,6 +138,7 @@ import PublishRouter from "./publish";
 import StatsRouter from "./stats";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
+router.use("/", PublishRouter);
 router.use("/", StatsRouter);
 
 export default router;
