@@ -20,3 +20,7 @@ export function LoginUser(email: string, password: string) {
     password,
   });
 }
+
+export function RequestKey(email: string) {
+  return axios.post("/auth/request-key", { email });
+}

@@ -7,6 +7,10 @@ const templates = {
     `${__dirname}/templates/verifyEmail.html`,
     "utf-8"
   ),
+  resetPassword: fs.readFileSync(
+    `${__dirname}/templates/resetPassword.html`,
+    "utf-8"
+  ),
 };
 
 export async function sendEmail(

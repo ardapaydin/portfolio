@@ -9,6 +9,7 @@ import Templates from "./pages/dashboard/templates";
 import DisplayTemplate from "./pages/display";
 import EditPortfolio from "./pages/dashboard/portfolio/edit";
 import Settings from "./pages/dashboard/settings";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 function App() {
   const path = window.location.pathname;
@@ -27,6 +28,7 @@ function App() {
       <Route path="/auth/register" element={user?.data?.user ? <Navigate to="/" replace={true} /> : <Register />} />
       <Route path="/auth/login" element={user?.data?.user ? <Navigate to="/" replace={true} /> : <Login />} />
       <Route path="/auth/verify-email" element={<VerifyEmail />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
     </Routes>
   );
 }

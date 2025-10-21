@@ -12,6 +12,7 @@ import {
 import { signToken } from "../../helpers/jwt";
 import { createToken } from "../../helpers/email/verification";
 import { requireNoAuth } from "../../helpers/middlewares/auth";
+import resetpasswordrouter from "./resetpassword";
 const router = express.Router();
 
 router.get("/me", async (req, res) => {
@@ -139,5 +140,6 @@ router.post("/verify-email", async (req, res) => {
     .where(eq(emailVerificationTable.token, token));
   res.json({ success: true });
 });
+router.use(resetpasswordrouter);
 
 export default router;

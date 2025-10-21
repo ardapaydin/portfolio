@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LoginUser } from "../../../utils/api/auth";
 import { setToken } from "../../utils/user";
+import ForgotPassword from "@/design/components/dashboard/dialogs/ForgotPassword";
 
 const validate = (form: { [key: string]: string }) => {
     const errors: { [key: string]: string[] } = {};
@@ -90,6 +91,13 @@ export default function Login() {
                         >
                             Login
                         </button>
+                        <div className="items-end justify-end flex text-sm -mb-2 -mt-4">
+                            <ForgotPassword>
+                                <span className="text-green-400 cursor-pointer">
+                                    Forgot Password?
+                                </span>
+                            </ForgotPassword>
+                        </div>
                         <p className="text-sm text-gray-400 text-center">
                             Don't have an account? <a href="/auth/register" className="text-green-400 hover:underline">Sign up</a>
                         </p>
