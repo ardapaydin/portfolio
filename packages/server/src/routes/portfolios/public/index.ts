@@ -55,7 +55,7 @@ router.get("/view/:subdomain", async (req, res) => {
       portfolioId: find.id,
       date,
       views: 1,
-      uniqueVisitors: existingIp ? 1 : 0,
+      uniqueVisitors: !existingIp ? 1 : 0,
     })
     .onDuplicateKeyUpdate({
       set: {

@@ -107,3 +107,30 @@ export function GetPortfolioState(id: string, isEnabled: boolean = false) {
     refetchInterval: 15000,
   });
 }
+
+export function GetPortfolioAnalytics(
+  id: string,
+  from: string,
+  to: string,
+  isEnabled: boolean
+) {
+  return useQuery({
+    queryKey: ["portfolio", id, "analytics", from, to],
+    queryFn: async () => {
+      const res = await axios.get(
+        "/portfolios/" + id + "/analytics?from=" + from + "&to=" + to
+      );
+
+      return res.data as {
+        totalViews: number;
+        totalUnique: number;
+        daily: {
+          date: string;
+          views: number;
+          unique: number;
+        }[];
+      };
+    },
+    enabled: isEnabled,
+  });
+}

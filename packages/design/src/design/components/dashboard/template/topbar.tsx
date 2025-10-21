@@ -1,6 +1,6 @@
 import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
+import { ChartArea, Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
 import { useParams } from "react-router-dom";
 import DraftDetails from "../dialogs/DraftDetails";
 import Attachments from "../dialogs/Attachments";
@@ -9,6 +9,7 @@ import UpdatePortfolio from "../dialogs/UpdatePortfolio";
 import { save } from "@/utils/api/portfolio";
 import { useState } from "react";
 import PublishPortfolio from "../dialogs/PublishPortfolio";
+import Analytics from "../dialogs/Analytics";
 
 export default function Topbar() {
     const { id } = useParams();
@@ -86,7 +87,11 @@ export default function Topbar() {
                     </>
                 )}
 
-
+                <Analytics>
+                    <div className="text-muted-foreground hover:text-white transition-all cursor-pointer">
+                        <ChartArea className="w-5" />
+                    </div>
+                </Analytics>
                 <UpdatePortfolio>
                     <div className="text-muted-foreground hover:text-white transition-all cursor-pointer">
                         <Settings className="w-5" />

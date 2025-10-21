@@ -31,7 +31,10 @@ export const analyticsIpsTable = mysqlTable("analytics_ips", {
   id: varchar("id", { length: 36 })
     .primaryKey()
     .$default(() => crypto.randomUUID()),
-  portfolioId: varchar("portfolio_id", { length: 255 }).notNull(),
+  portfolioId: varchar("portfolio_id", { length: 255 }).references(
+    () => portfolioTable.id,
+    { onDelete: "cascade" }
+  ),
   ip: varchar("ip", { length: 64 }).notNull(),
   date: datetime("date").notNull(),
 });
