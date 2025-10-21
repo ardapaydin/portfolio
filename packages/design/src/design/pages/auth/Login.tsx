@@ -22,7 +22,7 @@ export default function Login() {
         email: "",
         password: "",
     });
-    const { registered, redirect, verified } = Object.fromEntries(new URLSearchParams(window.location.search))
+    const { registered, redirect, verified, reset } = Object.fromEntries(new URLSearchParams(window.location.search))
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const request = async () => {
         const response = await LoginUser(form.email, form.password)
@@ -54,6 +54,11 @@ export default function Login() {
                     {verified === "true" && <p className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded mb-6 text-center">
                         Your email has been verified. You can now log in.
                     </p>}
+                    {reset === "true" && (
+                        <p className="bg-green-500/20 border border-green-500 text-green-300 px-4 py-3 rounded mb-6 text-center">
+                            Your password has been reset. You can now log in with your new password.
+                        </p>
+                    )}
 
                     <div className="flex flex-col gap-6 w-full">
                         <div className="flex flex-col text-left">

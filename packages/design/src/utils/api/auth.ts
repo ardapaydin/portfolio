@@ -24,3 +24,7 @@ export function LoginUser(email: string, password: string) {
 export function RequestKey(email: string) {
   return axios.post("/auth/request-key", { email });
 }
+
+export function ChangePassword(key: string, password: string) {
+  return axios.post("/auth/reset-password", { key, password });
+}

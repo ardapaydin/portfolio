@@ -134,3 +134,13 @@ export function GetPortfolioAnalytics(
     enabled: isEnabled,
   });
 }
+
+export function useValidateResetKey(key: string) {
+  return useQuery({
+    queryKey: ["reset-key-validation", key],
+    queryFn: async () => {
+      const res = await axios.get("/auth/reset-password?token=" + key);
+      return res.data as { valid: boolean };
+    },
+  });
+}
