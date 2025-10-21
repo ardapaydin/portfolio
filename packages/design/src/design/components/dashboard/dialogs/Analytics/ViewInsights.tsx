@@ -11,7 +11,7 @@ export default function ViewInsights({ isOpen }: { isOpen: boolean }) {
     const { id } = useParams();
     const [range] = useState({
         from: formatDate(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
-        to: formatDate(new Date())
+        to: formatDate(new Date(Date.now() + 1 * 24 * 60 * 60 * 1000))
     });
 
     const analytics = GetPortfolioAnalytics(id!, range.from.toString(), range.to.toString(), isOpen);
@@ -48,16 +48,16 @@ export default function ViewInsights({ isOpen }: { isOpen: boolean }) {
                 </div>
             )}
             {(analytics.data && !analytics.isLoading) && (
-                <div className="h-96 w-full flex flex-col">
+                <div className="h-[30rem] md:h-96 w-full flex flex-col">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                         <span className="bg-[#18181b] px-2 py-1 rounded font-mono">{range.from}</span>
                         <span className="text-white font-bold">to</span>
                         <span className="bg-[#18181b] px-2 py-1 rounded font-mono">{range.to}</span>
                     </div>
 
-                    <div className="flex gap-2 mb-2">
+                    <div className="gap-2 mb-2 grid md:grid-cols-3">
                         <div className="bg-[#222222] rounded-md p-2 px-4 items-start flex flex-col border shadow-lg border-[#303030]">
-                            <h1>Unique Views</h1>
+                            <h1 className="text-sm">Unique Views</h1>
                             <div className="flex items-center gap-2">
                                 <span className="text-2xl font-bold">
                                     {analytics.data.daily.reduce((sum, item) => sum + item.unique, 0)}
@@ -85,7 +85,7 @@ export default function ViewInsights({ isOpen }: { isOpen: boolean }) {
                             </div>
                         </div>
                         <div className="bg-[#222222] rounded-md p-2 px-4 flex items-start flex-col border shadow-lg border-[#303030]">
-                            <h1>Total Views</h1>
+                            <h1 className="text-sm">Total Views</h1>
                             <div className="flex items-center gap-2">
                                 <span className="text-2xl font-bold">
                                     {analytics.data.daily.reduce((sum, item) => sum + item.views, 0)}
@@ -110,6 +110,14 @@ export default function ViewInsights({ isOpen }: { isOpen: boolean }) {
 
                                     </span>
                                 )}
+                            </div>
+                        </div>
+                        <div className="bg-[#222222] rounded-md p-2 px-4 flex items-start flex-col border shadow-lg border-[#303030]">
+                            <h1 className="text-sm">Average Time on Page</h1>
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl font-bold">
+                                    {formatDuration(analytics.data.averageDuration)}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -156,3 +164,24 @@ export default function ViewInsights({ isOpen }: { isOpen: boolean }) {
         </>
     )
 }
+
+const formatDuration = (seconds?: number | null) => {
+    if (seconds == null) return "0s";
+    let s = Math.round(seconds);
+    if (s === 0) return "0s";
+
+    const days = Math.floor(s / 86400);
+    s %= 86400;
+    const hours = Math.floor(s / 3600);
+    s %= 3600;
+    const minutes = Math.floor(s / 60);
+    s %= 60;
+
+    const parts: string[] = [];
+    if (days) parts.push(`${days}d`);
+    if (hours) parts.push(`${hours}h`);
+    if (minutes) parts.push(`${minutes}m`);
+    if (s) parts.push(`${s}s`);
+
+    return parts.join(" ");
+};

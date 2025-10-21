@@ -124,6 +124,7 @@ export function GetPortfolioAnalytics(
       return res.data as {
         totalViews: number;
         totalUnique: number;
+        averageDuration: number;
         daily: {
           date: string;
           views: number;

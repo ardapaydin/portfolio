@@ -3,6 +3,7 @@ import { requireAuth } from "../../../../helpers/middlewares/auth";
 import { db } from "../../../../database/db";
 import {
   analyticsTable,
+  averageTimeTable,
   eventsTable,
   portfolioTable,
 } from "../../../../database";
@@ -59,9 +60,26 @@ router.get("/:id/analytics", requireAuth, async (req, res) => {
     )
     .orderBy(asc(analyticsTable.date));
 
+  const times = await db
+    .select()
+    .from(averageTimeTable)
+    .where(
+      and(
+        eq(averageTimeTable.relatedPortfolioId, id),
+        from ? gte(averageTimeTable.createdAt, from) : undefined,
+        to ? lte(averageTimeTable.createdAt, to) : undefined
+      )
+    )
+    .orderBy(asc(averageTimeTable.createdAt));
+
+  const durations = times.map((t) => t.duration);
+
   res.json({
     totalViews: data.reduce((acc, d) => acc + d.views, 0),
     totalUnique: data.reduce((acc, d) => acc + d.uniqueVisitors, 0),
+    averageDuration: Math.floor(
+      durations.reduce((acc, v) => acc + v, 0) / durations.length
+    ),
     daily: data.map((d) => ({
       date: `${new Date(d.date).getFullYear()}-${(
         new Date(d.date).getMonth() + 1
@@ -158,5 +176,4 @@ router.get("/:id/event-analytics", requireAuth, async (req, res) => {
   response = response.sort((a, b) => b.count - a.count);
   return res.json(response);
 });
-
 export default router;

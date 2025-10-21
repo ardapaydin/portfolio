@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
 const app = express();
+import expressWs from "express-ws";
+expressWs(app);
 
 declare global {
   namespace Express {
