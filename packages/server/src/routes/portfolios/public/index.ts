@@ -79,7 +79,6 @@ router.get("/view/:subdomain", async (req, res) => {
 
 router.ws("/ws/:subdomain", async (ws, req) => {
   const { subdomain } = req.params;
-  console.log("connection");
   const [find] = await db
     .select()
     .from(portfolioTable)
@@ -122,7 +121,6 @@ router.ws("/ws/:subdomain", async (ws, req) => {
   });
 
   ws.on("close", async () => {
-    console.log("closed");
     let x = Math.floor((Date.now() - connectedAt) / 1000);
     if (!x) return;
     await db.insert(averageTimeTable).values({

@@ -1,3 +1,4 @@
+import TemplateEon from "@/templates/eon/main";
 import TemplateWai from "../../templates/wai/main";
 import { useTemplate } from "../../utils/api/queries";
 
@@ -6,6 +7,7 @@ export default function DisplayTemplate() {
     const r = useTemplate(template);
     switch (template) {
         case "wai": return <TemplateWai d={r.data?.default} />
+        case "eon": return <TemplateEon d={r.data?.default} />
         default: return <div className="text-center text-white mt-20">Template not found</div>
     }
 }

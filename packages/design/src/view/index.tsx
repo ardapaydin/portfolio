@@ -12,14 +12,23 @@ export default function View() {
         if (!data.data) return;
         const createws = new WebSocket(`${import.meta.env.VITE_API_BASE_URL || "/api"}/portfolios/ws/${subdomain}`);
         const sendHeartbeat = () => {
-            if (createws.readyState == WebSocket.OPEN) createws.send(JSON.stringify({ type: "heartbeat" }));
+            if (createws.readyState === WebSocket.OPEN) createws.send(JSON.stringify({ type: "heartbeat" }));
         };
-        createws.addEventListener("open", sendHeartbeat);
+        const message = (ev: MessageEvent) => {
+            const parse = JSON.parse(ev.data);
+            switch (parse.type) {
+                case "welcome": {
+                    sendHeartbeat();
+                    break;
+                }
+            }
+        }
+        createws.addEventListener("message", message);
         const interval = setInterval(sendHeartbeat, 25000);
         return () => {
             clearInterval(interval);
-            createws.removeEventListener("open", sendHeartbeat);
-            createws.close()
+            createws.removeEventListener("message", message);
+            createws.close();
         };
     }, [data.data])
     if (data.isLoading) return <Loading />

@@ -19,7 +19,6 @@ export default function DraftDetails({
     const deleteDraft = async () => {
         const deletereq = await DeleteDraft(id!);
         if (deletereq.status != 204) return
-        console.log(portfolio.data.data)
         qc.setQueryData(["data"], { ...portfolio.data.data })
         setIsOpen(false);
         setConfirm("")
