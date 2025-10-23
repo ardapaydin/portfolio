@@ -1,7 +1,8 @@
 import { usePortfolios } from "@/utils/api/queries"
-import { Pencil, Settings } from "lucide-react";
+import { Pencil, Settings, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UpdatePortfolio from "./dialogs/UpdatePortfolio";
+import DeletePortfolio from "./dialogs/DeletePortfolio";
 
 export default function Portfolios() {
     const portfolios = usePortfolios();
@@ -45,9 +46,14 @@ export default function Portfolios() {
                             Edit <Pencil className="w-4" />
                         </button>
 
-                        <UpdatePortfolio portfolioId={portfolio.id}>
-                            <Settings className="w-5 cursor-pointer text-muted-foreground hover:text-white transition" />
-                        </UpdatePortfolio>
+                        <div className="flex items-center gap-2">
+                            <UpdatePortfolio portfolioId={portfolio.id}>
+                                <Settings className="w-5 cursor-pointer text-muted-foreground hover:text-white transition" />
+                            </UpdatePortfolio>
+                            <DeletePortfolio id={portfolio.id}>
+                                <Trash className="w-5 cursor-pointer text-red-500/50 hover:text-red-500 transition" />
+                            </DeletePortfolio>
+                        </div>
 
                     </div>
                 </div>

@@ -29,3 +29,7 @@ export function save(id: string) {
 export function publish(id: string) {
   return axios.post("/portfolios/" + id + "/publish");
 }
+
+export function deletePortfolio(id: string) {
+  return axios.delete("/portfolios/" + id);
+}
