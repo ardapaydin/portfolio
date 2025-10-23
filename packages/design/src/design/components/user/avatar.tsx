@@ -10,6 +10,15 @@ export default function UserAvatar({
     props?: ComponentProps<'div'>
 }) {
     const user = useUser();
+    if (user.data?.user?.profilePicture) return (
+        <div className={cn("w-10 h-10", className)}>
+            <img
+                className="w-full object-cover rounded-lg"
+                src={`${import.meta.env.VITE_S3_URL}profilePictures/${user?.data?.user?.profilePicture}`}
+            />
+
+        </div>
+    )
     const letter = user.data?.user?.name ? user.data.user.name.charAt(0).toUpperCase() : user.data?.user?.email ? user.data.user.email.charAt(0).toUpperCase() : "?";
 
     return (

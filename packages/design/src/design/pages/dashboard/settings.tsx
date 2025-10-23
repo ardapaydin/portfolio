@@ -2,11 +2,15 @@ import UserAvatar from "@/design/components/user/avatar";
 import { useUser } from "../../../utils/api/queries";
 import Layout from "../../components/dashboard/layout";
 import { Mail, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UpdateUser } from "@/utils/api/user";
+import { UploadProfilePicture } from "@/utils/api/attachments";
+import { useQueryClient } from "@tanstack/react-query";
+import type { TypeUser } from "@/design/types/user";
 
 export default function Settings() {
     const user = useUser();
+    const qc = useQueryClient();
     const [form, setForm] = useState({
         name: user?.data?.user?.name,
         email: user?.data?.user?.email,
@@ -15,7 +19,7 @@ export default function Settings() {
         confirmPassword: ""
     });
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
-
+    const fileInputRef = useRef<HTMLInputElement>(null);
     useEffect(() => {
         const newErrors: { [key: string]: string[] } = {};
         if (form.name && form.name.length > 60) newErrors.name = ["Name is so long."]
@@ -40,6 +44,26 @@ export default function Settings() {
         else setErrors(request.data?.errors || request.data?.message)
     }
 
+    const fileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        console.log(file)
+        if (!file) return;
+        const formdata = new FormData();
+        formdata.append("file", file)
+        const r = await UploadProfilePicture(formdata)
+        if (r.data.success) {
+            const d = qc.getQueryData(["user"]) as { user: TypeUser };
+            qc.setQueryData(["user"], {
+                ...d,
+                user: {
+                    ...d.user,
+                    profilePicture: r.data.id
+                }
+            })
+        }
+
+    }
+
     return (
         <Layout>
             <div className="flex-1 h-full md:px-64">
@@ -52,10 +76,16 @@ export default function Settings() {
                         <p className="text-muted-foreground text-xs">
                             Recommended size 256x256
                         </p>
-                        <div className="border-2 flex mt-3 text-sm cursor-not-allowed opacity-50 items-center justify-center gap-2 border-muted-foreground p-1 px-4 rounded-lg">
+                        <div onClick={() => { fileInputRef.current?.click() }} className="border-2 cursor-pointer opacity-90 hover:opacity-100 transition flex mt-3 text-sm items-center justify-center gap-2 border-muted-foreground p-1 px-4 rounded-lg">
                             <Upload className="w-4" />
                             Upload Picture
                         </div>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            className="hidden"
+                            onChange={fileChange}
+                        />
                     </div>
                 </div>
                 {typeof errors == "string" && <p className="text-red-500 text-sm">{errors}</p>}

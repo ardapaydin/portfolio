@@ -3,7 +3,7 @@ import { requireAuth } from "../../helpers/middlewares/auth";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fileUpload from "express-fileupload";
 import { db } from "../../database/db";
-import { portfolioTable } from "../../database";
+import { portfolioTable, usersTable } from "../../database";
 import { and, eq } from "drizzle-orm";
 import { attachmentsTable } from "../../database/schemas/attachments";
 const router = express.Router();
@@ -83,6 +83,46 @@ router.post("/", requireAuth, async (req, res) => {
     type,
     name: file.name,
   });
+  return res.status(200).json({ success: true, url: s3Key, id });
+});
+
+router.post("/avatar", requireAuth, async (req, res) => {
+  const file = req.files?.file;
+
+  if (!file)
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
+
+  if (Array.isArray(file))
+    return res
+      .status(400)
+      .json({ success: false, message: "Multiple files uploaded." });
+
+  if (!file.mimetype.startsWith("image/"))
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid file type" });
+
+  const id = crypto.randomUUID();
+  const s3Key = `profilePictures/${id}`;
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME!,
+      Key: s3Key,
+      Body: file.data,
+      ContentType: file.mimetype,
+      ACL: "public-read",
+    })
+  );
+
+  await db
+    .update(usersTable)
+    .set({
+      profilePicture: id,
+    })
+    .where(eq(usersTable.id, req.user!.id));
+
   return res.status(200).json({ success: true, url: s3Key, id });
 });
 

@@ -13,6 +13,7 @@ export const usersTable = mysqlTable("users", {
     .$default(() => crypto.randomUUID()),
   email: varchar("email", { length: 255 }).notNull().unique(),
   password: varchar("password", { length: 255 }).notNull(),
+  profilePicture: varchar("profile_picture", { length: 255 }),
   name: varchar("name", { length: 255 }),
   emailVerified: boolean("email_verified").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),

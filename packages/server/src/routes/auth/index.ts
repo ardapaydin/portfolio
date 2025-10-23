@@ -21,6 +21,7 @@ router.get("/me", async (req, res) => {
     .select({
       id: usersTable.id,
       email: usersTable.email,
+      profilePicture: usersTable.profilePicture,
       name: usersTable.name,
       emailVerified: usersTable.emailVerified,
       createdAt: usersTable.createdAt,

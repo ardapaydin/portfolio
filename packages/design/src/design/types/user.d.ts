@@ -3,5 +3,6 @@ export type TypeUser = {
   name: string;
   email: string;
   emailVerified: boolean;
+  profilePicture: string;
   createdAt: string;
 };
