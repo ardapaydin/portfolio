@@ -2,6 +2,7 @@ import EditSidebar from "@/design/components/dashboard/template/editSidebar";
 import Topbar from "@/design/components/dashboard/template/topbar";
 import Error from "@/design/components/error";
 import Loading from "@/design/components/loading";
+import TemplateCamba from "@/templates/camba/main";
 import TemplateEon from "@/templates/eon/main";
 import TemplateWai from "@/templates/wai/main";
 import { usePortfolio, useTemplate } from "@/utils/api/queries";
@@ -28,6 +29,7 @@ export default function EditPortfolio() {
                                 case "wai":
                                     return <TemplateWai />;
                                 case "eon": return <TemplateEon />
+                                case "camba": return <TemplateCamba />
                                 default:
                                     return <Error />;
                             }
