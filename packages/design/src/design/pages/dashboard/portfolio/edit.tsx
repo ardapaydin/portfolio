@@ -2,6 +2,7 @@ import EditSidebar from "@/design/components/dashboard/template/editSidebar";
 import Topbar from "@/design/components/dashboard/template/topbar";
 import Error from "@/design/components/error";
 import Loading from "@/design/components/loading";
+import TemplateEon from "@/templates/eon/main";
 import TemplateWai from "@/templates/wai/main";
 import { usePortfolio, useTemplate } from "@/utils/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,11 +22,12 @@ export default function EditPortfolio() {
             <div className="flex flex-col flex-1 min-h-0 p-4">
                 <Topbar />
                 <div className="flex-1 flex rounded-b-lg justify-center items-center overflow-auto relative">
-                    <div className="shadow-2xl relative w-full my-2 overflow-auto">
+                    <div className="shadow-2xl relative h-full w-full">
                         {template.data ? (() => {
                             switch (portfolio?.template) {
                                 case "wai":
                                     return <TemplateWai />;
+                                case "eon": return <TemplateEon />
                                 default:
                                     return <Error />;
                             }

@@ -26,7 +26,7 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
         return true;
     }
     const keys = Object.keys(template.data.fields[keyName]?.item)
-    const values = Object.values(template.data.fields[keyName]?.item) as { label: string, type: string }[]
+    const values = Object.values(template.data.fields[keyName]?.item) as { label: string, type: string, markdown: boolean }[]
     return (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between mb-6">
@@ -38,10 +38,27 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
                     <div className="flex flex-col text-left gap-3">
                         {keys.map((key, i) => (
                             <>
-                                <label className="mb-1 text-sm font-medium text-gray-200">{values[i].label}</label>
+                                <div className="flex items-center gap-1">
+                                    <label className="mb-1 text-sm font-medium text-gray-200">{values[i].label}</label>
+                                    {values[i].markdown && <span className="text-xs bg-gray-600/25 text-white/30 px-1 rounded">Markdown Supported</span>}
+
+                                </div>
                                 {values[i].type == "string" &&
                                     <input
                                         type="text"
+                                        value={data ? data[keyName][index!]?.[key] : ""}
+                                        onChange={(e) => {
+                                            const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];
+                                            newList[index!] = { ...newList[index!], [key]: e.target.value };
+                                            qc.setQueryData(["data"], { ...qc.getQueryData(["data"]), [keyName]: newList });
+                                            if (mode === "create") setCreate({ ...create, [key]: e.target.value });
+                                        }}
+                                        className="w-full p-2 rounded-lg bg-[#333] border-2 border-[#262626] focus:outline-none"
+                                    />
+                                }
+                                {values[i].type == "text" &&
+                                    <textarea
+                                        rows={4}
                                         value={data ? data[keyName][index!]?.[key] : ""}
                                         onChange={(e) => {
                                             const newList = [...(qc.getQueryData<any>(["data"])?.[keyName] || [])];

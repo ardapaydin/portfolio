@@ -96,7 +96,7 @@ export default function EditSidebar() {
                                     )}
 
                                     {field.type === "color" && (
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 relative">
                                             <div
                                                 className="min-w-8 h-8 rounded-lg border-[#262626] border-2 cursor-pointer"
                                                 style={{ backgroundColor: data ? data[keys[i]] : "#000000" }}
