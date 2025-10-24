@@ -1,17 +1,19 @@
 import type { TypeTemplate } from "@/design/types/template";
-import { usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
+import { useModules, usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, Puzzle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
 import { SaveToDraft } from "@/utils/api/portfolio";
+import Modules from "../dialogs/Modules/Modules";
 
 export default function EditSidebar() {
     const { id } = useParams();
     const [selectedList, setSelectedList] = useState(null as { key: string, mode: "edit" | "create", index?: number, value?: { name: string, url: string } } | null);
     const portfolio = usePortfolio(id!);
     const template = useTemplate(portfolio?.data?.template!) as { data: TypeTemplate | undefined, isLoading: boolean };
+    const modules = useModules(portfolio?.data?.template);
     const qc = useQueryClient();
     const draft = usePortfolioDraft(id!);
     const updateField = (fieldId: string, value: any) => {
@@ -126,11 +128,17 @@ export default function EditSidebar() {
                             ))}
                     </>
                 )}
-                <hr className="border-[#333]" />
-                <div className="flex items-center gap-2.5 cursor-pointer bg-[#333]/80 hover:bg-[#333] border-[#262626] border-2 p-3 rounded-lg transition-colors duration-200 mt-6">
-                    <Puzzle className="w-5 h-5 text-gray-400" />
-                    <span className="font-medium text-gray-300">Modules</span>
-                </div>
+                {(modules.data?.length) && (
+                    <>
+                        <hr className="border-[#333]" />
+                        <Modules>
+                            <div className="flex items-center gap-2.5 cursor-pointer bg-[#333]/80 hover:bg-[#333] border-[#262626] border-2 p-3 rounded-lg transition-all duration-200 mt-6">
+                                <Puzzle className="w-5 h-5 text-gray-400" />
+                                <span className="font-medium text-gray-300">Modules</span>
+                            </div>
+                        </Modules>
+                    </>
+                ) || null}
             </div>
         </div>
     )

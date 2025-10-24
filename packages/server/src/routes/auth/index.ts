@@ -3,7 +3,11 @@ import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { loginSchema } from "../../helpers/validations/auth/login";
 import { registerSchema } from "../../helpers/validations/auth/register";
 import { db } from "../../database/db";
-import { emailVerificationTable, usersTable } from "../../database";
+import {
+  connectionsTable,
+  emailVerificationTable,
+  usersTable,
+} from "../../database";
 import { eq } from "drizzle-orm";
 import {
   ComparePassword,
@@ -28,7 +32,21 @@ router.get("/me", async (req, res) => {
     })
     .from(usersTable)
     .where(eq(usersTable.id, req.user.id));
-  res.json({ user });
+
+  let connections = await db
+    .select()
+    .from(connectionsTable)
+    .where(eq(connectionsTable.userId, req.user.id));
+  res.json({
+    user,
+    connections: connections.map((x) => {
+      return {
+        ...x,
+        accessToken: undefined,
+        serviceUser: JSON.parse(x.serviceUser as string),
+      };
+    }),
+  });
 });
 
 router.post(

@@ -1,10 +1,12 @@
 import z from "zod";
 import { findImage, hexRegex, link, meta } from "../validation";
+import { Module } from "../modules";
 
 export default {
   id: "wai",
   name: "Wai",
   description: "Just a simple and clean portfolio template.",
+  supportedModules: [Module.GithubRepositories],
   data: {
     fields: {
       name: {

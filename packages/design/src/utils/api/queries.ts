@@ -6,6 +6,7 @@ import type { TypeTemplate } from "../../design/types/template";
 import type { TypeDraft } from "@/design/types/draft";
 import type { TypeAttachment } from "@/design/types/attachment";
 import type { TypePortfolio } from "@/design/types/portfolio";
+import type { TypeModule } from "@/design/types/module";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -174,5 +175,15 @@ export function GetPortfolioEventAnalytics(
       }[];
     },
     enabled: isEnabled,
+  });
+}
+
+export function useModules(templateId: string) {
+  return useQuery({
+    queryKey: ["modules", templateId],
+    queryFn: async () => {
+      const res = await axios.get("/modules?templateId=" + templateId);
+      return res.data as TypeModule[];
+    },
   });
 }

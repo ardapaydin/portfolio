@@ -5,6 +5,7 @@ export default {
   id: "eon",
   name: "Eon",
   description: "A modern portfolio template.",
+  supportedModules: [],
   data: {
     fields: {
       name: {
