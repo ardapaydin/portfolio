@@ -21,7 +21,7 @@ export default function EditSidebar() {
         qc.setQueryData(["data"], newData);
     }
     useEffect(() => {
-        if ((draft.data?.createdAt || "") > portfolio.data?.updatedAt && draft.data?.data) qc.setQueryData(["data"], draft.data.data);
+        if (draft.data?.data) qc.setQueryData(["data"], draft.data.data);
     }, [draft.data, portfolio.data?.updatedAt]);
 
     const data = useQuery({

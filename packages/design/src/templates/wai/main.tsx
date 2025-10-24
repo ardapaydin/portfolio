@@ -6,6 +6,7 @@ import MarkdownComponents from "../global/Markdown";
 import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
 import CustomLink from "../global/Link";
+import WaiGitHubRepos from "./modules/GithubRepos";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -109,13 +110,15 @@ export default function TemplateWai({ d }: { d?: any }) {
                             ))}
                         </ul>
                     </Section>
+
+                    {data?.modules?.find((x: number) => x == 1) && <WaiGitHubRepos data={data} />}
                 </div>
             </div>
         </div>
     )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+export function Section({ title, children }: { title: string; children: React.ReactNode }) {
     return (
         <div className="mt-8">
             <p className="font-semibold mb-2">{title}</p>

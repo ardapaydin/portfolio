@@ -18,7 +18,7 @@ export default function Modules({ children }: {
     const qc = useQueryClient()
 
     const enableModule = (module: TypeModule) => qc.setQueryData(["data"], (old: any) => ({ ...old, modules: [module.id, ...(old?.modules || [])] }));
-    const disableModule = (module: TypeModule) => qc.setQueryData(["data"], (old: any) => ({ ...old, modules: old.modules.filter((x: number) => x != module.id) }))
+    const disableModule = (module: TypeModule) => qc.setQueryData(["data"], (old: any) => ({ ...old, modules: old.modules?.filter((x: number) => x != module.id) }))
 
     const d = useQuery({ queryKey: ["data"] }) as { data: { modules: number[] } }
 
@@ -97,17 +97,17 @@ export default function Modules({ children }: {
                                 <h1 className="text-lg font-bold text-gray-200">{selectedModule.name}</h1>
                             </div>
                             <button
-                                onClick={() => d.data?.modules.find(x => x == selectedModule.id) ? disableModule(selectedModule) : enableModule(selectedModule)}
+                                onClick={() => d.data?.modules?.find(x => x == selectedModule.id) ? disableModule(selectedModule) : enableModule(selectedModule)}
                                 className={`
                                     py-1 text-xs disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:bg-gray-500 
-                                    disabled:cursor-not-allowed px-2 rounded-lg bg-${d.data?.modules.find(x => x == selectedModule.id) ? "red" : "green"}-500 
-                                    border-b-6 disabled:border-gray-400/50 border-${d.data?.modules.find(x => x == selectedModule.id) ? "red" : "green"}-400/50 
-                                    hover:translate-y-0.5 disabled:bg-gray-500 hover:bg-${d.data?.modules.find(x => x == selectedModule.id) ? "red" : "green"}-600 
+                                    disabled:cursor-not-allowed px-2 rounded-lg bg-${d.data?.modules?.find(x => x == selectedModule.id) ? "red" : "green"}-500 
+                                    border-b-6 disabled:border-gray-400/50 border-${d.data?.modules?.find(x => x == selectedModule.id) ? "red" : "green"}-400/50 
+                                    hover:translate-y-0.5 disabled:bg-gray-500 hover:bg-${d.data?.modules?.find(x => x == selectedModule.id) ? "red" : "green"}-600 
                                     text-white cursor-pointer font-semibold transition"
                                 `}
                                 disabled={selectedModule.require == "oauth:github" && !user.data?.connections?.find(x => x.service == "github")}
                             >
-                                {d.data?.modules.find(x => x == selectedModule.id) ? "Disable Module" : "Enable Module"}
+                                {d.data?.modules?.find(x => x == selectedModule.id) ? "Disable Module" : "Enable Module"}
                             </button>
                         </div>
                     </div>

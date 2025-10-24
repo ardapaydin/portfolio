@@ -188,3 +188,16 @@ export function useModules(templateId: string) {
     },
   });
 }
+
+export function getPortfolioModule(portfolio: string, moduleId: number) {
+  return useQuery({
+    queryKey: ["portfolio", portfolio, "modules", moduleId],
+    queryFn: async () => {
+      const res = await axios.get(
+        "/portfolios/" + portfolio + "/modules/" + moduleId
+      );
+
+      return res.data as { slug: string };
+    },
+  });
+}

@@ -52,6 +52,12 @@ router.put(
       });
 
     if (portfolio.subdomain != subdomain) {
+      if (subdomain == portfolio.id)
+        return res.status(400).json({
+          success: false,
+          message: "Bad Request",
+          errors: { subdomain: ["Invalid subdomain"] },
+        });
       const [find] = await db
         .select()
         .from(portfolioTable)
@@ -136,9 +142,11 @@ import DraftRouter from "./draft";
 import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
 import StatsRouter from "./stats";
+import ModuleRouter from "./modules";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
 router.use("/", PublishRouter);
 router.use("/", StatsRouter);
+router.use("/", ModuleRouter);
 
 export default router;

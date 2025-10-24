@@ -30,17 +30,17 @@ router.post("/:id/draft", requireAuth, async (req, res) => {
   const validate = template?.data?.validation!;
   await BodyValidationMiddleware(req, res, () => {}, validate);
   if (res.headersSent) return;
-  if (req.body.modules) {
-    const f = req.body.modules.filter((x: number) =>
+  const moduleIds = Array.isArray(req.body.modules) ? req.body.modules : [];
+  if (moduleIds.length > 0) {
+    const f = moduleIds.filter((x: number) =>
       template?.supportedModules.includes(x as never)
     );
-    if (req.body.modules.length != f.length)
+    if (moduleIds.length != f.length)
       return res.status(400).json({
         success: false,
         message: "unsupported module for this template",
       });
-
-    for (const x of req.body.modules) {
+    for (const x of moduleIds) {
       const module = modules.find((m) => m.id === x);
       if (module?.require.startsWith("oauth")) {
         const s = module.require.split("oauth:")[1];
