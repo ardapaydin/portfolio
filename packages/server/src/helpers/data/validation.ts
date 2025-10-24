@@ -23,7 +23,8 @@ export const modules = z
   .array(z.union(Object.values(Module).map((x) => z.literal(x))))
   .refine((arr) => new Set(arr).size == arr.length, {
     message: "duplicate modules are not allowed",
-  });
+  })
+  .optional();
 
 export async function findImage(
   arg: string | undefined | null

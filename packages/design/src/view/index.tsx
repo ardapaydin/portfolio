@@ -1,4 +1,6 @@
 import Loading from "@/design/components/loading";
+import TemplateCamba from "@/templates/camba/main";
+import TemplateEon from "@/templates/eon/main";
 import TemplateWai from "@/templates/wai/main";
 import { getSubdomain } from "@/utils/api/subdomain";
 import { type UseQueryResult } from "@tanstack/react-query"
@@ -43,5 +45,7 @@ export default function View() {
     )
     switch (data.data.template) {
         case "wai": return <TemplateWai d={data.data.data} />
+        case "camba": return <TemplateCamba d={data.data.data} />
+        case "eon": return <TemplateEon d={data.data.data} />
     }
 }

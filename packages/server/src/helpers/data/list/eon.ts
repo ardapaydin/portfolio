@@ -1,11 +1,12 @@
 import z from "zod";
-import { findImage, hexRegex } from "../validation";
+import { findImage, hexRegex, meta, modules } from "../validation";
+import { Module } from "../modules";
 
 export default {
   id: "eon",
   name: "Eon",
   description: "A modern portfolio template.",
-  supportedModules: [],
+  supportedModules: [Module.GithubRepositories],
   data: {
     fields: {
       name: {
@@ -92,7 +93,7 @@ export default {
       ],
       backgroundColor: "#282828",
       secondaryBackgroundColor: "#252525",
-      primaryTextColor: "#fffffff",
+      primaryTextColor: "#ffffff",
       boxColor: "#252525",
       underlineColor: "#5f3eff",
     },
@@ -105,11 +106,11 @@ export default {
       projectsDescription: z
         .string()
         .min(2)
-        .max(100, "Projects Description must be between 2 and 100 characters"),
+        .max(256, "Projects Description must be between 2 and 256 characters"),
       contactDescription: z
         .string()
         .min(2)
-        .max(100, "Contact Description must be between 2 and 100 characters"),
+        .max(256, "Contact Description must be between 2 and 256 characters"),
       picture: z.uuid().nullable().optional().refine(findImage),
       projects: z
         .array(
@@ -146,6 +147,8 @@ export default {
       underlineColor: z
         .string()
         .regex(hexRegex, "Underline color must be a valid hex color"),
+      meta,
+      modules,
     }),
   },
 };

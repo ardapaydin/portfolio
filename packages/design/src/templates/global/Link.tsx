@@ -19,7 +19,7 @@ export default function CustomLink({
             onClick={async (e) => {
                 e.preventDefault()
                 SendEvent(subdomain, "clickLink", { key: linkKey, url: props.href, name })
-                window.open((e.target as HTMLAnchorElement).href, "_blank")
+                window.open(props.href, "_blank")
             }}
             className={cn("underline break-words hover:text-blue-400 transition-colors", props.className)}
             {...props}

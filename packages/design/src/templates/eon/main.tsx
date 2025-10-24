@@ -7,6 +7,7 @@ import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
 import CustomLink from "../global/Link";
 import "./index.css"
+import EonGitHubRepos from "./modules/GithubRepos";
 export default function TemplateEon({ d }: { d?: any }) {
     const queryState = useQuery({
         queryKey: ["data"],
@@ -174,6 +175,8 @@ export default function TemplateEon({ d }: { d?: any }) {
                     </ul>
 
                 </div>
+
+                {data.modules?.find((x: number) => x == 1) && <EonGitHubRepos data={data} />}
 
 
                 <div style={{ backgroundColor: data.secondaryBackgroundColor }}

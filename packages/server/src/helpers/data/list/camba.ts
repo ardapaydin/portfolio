@@ -1,5 +1,5 @@
 import z from "zod";
-import { findImage, hexRegex } from "../validation";
+import { findImage, hexRegex, meta } from "../validation";
 
 export default {
   id: "camba",
@@ -193,6 +193,7 @@ export default {
       secondaryBoxColor: z.string().regex(hexRegex),
       borderColor: z.string().regex(hexRegex),
       underlineColor: z.string().regex(hexRegex),
+      meta,
     }),
   },
 };

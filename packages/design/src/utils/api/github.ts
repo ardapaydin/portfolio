@@ -16,6 +16,7 @@ export function getGithubRepos(slug?: string) {
         name: string;
         html_url: string;
         stargazers_count: number;
+        description: string;
       }[];
     },
     enabled: !!slug,
