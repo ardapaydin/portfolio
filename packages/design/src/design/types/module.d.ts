@@ -1,5 +1,5 @@
 export type TypeModule = {
-  id: string;
+  id: number;
   name: string;
   require: string;
 };

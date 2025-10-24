@@ -4,7 +4,7 @@ export type TypePortfolio = {
   subdomain: string;
   template: string;
   data: any;
-  isPublished;
+  isPublished: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

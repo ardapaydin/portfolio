@@ -2,6 +2,7 @@ import z from "zod";
 import { db } from "../../database/db";
 import { attachmentsTable } from "../../database";
 import { eq } from "drizzle-orm";
+import { Module } from "./modules";
 
 export const link = z.object({
   name: z.string().min(2).max(100),
@@ -17,6 +18,12 @@ export const meta = z
   .optional();
 
 export const hexRegex = /^#([0-9A-Fa-f]{6})$/;
+
+export const modules = z
+  .array(z.union(Object.values(Module).map((x) => z.literal(x))))
+  .refine((arr) => new Set(arr).size == arr.length, {
+    message: "duplicate modules are not allowed",
+  });
 
 export async function findImage(
   arg: string | undefined | null

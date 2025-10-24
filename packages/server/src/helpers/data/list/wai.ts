@@ -1,5 +1,5 @@
 import z from "zod";
-import { findImage, hexRegex, link, meta } from "../validation";
+import { findImage, hexRegex, link, meta, modules } from "../validation";
 import { Module } from "../modules";
 
 export default {
@@ -89,6 +89,7 @@ export default {
         .string()
         .regex(hexRegex, "Box color must be a valid hex color"),
       meta,
+      modules,
     }),
   },
 };
