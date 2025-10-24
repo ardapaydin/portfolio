@@ -7,6 +7,7 @@ import type { TypeDraft } from "@/design/types/draft";
 import type { TypeAttachment } from "@/design/types/attachment";
 import type { TypePortfolio } from "@/design/types/portfolio";
 import type { TypeModule } from "@/design/types/module";
+import type { TypeConnection } from "@/design/types/connection";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -28,7 +29,7 @@ export function useUser() {
     queryKey: ["user"],
     queryFn: async () => {
       const res = await axios.get("/auth/me");
-      return res.data as { user?: TypeUser };
+      return res.data as { user?: TypeUser; connections?: TypeConnection[] };
     },
     retry: false,
   });
