@@ -35,6 +35,7 @@ export const analyticsIpsTable = mysqlTable("analytics_ips", {
     () => portfolioTable.id,
     { onDelete: "cascade" }
   ),
+  country: varchar("country", { length: 32 }).notNull(),
   ip: varchar("ip", { length: 64 }).notNull(),
   date: datetime("date").notNull(),
 });

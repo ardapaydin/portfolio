@@ -53,6 +53,7 @@ router.get("/view/:subdomain", async (req, res) => {
       ip: encryptIp(ip),
       date,
       portfolioId: find.id,
+      country: (req.headers["cf-ipcountry"] as string) || "US",
     });
 
   await db

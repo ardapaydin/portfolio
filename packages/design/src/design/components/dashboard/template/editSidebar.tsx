@@ -1,7 +1,7 @@
 import type { TypeTemplate } from "@/design/types/template";
 import { usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Puzzle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
@@ -126,7 +126,11 @@ export default function EditSidebar() {
                             ))}
                     </>
                 )}
-
+                <hr className="border-[#333]" />
+                <div className="flex items-center gap-2.5 cursor-pointer bg-[#333]/80 hover:bg-[#333] border-[#262626] border-2 p-3 rounded-lg transition-colors duration-200 mt-6">
+                    <Puzzle className="w-5 h-5 text-gray-400" />
+                    <span className="font-medium text-gray-300">Modules</span>
+                </div>
             </div>
         </div>
     )

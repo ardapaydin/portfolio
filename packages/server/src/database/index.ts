@@ -7,3 +7,4 @@ export * from "./schemas/analytics";
 export * from "./schemas/resetPassword";
 export * from "./schemas/event";
 export * from "./schemas/averageTime";
+export * from "./schemas/connections";
