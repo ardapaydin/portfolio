@@ -14,7 +14,7 @@ export const connectionsTable = mysqlTable("connections", {
   }),
   serviceUser: json("service_user")
     .notNull()
-    .default(sql`{}`),
+    .default(sql`'{}'`),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

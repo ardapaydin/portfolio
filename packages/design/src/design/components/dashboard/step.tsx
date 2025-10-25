@@ -26,7 +26,7 @@ const steps = [
 export default function Step() {
     const portfolios = usePortfolios();
     const user = useUser();
-    const [userStep, setUserStep] = useState(0)
+    const [userStep, setUserStep] = useState(1)
     useEffect(() => {
         if (portfolios.data?.length) setUserStep(2)
         if (portfolios.data?.find(((x) => x.isPublished))) setUserStep(3)

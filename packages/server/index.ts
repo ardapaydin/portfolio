@@ -2,7 +2,9 @@ import "dotenv/config";
 import express from "express";
 const app = express();
 import expressWs from "express-ws";
+import cors from "cors";
 expressWs(app);
+app.use(cors({ origin: "*" }));
 
 declare global {
   namespace Express {

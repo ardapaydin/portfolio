@@ -62,7 +62,9 @@ router.get("/:idOrSubdomain/modules/:moduleId", async (req, res) => {
           eq(connectionsTable.service, r.require.split("oauth:")[1])
         )
       );
-    const jsoncon = JSON.parse(connection.serviceUser as string);
+    const jsoncon = connection?.serviceUser
+      ? JSON.parse(connection.serviceUser as string)
+      : {};
     const [config] = await db
       .select()
       .from(moduleConfigsTable)
