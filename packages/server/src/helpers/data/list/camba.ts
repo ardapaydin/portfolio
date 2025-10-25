@@ -1,12 +1,13 @@
 import z from "zod";
-import { findImage, hexRegex, meta } from "../validation";
+import { findImage, hexRegex, meta, modules } from "../validation";
+import { Module } from "../modules";
 
 export default {
   id: "camba",
   name: "Camba",
   description:
     "Camba is a fully responsive personal portfolio website, responsive for all devices.",
-  supportedModules: [],
+  supportedModules: [Module.GithubRepositories],
   data: {
     fields: {
       name: {
@@ -194,6 +195,7 @@ export default {
       borderColor: z.string().regex(hexRegex),
       underlineColor: z.string().regex(hexRegex),
       meta,
+      modules,
     }),
   },
 };
