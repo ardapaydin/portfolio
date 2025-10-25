@@ -128,7 +128,7 @@ export default function EditSidebar() {
                             ))}
                     </>
                 )}
-                {(modules.data?.length) && (
+                {((modules.data?.length) && !selectedList) && (
                     <>
                         <hr className="border-[#333]" />
                         <Modules>

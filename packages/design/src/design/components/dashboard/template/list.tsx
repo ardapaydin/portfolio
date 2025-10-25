@@ -17,16 +17,21 @@ export default function ListSidebar({ keyName, mode, index, setSelectedList }: {
         queryFn: async () => ({} as TypeTemplate),
     }).data as TypeTemplate | undefined;
     const [create, setCreate] = useState<{ [key: string]: string }>({ name: "", url: "" });
+    const keys = Object.keys(template.data.fields[keyName]?.item)
+    const values = Object.values(template.data.fields[keyName]?.item) as { label: string, type: string, markdown: boolean }[]
+
     const validation = () => {
         const isValidUrl = (url: string) => /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/.test(url);
         if (mode === "create") {
-            if (create.name.trim() === "" || create.url.trim() === "") return false;
-            if (!isValidUrl(create.url)) return false;
+            for (let i = 0; i < values.length; i++) {
+                const key = keys[i];
+                if (values[i].type === "link" && !isValidUrl(create[key])) return false;
+                if (create[key]?.trim() === "") return false;
+            }
         }
         return true;
     }
-    const keys = Object.keys(template.data.fields[keyName]?.item)
-    const values = Object.values(template.data.fields[keyName]?.item) as { label: string, type: string, markdown: boolean }[]
+
     return (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between mb-6">
