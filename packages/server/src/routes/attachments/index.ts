@@ -52,6 +52,11 @@ router.post("/", requireAuth, async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: "Invalid file type for picture" });
+  if (file.size > 20 * 1024 * 1024)
+    return res
+      .status(400)
+      .json({ success: false, message: "File size exceeds 20MB limit" });
+
   const [portfolio] = await db
     .select()
     .from(portfolioTable)
@@ -103,7 +108,10 @@ router.post("/avatar", requireAuth, async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: "Invalid file type" });
-
+  if (file.size > 20 * 1024 * 1024)
+    return res
+      .status(400)
+      .json({ success: false, message: "File size exceeds 20MB limit" });
   const id = crypto.randomUUID();
   const s3Key = `profilePictures/${id}`;
   await s3.send(
