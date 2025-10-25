@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { publish } from "@/utils/api/portfolio";
+import { publish, save } from "@/utils/api/portfolio";
 import { Check, CheckCircle2, Copy } from "lucide-react";
 import { LoadingSmall } from "../../loading";
 import { GetPortfolioState } from "@/utils/api/queries";
@@ -13,6 +13,9 @@ export default function PublishPortfolio({ children }: { children: React.ReactNo
     const [copied, setCopied] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const state = GetPortfolioState(id!, !isLoading && isOpen)
+    useEffect(() => {
+        if (isOpen) save(id!);
+    }, [isOpen])
     const handlePublish = async () => {
         if (!id) return;
         const pub = await publish(id);
