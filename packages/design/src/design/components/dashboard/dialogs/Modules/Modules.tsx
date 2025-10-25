@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, Github, Puzzle } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom"
+import EditModule from "./Edit";
 
 export default function Modules({ children }: {
     children: React.ReactNode
@@ -30,7 +31,7 @@ export default function Modules({ children }: {
             <DialogContent className="flex flex-col">
                 <div className="flex items-center gap-2">
                     {selectedModule && <ArrowLeft className="cursor-pointer" onClick={() => setSelectedModule(null)} />}
-                    <DialogTitle>Modules</DialogTitle>
+                    <DialogTitle>{selectedModule ? selectedModule.name : "Modules"}</DialogTitle>
                 </div>
                 {(!selectedModule) && modules.data?.map((x) => (
                     <div
@@ -94,7 +95,7 @@ export default function Modules({ children }: {
 
                         <div className="flex justify-between items-center mt-4">
                             <div className="flex flex-col gap-1">
-                                <h1 className="text-lg font-bold text-gray-200">{selectedModule.name}</h1>
+                                <h1 className="text-lg font-bold text-gray-200">Configure Module</h1>
                             </div>
                             <button
                                 onClick={() => d.data?.modules?.find(x => x == selectedModule.id) ? disableModule(selectedModule) : enableModule(selectedModule)}
@@ -110,6 +111,9 @@ export default function Modules({ children }: {
                                 {d.data?.modules?.find(x => x == selectedModule.id) ? "Disable Module" : "Enable Module"}
                             </button>
                         </div>
+
+
+                        <EditModule module={selectedModule} />
                     </div>
                 )}
             </DialogContent>

@@ -9,7 +9,7 @@ export default function WaiGitHubRepos({ data }: { data: Record<string, any> }) 
     const { id } = useParams();
 
     const module = getPortfolioModule(id || subdomain, 1);
-    const d = getGithubRepos(module.data?.slug)
+    const d = getGithubRepos(module.data?.slug, module.data?.config.sort, module.data?.config.max)
     if (module.isLoading || d.isLoading) return (
         <Section title="GitHub Repositories">
             <div className="flex flex-col mt-2">

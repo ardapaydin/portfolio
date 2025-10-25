@@ -197,7 +197,7 @@ export function getPortfolioModule(portfolio: string, moduleId: number) {
         "/portfolios/" + portfolio + "/modules/" + moduleId
       );
 
-      return res.data as { slug: string };
+      return res.data as { slug: string; config: Record<string, any> };
     },
   });
 }

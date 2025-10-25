@@ -9,7 +9,7 @@ export default function EonGitHubRepos({ data }: { data: Record<string, any> }) 
     const { id } = useParams();
 
     const module = getPortfolioModule(id || subdomain, 1);
-    const d = getGithubRepos(module.data?.slug);
+    const d = getGithubRepos(module.data?.slug, module.data?.config.sort, module.data?.config.max);
     return (
         <div id="contact" className="flex flex-col my-8 px-2 md:px-0 max-w-7xl mx-auto w-full">
             <div className="uppercase text-sm tracking-widest text-white/50 mb-4" style={{

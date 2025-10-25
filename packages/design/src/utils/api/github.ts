@@ -1,13 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export function getGithubRepos(slug?: string) {
+export function getGithubRepos(
+  slug?: string,
+  sort: string = "stars",
+  per_page: number = 5
+) {
   return useQuery({
-    queryKey: ["github", slug, "repo"],
+    queryKey: ["github", slug, "repo", sort, per_page],
     queryFn: async () => {
       return (
         await axios.get(
-          "https://api.github.com/users/ardapaydin/repos?sort=stars&per_page=5",
+          "https://api.github.com/users/ardapaydin/repos?sort=" +
+            sort +
+            "&per_page=" +
+            per_page,
           { headers: { Authorization: undefined } }
         )
       ).data as {
