@@ -9,4 +9,17 @@ export const createPortfolioSchema = z.object({
     portfolioTemplates.map((template) => template.id),
     "Invalid template selected"
   ),
+  subdomain: z
+    .string()
+    .toLowerCase()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,
+      "Subdomain must contain only lowercase letters, numbers, and hyphens, cannot start or end with a hyphen"
+    )
+    .optional()
+    .refine((val) => val?.toLowerCase() !== "design", {
+      message: "Subdomain cannot be 'design'",
+    }),
 });

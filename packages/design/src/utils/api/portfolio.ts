@@ -3,10 +3,15 @@ import axios from "axios";
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
 
-export function NewPortfolio(name: string, template: string) {
+export function NewPortfolio(
+  name: string,
+  template: string,
+  subdomain?: string
+) {
   return axios.post("/portfolios", {
     template,
     name,
+    subdomain: subdomain ? subdomain : undefined,
   });
 }
 

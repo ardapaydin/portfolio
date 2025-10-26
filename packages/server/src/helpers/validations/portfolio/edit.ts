@@ -8,7 +8,6 @@ export const editPortfolioSchema = z.object({
   subdomain: z
     .string()
     .toLowerCase()
-    .min(1)
     .max(100)
     .regex(
       /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/,

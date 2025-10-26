@@ -7,7 +7,7 @@ import { portfolioTable } from "../../database/schemas/portfolio";
 import BodyValidationMiddleware from "../../helpers/middlewares/validation";
 import { createPortfolioSchema } from "../../helpers/validations/portfolio/create";
 import { db } from "../../database/db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { portfolioTemplates } from "../../helpers/data/templates";
 import createSubdomain from "../../helpers/utils/createSubdomain";
 
@@ -17,8 +17,8 @@ router.post(
   (req, res, next) =>
     BodyValidationMiddleware(req, res, next, createPortfolioSchema),
   async (req, res) => {
-    const { name, template } = req.body;
-    let subdomain = createSubdomain();
+    const { name, template, subdomain: sd } = req.body;
+    let subdomain = sd || createSubdomain();
     const [{ emailVerified }] = await db
       .select({ emailVerified: usersTable.emailVerified })
       .from(usersTable)
@@ -29,6 +29,24 @@ router.post(
         message: "email is not verified",
         errors: {
           name: ["You must verify your email before creating a portfolio"],
+        },
+      });
+
+    const [findsubdomain] = await db
+      .select()
+      .from(portfolioTable)
+      .where(
+        or(
+          eq(portfolioTable.subdomain, subdomain),
+          eq(portfolioTable.id, subdomain)
+        )
+      );
+    if (findsubdomain)
+      return res.status(400).json({
+        success: false,
+        message: "subdomain is taken",
+        errors: {
+          subdomain: ["Subdomain already taken."],
         },
       });
 

@@ -4,7 +4,7 @@ const router = express.Router();
 import { requireAuth } from "../../../helpers/middlewares/auth";
 import { portfolioTable } from "../../../database/schemas/portfolio";
 import { db } from "../../../database/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { draftsTable } from "../../../database";
 import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
@@ -61,7 +61,12 @@ router.put(
       const [find] = await db
         .select()
         .from(portfolioTable)
-        .where(eq(portfolioTable.subdomain, subdomain));
+        .where(
+          or(
+            eq(portfolioTable.subdomain, subdomain),
+            eq(portfolioTable.id, subdomain)
+          )
+        );
 
       if (find)
         return res.status(400).json({
