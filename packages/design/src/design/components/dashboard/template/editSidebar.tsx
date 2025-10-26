@@ -7,7 +7,9 @@ import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
 import { SaveToDraft } from "@/utils/api/portfolio";
 import Modules from "../dialogs/Modules/Modules";
-
+import z from "zod";
+import { validZod } from "@/design/utils/zod";
+import { useValidationErrorStore } from "@/store/validationErrorStore";
 export default function EditSidebar() {
     const { id } = useParams();
     const [selectedList, setSelectedList] = useState(null as { key: string, mode: "edit" | "create", index?: number, value?: { name: string, url: string } } | null);
@@ -16,6 +18,7 @@ export default function EditSidebar() {
     const modules = useModules(portfolio?.data?.template);
     const qc = useQueryClient();
     const draft = usePortfolioDraft(id!);
+    const useEStore = useValidationErrorStore();
     const updateField = (fieldId: string, value: any) => {
         const newData = { ...qc.getQueryData<any>(["data"]), [fieldId]: value };
         qc.setQueryData(["data"], newData);
@@ -31,6 +34,26 @@ export default function EditSidebar() {
 
     useEffect(() => {
         if (JSON.stringify(draft.data?.data) === JSON.stringify(data)) return;
+        if (!template.data?.validation) return
+        const validation = z.object(Object.fromEntries(
+            Object.entries(template.data.validation.def.shape).map(([key, val]) => [
+                key,
+                validZod((val as z.ZodTypeAny)),
+            ])
+        ));
+        const validate = validation.safeParse(data);
+        if (!validate.success) {
+            const errors: Record<string, string[]> = {};
+
+            validate.error.issues.forEach((e) => {
+                const path = e.path.join(".") || "body";
+                if (!errors[path]) errors[path] = [];
+
+                errors[path].push(e.message);
+            });
+            useEStore.setErrors(errors)
+            return
+        } else useEStore.clearAllErrors()
         window.onbeforeunload = () => true;
         const timeout = setTimeout(async () => {
             qc.setQueryData(["portfolio", id, "draft"], { ...draft.data, data, updating: true });
@@ -56,9 +79,13 @@ export default function EditSidebar() {
                             .filter((field) => field.type != "image")
                             .map((field, i) => (
                                 <div key={field.label} className="mb-4">
-                                    <div className="flex items-center gap-1 mb-1">
-                                        <label className="block text-sm font-medium">{field.label}</label>
-                                        {field.markdown && <span className="text-xs bg-gray-600/25 text-white/30 px-1 rounded">Markdown Supported</span>}
+                                    <div className="flex flex-col gap-1 mb-1">
+                                        <div className="flex gap-1 items-center">
+                                            <label className="block text-sm font-medium">{field.label}</label>
+                                            {field.markdown && <span className="text-xs bg-gray-600/25 text-white/30 px-1 rounded">Markdown Supported</span>}
+                                        </div>
+                                        {useEStore.errors[keys[i]] && <p className="text-red-500">{useEStore.errors[keys[i]][0]}</p>}
+
                                     </div>
                                     {field.type === "text" && (
                                         <textarea
