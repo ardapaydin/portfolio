@@ -7,7 +7,7 @@ export default {
   name: "Camba",
   description:
     "Camba is a fully responsive personal portfolio website, responsive for all devices.",
-  supportedModules: [Module.GithubRepositories],
+  supportedModules: [Module.GithubRepositories, Module.GithubReadMe],
   data: {
     fields: {
       name: {

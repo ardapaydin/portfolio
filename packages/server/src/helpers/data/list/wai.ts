@@ -6,7 +6,7 @@ export default {
   id: "wai",
   name: "Wai",
   description: "Just a simple and clean portfolio template.",
-  supportedModules: [Module.GithubRepositories],
+  supportedModules: [Module.GithubRepositories, Module.GithubReadMe],
   data: {
     fields: {
       name: {

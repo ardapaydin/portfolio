@@ -51,6 +51,13 @@ export default function EditModule({ module }: { module: TypeModule }) {
                                     </option>
                                 ))}
                             </select>}
+
+                            {value.type == "string" && <input
+                                type="text"
+                                value={form.branch}
+                                onChange={(e) => setForm({ ...form, [x]: e.target.value })}
+                                className="w-full p-2 h-12 rounded-lg bg-[#333] border-[#262626] border-4 focus:outline-none"
+                            />}
                         </div>
                     )
                 })}

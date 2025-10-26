@@ -6,7 +6,7 @@ export default {
   id: "eon",
   name: "Eon",
   description: "A modern portfolio template.",
-  supportedModules: [Module.GithubRepositories],
+  supportedModules: [Module.GithubRepositories, Module.GithubReadMe],
   data: {
     fields: {
       name: {

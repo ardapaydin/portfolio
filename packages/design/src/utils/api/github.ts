@@ -29,3 +29,21 @@ export function getGithubRepos(
     enabled: !!slug,
   });
 }
+
+export function getGitHubReadme(slug?: string, branch?: string) {
+  return useQuery({
+    queryKey: ["github", slug, "repos", slug, branch, "readme"],
+    queryFn: async () => {
+      return await axios.get<string>(
+        "https://raw.githubusercontent.com/" +
+          slug +
+          "/" +
+          slug +
+          "/" +
+          branch +
+          "/README.md",
+        { headers: { Authorization: undefined } }
+      );
+    },
+  });
+}

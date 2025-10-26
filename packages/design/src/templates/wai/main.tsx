@@ -7,6 +7,7 @@ import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
 import CustomLink from "../global/Link";
 import WaiGitHubRepos from "./modules/GithubRepos";
+import GitHubReadme from "../global/Modules/GitHubReadMe";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -31,7 +32,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                 <div
                     style={{ backgroundColor: data?.backgroundColor }}
                     className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-                <div className="py-16 px-4 md:px-10 rounded-lg shadow-2xl" style={{
+                <div className="py-16 px-4 md:px-10 rounded-lg shadow-2xl overflow-auto max-h-[80vh]" style={{
                     backgroundColor: data?.boxColor + "40"
                 }}>
                     <div className="flex flex-col md:flex-row items-center md:justify-between gap-6">
@@ -84,7 +85,8 @@ export default function TemplateWai({ d }: { d?: any }) {
                     <div className="mt-2 text-lg leading-relaxed break-words whitespace-normal" style={{
                         color: data?.primaryTextColor
                     }}>
-                        <Markdown components={MarkdownComponents({ dataKey: "bio" })}>{data?.bio}</Markdown>
+                        {data?.modules?.find((x: number) => x == 2) && <GitHubReadme data={data} /> ||
+                            <Markdown components={MarkdownComponents({ dataKey: "bio" })}>{data?.bio}</Markdown>}
                     </div>
 
                     <Section title="Links">

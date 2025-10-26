@@ -2,6 +2,7 @@ import z from "zod";
 
 export const Module = {
   GithubRepositories: 1,
+  GithubReadMe: 2,
 };
 
 export default [
@@ -25,6 +26,28 @@ export default [
       validation: z.object({
         max: z.int().max(16),
         sort: z.enum(["stars", "forks", "updated"]),
+      }),
+    },
+  },
+  {
+    id: Module.GithubReadMe,
+    name: "GitHub ReadMe",
+    require: "oauth:github",
+    config: {
+      fields: {
+        branch: {
+          label: "Branch",
+          type: "string",
+        },
+      },
+      default: {
+        branch: "master",
+      },
+      validation: z.object({
+        branch: z
+          .string()
+          .max(255)
+          .regex(/^[a-zA-Z0-9._-]+$/, "Invalid branch"),
       }),
     },
   },
