@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { TypeUser } from "@/design/types/user";
 import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
+import { useTwoFactorStore } from "@/store/twoFactorStore";
 
 export default function Settings() {
     const user = useUser();
@@ -22,6 +23,7 @@ export default function Settings() {
     });
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { setIsOpen, setData } = useTwoFactorStore()
     useEffect(() => {
         const newErrors: { [key: string]: string[] } = {};
         if (form.name && form.name.length > 60) newErrors.name = ["Name is so long."]
@@ -63,7 +65,6 @@ export default function Settings() {
                 }
             })
         }
-
     }
 
     return (
@@ -171,7 +172,16 @@ export default function Settings() {
                             </button>
                         </SetupTwoFactor>
 
-                        <button hidden={!user.data?.twoFactor} className="border-b-2 rounded text-sm border-red-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50">
+                        <button
+                            onClick={() => {
+                                setData({
+                                    type: "disableTwoFactor",
+                                    fields: {},
+                                    options: ["app", "backup"]
+                                })
+                                setIsOpen(true)
+                            }}
+                            hidden={!user.data?.twoFactor} className="border-b-2 rounded text-sm border-red-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50">
                             Disable
                         </button>
                     </div>

@@ -6,7 +6,7 @@ import {
   twoFactorAuthenticationTable,
   usersTable,
 } from "../../../database";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import speakeasy from "speakeasy";
 import { toDataURL } from "qrcode";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
@@ -126,6 +126,53 @@ router.post(
       success: true,
       codes,
     });
+  }
+);
+
+router.post(
+  "/disable",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(req, res, next, twoFactorVerifySchema),
+  async (req, res) => {
+    const [find] = await db
+      .select()
+      .from(twoFactorAuthenticationTable)
+      .where(
+        and(
+          eq(twoFactorAuthenticationTable.userId, req.user!.id),
+          eq(twoFactorAuthenticationTable.verified, true)
+        )
+      );
+
+    if (!find)
+      return res.status(400).json({ success: false, message: "not enabled" });
+
+    const { code } = req.body;
+
+    const verify = speakeasy.totp.verify({
+      secret: find.secret,
+      encoding: "base32",
+      token: code,
+      window: 1,
+    });
+
+    if (!verify)
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Invalid code",
+          errors: { code: ["Invalid code"] },
+        });
+
+    await db
+      .delete(twoFactorAuthenticationTable)
+      .where(eq(twoFactorAuthenticationTable.id, find.id));
+    await db
+      .delete(backupCodesTable)
+      .where(eq(backupCodesTable.userId, req.user!.id));
+    return res.status(200).json({ success: true });
   }
 );
 
