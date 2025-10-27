@@ -7,6 +7,7 @@ import { UpdateUser } from "@/utils/api/user";
 import { UploadProfilePicture } from "@/utils/api/attachments";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TypeUser } from "@/design/types/user";
+import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 
 export default function Settings() {
     const user = useUser();
@@ -66,7 +67,7 @@ export default function Settings() {
 
     return (
         <Layout>
-            <div className="flex-1 h-full md:px-64">
+            <div className="flex-1 h-full max-w-3xl mx-auto">
                 <div className="flex gap-6 items-center">
                     <UserAvatar className="w-24 h-24 text-2xl" />
                     <div className="flex flex-col mt-1">
@@ -154,7 +155,15 @@ export default function Settings() {
 
                 </div>
 
-                <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-end">
+                <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-between">
+                    <DeleteAccount>
+                        <button
+                            className="border-2 border-dashed rounded-full text-sm border-red-500 p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50"
+                        >
+                            Delete Account
+                        </button>
+                    </DeleteAccount>
+
                     <button
                         onClick={submit}
                         disabled={!!Object.keys(errors).length}

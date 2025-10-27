@@ -10,12 +10,19 @@ import UserRouter from "./user";
 import EventRouter from "./event";
 import ModulesRouter from "./modules";
 import { verifyToken } from "../helpers/jwt";
-
-router.use((req, res, next) => {
+import { db } from "../database/db";
+import { count, eq } from "drizzle-orm";
+import { usersTable } from "../database";
+router.use(async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
     try {
       const { id } = verifyToken(authHeader.split(" ")[1]);
+      const [{ value }] = await db
+        .select({ value: count() })
+        .from(usersTable)
+        .where(eq(usersTable.id, id));
+      if (!value) return next();
       res.setHeader("X-User-Id", id);
       req.user = { id };
     } catch (err) {}

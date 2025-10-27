@@ -16,7 +16,7 @@ export const moduleConfigsTable = mysqlTable("module_configs", {
   config: json("config"),
   portfolioId: varchar("portfolio_id", { length: 36 })
     .notNull()
-    .references(() => portfolioTable.id),
+    .references(() => portfolioTable.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

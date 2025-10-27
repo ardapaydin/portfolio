@@ -15,6 +15,7 @@ import {
   EncryptPassword,
 } from "../../helpers/encryptions/password";
 import deleteDomain from "../../helpers/cloudflare/pages/deleteDomain";
+import { deleteUserSchema } from "../../helpers/validations/user/delete";
 const router = express.Router();
 
 router.put(
@@ -86,6 +87,31 @@ router.put(
         name,
       })
       .where(eq(usersTable.id, req.user!.id));
+
+    return res.status(200).json({ success: true });
+  }
+);
+
+router.delete(
+  "/",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(req, res, next, deleteUserSchema),
+  async (req, res) => {
+    const { password } = req.body;
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, req.user!.id));
+    const isvalid = ComparePassword(password, user.password);
+    if (!isvalid)
+      return res.status(400).json({
+        success: false,
+        message: "invalid password",
+        errors: { password: ["Password is incorrect"] },
+      });
+
+    await db.delete(usersTable).where(eq(usersTable.id, req.user!.id));
 
     return res.status(200).json({ success: true });
   }

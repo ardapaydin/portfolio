@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import {
   boolean,
   mysqlTable,
@@ -10,7 +9,7 @@ import { usersTable } from "./users";
 export const emailVerificationTable = mysqlTable("email_verifications", {
   id: varchar("id", { length: 36 }).primaryKey().notNull(),
   userId: varchar("user_id", { length: 36 })
-    .references(() => usersTable.id)
+    .references(() => usersTable.id, { onDelete: "cascade" })
     .notNull(),
   token: varchar("token", { length: 255 }).notNull().unique(),
   createdAt: timestamp("created_at").defaultNow(),

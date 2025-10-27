@@ -16,3 +16,11 @@ export async function UpdateUser(
     newPassword: newPassword || undefined,
   });
 }
+
+export async function DeleteUser(password: string) {
+  return await axios.delete("/user", {
+    data: {
+      password,
+    },
+  });
+}
