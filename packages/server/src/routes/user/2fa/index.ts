@@ -112,7 +112,7 @@ router.post(
       .set({
         verified: true,
       })
-      .where(eq(twoFactorAuthenticationTable.id, user.id));
+      .where(eq(twoFactorAuthenticationTable.userId, user.id));
 
     const codes = createBackupCodes();
     for (let code of codes)

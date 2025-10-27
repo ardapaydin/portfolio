@@ -6,6 +6,7 @@ import { db } from "../../database/db";
 import {
   connectionsTable,
   emailVerificationTable,
+  twoFactorAuthenticationTable,
   usersTable,
 } from "../../database";
 import { eq } from "drizzle-orm";
@@ -37,6 +38,14 @@ router.get("/me", async (req, res) => {
     .select()
     .from(connectionsTable)
     .where(eq(connectionsTable.userId, req.user.id));
+
+  const [twofa] = await db
+    .select({
+      verified: twoFactorAuthenticationTable.verified,
+    })
+    .from(twoFactorAuthenticationTable)
+    .where(eq(twoFactorAuthenticationTable.userId, user.id));
+
   res.json({
     user,
     connections: connections.map((x) => {
@@ -46,6 +55,7 @@ router.get("/me", async (req, res) => {
         serviceUser: JSON.parse(x.serviceUser as string),
       };
     }),
+    twoFactor: twofa || false,
   });
 });
 

@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { LoadingSmall } from "@/design/components/loading";
 import { Verify } from "@/utils/api/2fa";
 import { useTwoFactorSetup } from "@/utils/api/queries";
+import { useQueryClient } from "@tanstack/react-query";
 import { Copy } from "lucide-react";
 import { useState } from "react"
 
@@ -13,10 +14,15 @@ export default function SetupTwoFactor({ children }: {
     const [code, setCode] = useState("")
     const [errors, setErrors] = useState<Record<string, string[]>>({})
     const [backupCodes, setBackupCodes] = useState<string[]>([])
+    const qc = useQueryClient();
     const handleverify = async () => {
         const r = await Verify(code);
         if (r.status == 200) {
             setBackupCodes(r.data.codes)
+            qc.setQueryData(["user"], (old: any) => ({
+                ...old,
+                twoFactor: true
+            }))
         } else setErrors(r.data?.errors || { code: ["Internal server error."] })
     }
 
@@ -86,7 +92,7 @@ export default function SetupTwoFactor({ children }: {
                     </div>
                 )}
 
-                {(backupCodes.length) && (
+                {(!!backupCodes.length) && (
                     <div className="flex flex-col">
                         <h1 className="text-2xl font-bold">
                             Backup Codes

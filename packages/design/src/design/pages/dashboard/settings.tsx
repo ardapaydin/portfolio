@@ -164,11 +164,16 @@ export default function Settings() {
                     <div className="flex flex-col gap-1">
                         <SetupTwoFactor>
                             <button
+                                hidden={user.data?.twoFactor}
                                 className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"
                             >
                                 Enable
                             </button>
                         </SetupTwoFactor>
+
+                        <button hidden={!user.data?.twoFactor} className="border-b-2 rounded text-sm border-red-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50">
+                            Disable
+                        </button>
                     </div>
                 </div>
 

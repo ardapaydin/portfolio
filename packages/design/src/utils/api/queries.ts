@@ -29,7 +29,11 @@ export function useUser() {
     queryKey: ["user"],
     queryFn: async () => {
       const res = await axios.get("/auth/me");
-      return res.data as { user?: TypeUser; connections?: TypeConnection[] };
+      return res.data as {
+        user?: TypeUser;
+        connections?: TypeConnection[];
+        twoFactor?: boolean;
+      };
     },
     retry: false,
   });
