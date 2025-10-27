@@ -201,3 +201,14 @@ export function getPortfolioModule(portfolio: string, moduleId: number) {
     },
   });
 }
+
+export function useTwoFactorSetup(enabled: boolean) {
+  return useQuery({
+    queryKey: ["me", "2fa", "setup"],
+    queryFn: async () => {
+      const res = await axios.post("/user/2fa/setup");
+      return res.data as { qr: string; secret: string };
+    },
+    enabled,
+  });
+}

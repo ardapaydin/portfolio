@@ -119,6 +119,7 @@ router.post(
       await db.insert(backupCodesTable).values({
         key: code,
         userId: user.id,
+        usedAt: null,
       });
 
     return res.status(200).json({

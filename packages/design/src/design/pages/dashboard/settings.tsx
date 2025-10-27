@@ -8,6 +8,7 @@ import { UploadProfilePicture } from "@/utils/api/attachments";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TypeUser } from "@/design/types/user";
 import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
+import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 
 export default function Settings() {
     const user = useUser();
@@ -153,6 +154,22 @@ export default function Settings() {
 
                     </div>
 
+                </div>
+
+                <div className="flex mt-8 gap-4 items-center">
+                    <h1 className="text-xl">
+                        Two Factor Authentication
+                    </h1>
+
+                    <div className="flex flex-col gap-1">
+                        <SetupTwoFactor>
+                            <button
+                                className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"
+                            >
+                                Enable
+                            </button>
+                        </SetupTwoFactor>
+                    </div>
                 </div>
 
                 <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-between">
