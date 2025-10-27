@@ -9,3 +9,5 @@ export * from "./schemas/event";
 export * from "./schemas/averageTime";
 export * from "./schemas/connections";
 export * from "./schemas/modules";
+export * from "./schemas/2fa";
+export * from "./schemas/backupCodes";

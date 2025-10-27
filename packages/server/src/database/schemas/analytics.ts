@@ -2,7 +2,6 @@ import {
   datetime,
   int,
   mysqlTable,
-  timestamp,
   unique,
   varchar,
 } from "drizzle-orm/mysql-core";

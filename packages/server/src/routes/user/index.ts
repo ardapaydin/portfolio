@@ -117,4 +117,7 @@ router.delete(
   }
 );
 
+import twoFactorAuthentication from "./2fa";
+router.use("/2fa", twoFactorAuthentication);
+
 export default router;
