@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LoginUser } from "../../../utils/api/auth";
 import { setToken } from "../../utils/user";
 import ForgotPassword from "@/design/components/dashboard/dialogs/ForgotPassword";
+import { useTwoFactorStore } from "@/store/twoFactorStore";
 
 const validate = (form: { [key: string]: string }) => {
     const errors: { [key: string]: string[] } = {};
@@ -24,13 +25,25 @@ export default function Login() {
     });
     const { registered, redirect, verified, reset } = Object.fromEntries(new URLSearchParams(window.location.search))
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+    const useStoreTwoFa = useTwoFactorStore()
     const request = async () => {
         const response = await LoginUser(form.email, form.password)
         if (response?.data?.success) {
             setToken(response.data.data.token);
             window.location.href = redirect || "/";
         }
-        else setErrors(response?.data.errors || {})
+        else {
+            if (response.data.message == "2FA") {
+                useStoreTwoFa.setData({
+                    type: "login",
+                    fields: { ...form, redirect },
+                    options: ["app", "backup"]
+                })
+                useStoreTwoFa.setIsOpen(true);
+                return;
+            }
+            setErrors(response?.data.errors || {})
+        }
     }
 
     useEffect(() => {

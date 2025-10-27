@@ -177,7 +177,7 @@ export default function Settings() {
                                 setData({
                                     type: "disableTwoFactor",
                                     fields: {},
-                                    options: ["app", "backup"]
+                                    options: ["app"]
                                 })
                                 setIsOpen(true)
                             }}

@@ -4,12 +4,13 @@ import { loginSchema } from "../../helpers/validations/auth/login";
 import { registerSchema } from "../../helpers/validations/auth/register";
 import { db } from "../../database/db";
 import {
+  backupCodesTable,
   connectionsTable,
   emailVerificationTable,
   twoFactorAuthenticationTable,
   usersTable,
 } from "../../database";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   ComparePassword,
   EncryptPassword,
@@ -18,6 +19,7 @@ import { signToken } from "../../helpers/jwt";
 import { createToken } from "../../helpers/email/verification";
 import { requireNoAuth } from "../../helpers/middlewares/auth";
 import resetpasswordrouter from "./resetpassword";
+import speakeasy from "speakeasy";
 const router = express.Router();
 
 router.get("/me", async (req, res) => {
@@ -64,7 +66,7 @@ router.post(
   requireNoAuth,
   (req, res, next) => BodyValidationMiddleware(req, res, next, loginSchema),
   async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, twoFactorType, code: twoFactorCode } = req.body;
 
     const [user] = await db
       .select()
@@ -96,6 +98,65 @@ router.post(
           email: ["Please verify your email before logging in."],
         },
       });
+
+    const [findTwoFactor] = await db
+      .select()
+      .from(twoFactorAuthenticationTable)
+      .where(
+        and(
+          eq(twoFactorAuthenticationTable.userId, user.id),
+          eq(twoFactorAuthenticationTable.verified, true)
+        )
+      );
+
+    if (findTwoFactor) {
+      if (!twoFactorType || !twoFactorCode)
+        return res.status(400).json({ success: false, message: "2FA" });
+
+      if (twoFactorType == "backup") {
+        const [findCode] = await db
+          .select()
+          .from(backupCodesTable)
+          .where(
+            and(
+              eq(backupCodesTable.userId, user.id),
+              eq(backupCodesTable.key, twoFactorCode),
+              eq(backupCodesTable.used, false)
+            )
+          );
+
+        if (!findCode)
+          return res.status(400).json({
+            success: false,
+            message: "Invalid backup code",
+            errors: {
+              code: ["Backup code is invalid or already used"],
+            },
+          });
+
+        await db
+          .update(backupCodesTable)
+          .set({ used: true })
+          .where(eq(backupCodesTable.id, user.id));
+      } else if (twoFactorType == "app") {
+        const verify = speakeasy.totp.verify({
+          secret: findTwoFactor.secret,
+          encoding: "base32",
+          token: twoFactorCode,
+          window: 1,
+        });
+
+        if (!verify)
+          return res.status(400).json({
+            success: false,
+            message: "Invalid code",
+            errors: {
+              code: ["Invalid code provided."],
+            },
+          });
+      }
+    }
+
     res.json({
       success: true,
       data: { id: user.id, token: signToken(user.id) },

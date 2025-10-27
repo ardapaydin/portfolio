@@ -14,10 +14,17 @@ export function CreateUser(
   });
 }
 
-export function LoginUser(email: string, password: string) {
+export function LoginUser(
+  email: string,
+  password: string,
+  twoFactorType?: string,
+  code?: string
+) {
   return axios.post("/auth/login", {
     email,
     password,
+    twoFactorType: twoFactorType ? twoFactorType : undefined,
+    code: code ? code : undefined,
   });
 }
 
