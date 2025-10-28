@@ -9,6 +9,8 @@ import { useState } from "react"
 import { useBackupCodesStore } from "./BackupCodes"
 import { DeleteUser } from "@/utils/api/user"
 import logout from "@/utils/auth/logout"
+import { deletePortfolio } from "@/utils/api/portfolio"
+import type { TypePortfolio } from "@/design/types/portfolio"
 
 export default function EnterTwoFACode({ children }: {
     children: React.ReactNode
@@ -60,7 +62,16 @@ export default function EnterTwoFACode({ children }: {
                 logout();
                 setIsOpen(false);
                 window.location.href = "/"
-            } setErrors(r?.data?.errors || { code: ["Internal server error"] })
+            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
+        }
+
+        if (data.type == "deletePortfolio") {
+            const r = await deletePortfolio(data.fields!.id, code, type)
+            if (r.status == 200) {
+                const filter = qc.getQueryData(["portfolios"]) as TypePortfolio[];
+                setIsOpen(false);
+                qc.setQueryData(["portfolios"], filter.filter(x => x.id != data.fields!.id))
+            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
         }
     }
 

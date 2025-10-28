@@ -35,6 +35,15 @@ export function publish(id: string) {
   return axios.post("/portfolios/" + id + "/publish");
 }
 
-export function deletePortfolio(id: string) {
-  return axios.delete("/portfolios/" + id);
+export function deletePortfolio(
+  id: string,
+  code?: string,
+  twoFactorType?: string
+) {
+  return axios.delete("/portfolios/" + id, {
+    data: {
+      code: code ? code : undefined,
+      twoFactorType: twoFactorType ? twoFactorType : undefined,
+    },
+  });
 }

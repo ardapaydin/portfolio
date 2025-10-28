@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import type { TypePortfolio } from "@/design/types/portfolio";
+import { useTwoFactorStore } from "@/store/twoFactorStore";
 import { deletePortfolio } from "@/utils/api/portfolio";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react"
@@ -14,10 +15,23 @@ export default function DeletePortfolio({
     const [isOpen, setIsOpen] = useState(false);
     const [confirm, setConfirm] = useState("")
     const [error, setError] = useState(false)
+    const useTFactorStore = useTwoFactorStore()
     const qc = useQueryClient();
     const deleteportfolio = async () => {
         const r = await deletePortfolio(id)
-        if (r.status != 200) return setError(true);
+        if (r.status != 200) {
+            if (r.data.message == "2FA") {
+                useTFactorStore.setData({
+                    type: "deletePortfolio",
+                    fields: { id },
+                    options: ["app", "backup"]
+                })
+                setIsOpen(false);
+                useTFactorStore.setIsOpen(true);
+                return
+            }
+            return setError(true);
+        }
         setIsOpen(false);
         setConfirm("")
         const filter = qc.getQueryData(["portfolios"]) as TypePortfolio[];

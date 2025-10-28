@@ -124,6 +124,7 @@ router.post("/:id/save", requireAuth, async (req, res) => {
 
 router.delete("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
+  const { twoFactorType, code: twoFactorCode } = req.body || {};
   const [portfolio] = await db
     .select()
     .from(portfolioTable)
@@ -137,6 +138,13 @@ router.delete("/:id", requireAuth, async (req, res) => {
       message: "Portfolio not found or you do not have access to it",
     });
 
+  const twoFaVerify = await validateTwoFA(
+    req.user!.id,
+    twoFactorType,
+    twoFactorCode
+  );
+  if (!twoFaVerify.success) return res.status(400).json(twoFaVerify);
+
   if (portfolio.isPublished)
     deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
   await db.delete(portfolioTable).where(eq(portfolioTable.id, id));
@@ -148,6 +156,7 @@ import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
 import StatsRouter from "./stats";
 import ModuleRouter from "./modules";
+import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
 router.use("/", PublishRouter);
