@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useTwoFactorStore } from "@/store/twoFactorStore";
 import { DeleteUser } from "@/utils/api/user";
 import logout from "@/utils/auth/logout";
 import { useState } from "react";
@@ -7,12 +8,19 @@ export default function DeleteAccount({ children }: { children: React.ReactNode 
     const [isOpen, setIsOpen] = useState(false);
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<Record<string, string[]>>({})
-
+    const twoFaStore = useTwoFactorStore()
     const deleteacc = async () => {
         const req = await DeleteUser(password);
         if (req.status == 200) {
             logout();
             window.location.href = "/"
+        } else if (req?.data?.message == "2FA") {
+            twoFaStore.setData({
+                type: "deleteAccount",
+                fields: { password },
+                options: ["app", "backup"]
+            })
+            twoFaStore.setIsOpen(true)
         } else setErrors(req?.data?.errors || { password: ["Internal server error"] });
     }
 

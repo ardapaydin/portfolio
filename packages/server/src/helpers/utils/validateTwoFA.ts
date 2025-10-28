@@ -19,6 +19,8 @@ export async function validateTwoFA(
     );
 
   if (findTwoFactor) {
+    if (!["backup", "app"].includes(twoFactorType) || !twoFactorCode)
+      return { success: false, message: "2FA" };
     if (twoFactorType == "backup") {
       if (!options.includes("backup"))
         return {
@@ -62,7 +64,7 @@ export async function validateTwoFA(
           },
         };
     }
-
-    return { success: true };
   }
+
+  return { success: true };
 }

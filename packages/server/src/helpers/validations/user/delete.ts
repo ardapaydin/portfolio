@@ -9,4 +9,6 @@ export const deleteUserSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/,
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
+  code: z.string().min(6).max(14).optional(),
+  twoFactorType: z.enum(["app", "backup"]).optional(),
 });

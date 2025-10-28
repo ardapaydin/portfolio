@@ -154,12 +154,7 @@ router.post(
 
     const twoFa = await validateTwoFA(req.user!.id, "app", code);
 
-    if (!twoFa?.success)
-      return res.status(400).json({
-        success: false,
-        message: "Invalid code",
-        errors: twoFa?.errors,
-      });
+    if (!twoFa?.success) return res.status(400).json(twoFa);
 
     await db
       .delete(twoFactorAuthenticationTable)
@@ -200,12 +195,7 @@ router.post(
       ["app"]
     );
 
-    if (!verify?.success)
-      return res.status(400).json({
-        success: false,
-        message: "Bad Request",
-        errors: verify?.errors,
-      });
+    if (!verify?.success) return res.status(400).json(verify);
 
     await db
       .delete(backupCodesTable)

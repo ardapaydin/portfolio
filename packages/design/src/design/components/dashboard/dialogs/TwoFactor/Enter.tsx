@@ -7,6 +7,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Lock } from "lucide-react"
 import { useState } from "react"
 import { useBackupCodesStore } from "./BackupCodes"
+import { DeleteUser } from "@/utils/api/user"
+import logout from "@/utils/auth/logout"
 
 export default function EnterTwoFACode({ children }: {
     children: React.ReactNode
@@ -50,6 +52,15 @@ export default function EnterTwoFACode({ children }: {
                 useBcodesStore.setIsOpen(true)
                 setIsOpen(false);
             } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
+        }
+
+        if (data.type == "deleteAccount") {
+            const r = await DeleteUser(data.fields!.password, type, code);
+            if (r.status == 200) {
+                logout();
+                setIsOpen(false);
+                window.location.href = "/"
+            } setErrors(r?.data?.errors || { code: ["Internal server error"] })
         }
     }
 

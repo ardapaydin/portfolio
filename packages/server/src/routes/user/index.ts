@@ -16,6 +16,8 @@ import {
 } from "../../helpers/encryptions/password";
 import deleteDomain from "../../helpers/cloudflare/pages/deleteDomain";
 import { deleteUserSchema } from "../../helpers/validations/user/delete";
+import { validateTwoFA } from "../../helpers/utils/validateTwoFA";
+
 const router = express.Router();
 
 router.put(
@@ -98,7 +100,7 @@ router.delete(
   (req, res, next) =>
     BodyValidationMiddleware(req, res, next, deleteUserSchema),
   async (req, res) => {
-    const { password } = req.body;
+    const { password, code: twoFactorCode, twoFactorType } = req.body;
     const [user] = await db
       .select()
       .from(usersTable)
@@ -111,6 +113,12 @@ router.delete(
         errors: { password: ["Password is incorrect"] },
       });
 
+    const twofa = await validateTwoFA(
+      req.user!.id,
+      twoFactorType,
+      twoFactorCode
+    );
+    if (!twofa?.success) return res.status(400).json(twofa);
     await db.delete(usersTable).where(eq(usersTable.id, req.user!.id));
 
     return res.status(200).json({ success: true });

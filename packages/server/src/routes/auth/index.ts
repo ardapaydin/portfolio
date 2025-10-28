@@ -100,12 +100,7 @@ router.post(
       });
 
     const twoFa = await validateTwoFA(user.id, twoFactorType, twoFactorCode);
-    if (!twoFa?.success)
-      return res.status(400).json({
-        success: false,
-        message: "Bad Request",
-        errprs: twoFa?.errors,
-      });
+    if (!twoFa?.success) return res.status(400).json(twoFa);
 
     res.json({
       success: true,
