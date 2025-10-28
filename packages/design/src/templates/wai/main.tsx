@@ -8,6 +8,7 @@ import { HeadProvider, Title, Link } from 'react-head';
 import CustomLink from "../global/Link";
 import WaiGitHubRepos from "./modules/GithubRepos";
 import GitHubReadme from "../global/Modules/GitHubReadMe";
+import WaiGitLabProjects from "./modules/GitlabProjects";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -114,6 +115,7 @@ export default function TemplateWai({ d }: { d?: any }) {
                     </Section>
 
                     {data?.modules?.find((x: number) => x == 1) && <WaiGitHubRepos data={data} />}
+                    {data?.modules?.find((x: number) => x == 3) && <WaiGitLabProjects data={data} />}
                 </div>
             </div>
         </div>
