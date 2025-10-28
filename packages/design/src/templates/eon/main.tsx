@@ -8,6 +8,7 @@ import { HeadProvider, Title, Link } from 'react-head';
 import CustomLink from "../global/Link";
 import "./index.css"
 import EonGitHubRepos from "./modules/GithubRepos";
+import EonGitLabProjects from "./modules/GitlabProjects";
 export default function TemplateEon({ d }: { d?: any }) {
     const queryState = useQuery({
         queryKey: ["data"],
@@ -177,6 +178,7 @@ export default function TemplateEon({ d }: { d?: any }) {
                 </div>
 
                 {data.modules?.find((x: number) => x == 1) && <EonGitHubRepos data={data} />}
+                {data.modules?.find((x: number) => x == 3) && <EonGitLabProjects data={data} />}
 
 
                 <div style={{ backgroundColor: data.secondaryBackgroundColor }}

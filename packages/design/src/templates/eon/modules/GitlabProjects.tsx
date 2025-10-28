@@ -1,31 +1,32 @@
 import CustomLink from "@/templates/global/Link";
-import { getGithubRepos } from "@/utils/api/github";
+import { getGitlabProjects } from "@/utils/api/gitlab";
 import { getPortfolioModule } from "@/utils/api/queries";
 import { Star } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom"
 
-export default function EonGitHubRepos({ data }: { data: Record<string, any> }) {
+export default function EonGitLabProjects({ data }: { data: Record<string, any> }) {
     const subdomain = process.env.NODE_ENV == "production" ? window.location.hostname.split('.')[0] : window.location.pathname.split("/view/")?.[1]
     const { id } = useParams();
 
-    const module = getPortfolioModule(id || subdomain, 1);
-    const d = getGithubRepos(module.data?.slug, module.data?.config.sort, module.data?.config.max);
+    const module = getPortfolioModule(id || subdomain, 3);
+    const d = getGitlabProjects(module?.data?.slug, module.data?.config?.sort, module.data?.config?.max)
     return (
-        <div id="github-repos" className="flex flex-col my-8 px-2 md:px-0 max-w-7xl mx-auto w-full">
+        <div id="gitlab-projects" className="flex flex-col my-8 px-2 md:px-0 max-w-7xl mx-auto w-full">
             <div className="uppercase text-sm tracking-widest text-white/50 mb-4" style={{
                 letterSpacing: "0.3rem"
             }}>
-                GitHub
+                GitLab
             </div>
+
 
             <div className="relative break-words mb-2">
                 <span className="relative break-words text-5xl font-bold">
-                    GitHub Repositories
+                    GitLab Projects
                     <span className="absolute left-0 bottom-0 w-[calc(100%+4rem)] h-7 -z-1" style={{ backgroundColor: data.underlineColor }} />
                 </span>
             </div>
-            <ul className="w-full flex flex-col gap-8">
 
+            <ul className="w-full flex flex-col gap-8">
                 {d.isLoading && (
                     <>
                         {Array.from({ length: 5 })
@@ -56,7 +57,7 @@ export default function EonGitHubRepos({ data }: { data: Record<string, any> }) 
                                             <CustomLink
                                                 linkKey="module-github"
                                                 name={x.name}
-                                                href={x.html_url}
+                                                href={x.web_url}
                                                 className="group flex items-center mb-2 gap-3 hover:opacity-80 transition-opacity"
                                             >
                                                 <h3 className="text-2xl font-bold group-hover:underline">
@@ -66,7 +67,7 @@ export default function EonGitHubRepos({ data }: { data: Record<string, any> }) 
                                                 <div className="flex items-center gap-1 text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded">
                                                     <Star size={16} />
                                                     <span className="text-sm font-medium">
-                                                        {x.stargazers_count.toLocaleString()}
+                                                        {x.star_count.toLocaleString()}
                                                     </span>
                                                 </div>
                                             </CustomLink>
@@ -84,6 +85,5 @@ export default function EonGitHubRepos({ data }: { data: Record<string, any> }) 
             </ul>
 
         </div>
-
     )
 }
