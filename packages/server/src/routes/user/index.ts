@@ -126,6 +126,8 @@ router.delete(
 );
 
 import twoFactorAuthentication from "./2fa";
+import passkey from "./passkey";
 router.use("/2fa", twoFactorAuthentication);
+router.use("/passkey", passkey);
 
 export default router;

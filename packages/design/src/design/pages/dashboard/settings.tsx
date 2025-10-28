@@ -11,7 +11,8 @@ import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
 import BackupCodes from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";
-
+import { RegisterRequest, RegisterResponse } from "@/utils/api/passkey";
+import { startRegistration } from "@simplewebauthn/browser"
 export default function Settings() {
     const user = useUser();
     const qc = useQueryClient();
@@ -67,6 +68,16 @@ export default function Settings() {
             })
         }
     }
+
+    const passkey = async () => {
+        const { data: options } = await RegisterRequest();
+
+        const credential = await startRegistration(options);
+        if (!credential) return;
+
+
+        await RegisterResponse(credential)
+    };
 
     return (
         <Layout>
@@ -204,6 +215,19 @@ export default function Settings() {
                             </>
                         )}
                     </div>
+                </div>
+
+                <div className="flex mt-8 gap-4 items-center">
+                    <h1 className="text-xl">
+                        Passkey
+                    </h1>
+
+                    <button
+                        onClick={() => passkey()}
+                        className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"
+                    >
+                        Add
+                    </button>
                 </div>
 
                 <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-between">
