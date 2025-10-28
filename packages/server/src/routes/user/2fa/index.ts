@@ -12,6 +12,8 @@ import { toDataURL } from "qrcode";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import { twoFactorVerifySchema } from "../../../helpers/validations/user/2fa/verify";
 import createBackupCodes from "../../../helpers/utils/createBackupCodes";
+import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
+import { newBackupCodesSchema } from "../../../helpers/validations/user/2fa/backupCodes";
 const router = express.Router();
 
 router.post("/setup", requireAuth, async (req, res) => {
@@ -150,21 +152,14 @@ router.post(
 
     const { code } = req.body;
 
-    const verify = speakeasy.totp.verify({
-      secret: find.secret,
-      encoding: "base32",
-      token: code,
-      window: 1,
-    });
+    const twoFa = await validateTwoFA(req.user!.id, "app", code);
 
-    if (!verify)
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Invalid code",
-          errors: { code: ["Invalid code"] },
-        });
+    if (!twoFa?.success)
+      return res.status(400).json({
+        success: false,
+        message: "Invalid code",
+        errors: twoFa?.errors,
+      });
 
     await db
       .delete(twoFactorAuthenticationTable)
@@ -173,6 +168,59 @@ router.post(
       .delete(backupCodesTable)
       .where(eq(backupCodesTable.userId, req.user!.id));
     return res.status(200).json({ success: true });
+  }
+);
+
+router.post(
+  "/backup-codes",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(req, res, next, newBackupCodesSchema),
+  async (req, res) => {
+    const [find] = await db
+      .select()
+      .from(twoFactorAuthenticationTable)
+      .where(
+        and(
+          eq(twoFactorAuthenticationTable.userId, req.user!.id),
+          eq(twoFactorAuthenticationTable.verified, true)
+        )
+      );
+
+    if (!find)
+      return res.status(400).json({
+        success: false,
+        message: "Two factor authentication is not enabled",
+      });
+    const { code: twoFactorCode, twoFactorType } = req.body;
+    const verify = await validateTwoFA(
+      req.user!.id,
+      twoFactorType,
+      twoFactorCode,
+      ["app"]
+    );
+
+    if (!verify?.success)
+      return res.status(400).json({
+        success: false,
+        message: "Bad Request",
+        errors: verify?.errors,
+      });
+
+    await db
+      .delete(backupCodesTable)
+      .where(eq(backupCodesTable.userId, req.user!.id));
+
+    const generate = createBackupCodes();
+
+    await db.insert(backupCodesTable).values(
+      generate.map((key) => ({
+        userId: req.user!.id,
+        key,
+      }))
+    );
+
+    return res.status(200).json({ success: true, codes: generate });
   }
 );
 

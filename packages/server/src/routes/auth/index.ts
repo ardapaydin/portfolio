@@ -19,7 +19,7 @@ import { signToken } from "../../helpers/jwt";
 import { createToken } from "../../helpers/email/verification";
 import { requireNoAuth } from "../../helpers/middlewares/auth";
 import resetpasswordrouter from "./resetpassword";
-import speakeasy from "speakeasy";
+import { validateTwoFA } from "../../helpers/utils/validateTwoFA";
 const router = express.Router();
 
 router.get("/me", async (req, res) => {
@@ -99,63 +99,13 @@ router.post(
         },
       });
 
-    const [findTwoFactor] = await db
-      .select()
-      .from(twoFactorAuthenticationTable)
-      .where(
-        and(
-          eq(twoFactorAuthenticationTable.userId, user.id),
-          eq(twoFactorAuthenticationTable.verified, true)
-        )
-      );
-
-    if (findTwoFactor) {
-      if (!twoFactorType || !twoFactorCode)
-        return res.status(400).json({ success: false, message: "2FA" });
-
-      if (twoFactorType == "backup") {
-        const [findCode] = await db
-          .select()
-          .from(backupCodesTable)
-          .where(
-            and(
-              eq(backupCodesTable.userId, user.id),
-              eq(backupCodesTable.key, twoFactorCode),
-              eq(backupCodesTable.used, false)
-            )
-          );
-
-        if (!findCode)
-          return res.status(400).json({
-            success: false,
-            message: "Invalid backup code",
-            errors: {
-              code: ["Backup code is invalid or already used"],
-            },
-          });
-
-        await db
-          .update(backupCodesTable)
-          .set({ used: true })
-          .where(eq(backupCodesTable.id, user.id));
-      } else if (twoFactorType == "app") {
-        const verify = speakeasy.totp.verify({
-          secret: findTwoFactor.secret,
-          encoding: "base32",
-          token: twoFactorCode,
-          window: 1,
-        });
-
-        if (!verify)
-          return res.status(400).json({
-            success: false,
-            message: "Invalid code",
-            errors: {
-              code: ["Invalid code provided."],
-            },
-          });
-      }
-    }
+    const twoFa = await validateTwoFA(user.id, twoFactorType, twoFactorCode);
+    if (!twoFa?.success)
+      return res.status(400).json({
+        success: false,
+        message: "Bad Request",
+        errprs: twoFa?.errors,
+      });
 
     res.json({
       success: true,
