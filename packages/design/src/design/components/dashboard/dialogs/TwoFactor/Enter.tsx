@@ -1,11 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
 import { setToken } from "@/design/utils/user"
 import { useTwoFactorStore } from "@/store/twoFactorStore"
-import { Disable } from "@/utils/api/2fa"
+import { BackupCodes, Disable } from "@/utils/api/2fa"
 import { LoginUser } from "@/utils/api/auth"
 import { useQueryClient } from "@tanstack/react-query"
 import { Lock } from "lucide-react"
 import { useState } from "react"
+import { useBackupCodesStore } from "./BackupCodes"
 
 export default function EnterTwoFACode({ children }: {
     children: React.ReactNode
@@ -20,7 +21,7 @@ export default function EnterTwoFACode({ children }: {
         if (type === "backup") return code.trim().length === 14;
         return false;
     }
-
+    const useBcodesStore = useBackupCodesStore()
     const send = async () => {
         if (data.type == "disableTwoFactor") {
             const r = await Disable(code);
@@ -39,6 +40,15 @@ export default function EnterTwoFACode({ children }: {
                 setIsOpen(false);
                 setToken(r.data.data.token)
                 window.location.href = data.fields!.redirect || "/";
+            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
+        }
+
+        if (data.type == "requestBackupCodes") {
+            const r = await BackupCodes(code, type);
+            if (r.status == 200) {
+                useBcodesStore.setBackupCodes(r.data.codes);
+                useBcodesStore.setIsOpen(true)
+                setIsOpen(false);
             } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
         }
     }

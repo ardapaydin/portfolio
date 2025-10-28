@@ -10,6 +10,7 @@ import type { TypeUser } from "@/design/types/user";
 import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
+import BackupCodes from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";
 
 export default function Settings() {
     const user = useUser();
@@ -162,7 +163,7 @@ export default function Settings() {
                         Two Factor Authentication
                     </h1>
 
-                    <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
                         <SetupTwoFactor>
                             <button
                                 hidden={user.data?.twoFactor}
@@ -184,6 +185,24 @@ export default function Settings() {
                             hidden={!user.data?.twoFactor} className="border-b-2 rounded text-sm border-red-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50">
                             Disable
                         </button>
+
+                        {user.data?.twoFactor && (
+                            <>
+                                <BackupCodes />
+                                <button
+                                    onClick={() => {
+                                        setData({
+                                            type: "requestBackupCodes",
+                                            fields: {},
+                                            options: ["app"]
+                                        })
+                                        setIsOpen(true)
+                                    }}
+                                    className="border-b-2 rounded text-sm border-blue-500 p-2 px-4 py-1 cursor-pointer hover:bg-blue-500 transition-all bg-blue-500/50">
+                                    New Backup Codes
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
 
