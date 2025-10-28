@@ -16,6 +16,19 @@ router.get("/:service", requireAuth, async (req, res) => {
         "&redirect_uri=" +
         process.env.GITHUB_REDIRECT_URI,
     });
+  } else if (service.toLowerCase() == "gitlab") {
+    return res.json({
+      success: true,
+      url:
+        "https://gitlab.com/oauth/authorize?client_id=" +
+        process.env.GITLAB_CLIENT_ID +
+        "&redirect_uri=" +
+        process.env.GITLAB_REDIRECT_URI +
+        "&response_type=" +
+        "code" +
+        "&scope=" +
+        "read_user",
+    });
   }
 
   return res
@@ -43,12 +56,7 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
       }),
       method: "POST",
     });
-    console.log({
-      client_id: process.env.GITHUB_CLIENT_ID,
-      client_secret: process.env.GITHUB_CLIENT_SECRET,
-      code,
-      redirect_uri: process.env.GITHUB_REDIRECT_URI,
-    });
+
     const d = await r.json();
     if (!r.ok)
       return res
@@ -62,7 +70,6 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
     });
 
     const userjson = await user.json();
-    console.log(userjson);
     if (!user.ok)
       return res
         .status(500)
@@ -97,6 +104,67 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
         accessToken: d.access_token,
         userId: req.user!.id,
         service: "github",
+      });
+  } else if (service == "gitlab") {
+    const r = await fetch("https://gitlab.com/oauth/token", {
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: process.env.GITLAB_CLIENT_ID!,
+        client_secret: process.env.GITLAB_CLIENT_SECRET!,
+        code: code as string,
+        grant_type: "authorization_code",
+        redirect_uri: process.env.GITLAB_REDIRECT_URI!,
+      }),
+      method: "POST",
+    });
+
+    const d = await r.json();
+    if (!r.ok)
+      return res
+        .status(500)
+        .json({ success: false, message: "An error occurred." });
+
+    const user = await fetch("https://gitlab.com/api/v4/user", {
+      headers: {
+        Authorization: "Bearer " + d.access_token,
+      },
+    });
+
+    const userjson = await user.json();
+    if (!user.ok)
+      return res
+        .status(500)
+        .json({ success: false, message: "An error occurred." });
+
+    const [f] = await db
+      .select()
+      .from(connectionsTable)
+      .where(
+        and(
+          eq(connectionsTable.userId, req.user!.id),
+          eq(connectionsTable.service, service)
+        )
+      );
+
+    if (f)
+      await db.update(connectionsTable).set({
+        serviceUser: {
+          id: userjson.id,
+          slug: userjson.username,
+          name: userjson.name,
+        },
+        accessToken: d.access_token,
+      });
+    else
+      await db.insert(connectionsTable).values({
+        serviceUser: {
+          id: userjson.id,
+          slug: userjson.username,
+          name: userjson.name,
+        },
+        accessToken: d.access_token,
+        userId: req.user!.id,
+        service: "gitlab",
       });
   }
 

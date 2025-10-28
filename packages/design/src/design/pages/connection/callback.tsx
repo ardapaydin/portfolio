@@ -5,11 +5,11 @@ import { useParams } from "react-router-dom"
 export default function Callback() {
     const { service } = useParams();
     const code = new URLSearchParams(window.location.search).get("code");
-    const r = ServiceCallback(service ?? "", code ?? "", service ? ["github"].includes(service) : false)
+    const r = ServiceCallback(service ?? "", code ?? "", service ? ["github", "gitlab"].includes(service) : false)
     if (r.isLoading) return <Loading />
     return (
         <div className="w-screen h-screen flex items-center justify-center bg-[#242424]/50 backdrop-blur-sm">
-            {((!service || !["github"].includes(service)) || !r.data?.success) && (
+            {((!service || !["github", "gitlab"].includes(service)) || !r.data?.success) && (
                 <div className="flex flex-col gap-4 text-center">
                     <div className="text-red-500 bg-[#313131] flex-col flex border border-red-500/50 font-bold px-8 py-5 rounded-lg shadow-lg">
                         {(!service || !["github"].includes(service))
