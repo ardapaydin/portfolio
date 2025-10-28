@@ -55,7 +55,7 @@ export default function EonGitLabProjects({ data }: { data: Record<string, any> 
                                     <li key={idx} style={{ backgroundColor: data.boxColor }} className={`md:w-1/2 rounded-lg shadow-lg p-8 flex flex-col gap-6`}>
                                         <div className="flex flex-col items-center md:items-start w-full">
                                             <CustomLink
-                                                linkKey="module-github"
+                                                linkKey="module-gitlab"
                                                 name={x.name}
                                                 href={x.web_url}
                                                 className="group flex items-center mb-2 gap-3 hover:opacity-80 transition-opacity"

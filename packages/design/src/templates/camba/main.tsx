@@ -6,6 +6,7 @@ import MarkdownComponents from "../global/Markdown";
 import Attachments from "@/design/components/dashboard/dialogs/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
 import CambaGitHubRepos from "./modules/GithubRepos";
+import CambaGitLabProjects from "./modules/GitlabProjects";
 
 export default function TemplateCamba({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -215,6 +216,7 @@ export default function TemplateCamba({ d }: { d?: any }) {
                         </div>
                     </div>
                     {data?.modules?.find((x: number) => x == 1) && <CambaGitHubRepos data={data} />}
+                    {data?.modules?.find((x: number) => x == 3) && <CambaGitLabProjects data={data} />}
 
 
                 </div>
