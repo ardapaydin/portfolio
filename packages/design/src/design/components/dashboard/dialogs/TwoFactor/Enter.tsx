@@ -5,7 +5,6 @@ import { useState } from "react"
 import { FinishMFA } from "@/utils/api/mfa"
 import axios from "axios"
 import { startAuthentication } from "@simplewebauthn/browser"
-import { useUser } from "@/utils/api/queries"
 
 export default function EnterTwoFACode({ children }: {
     children: React.ReactNode
