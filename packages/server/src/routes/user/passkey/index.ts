@@ -87,7 +87,7 @@ router.post(
       new Uint8Array(Buffer.from(credential.id)).buffer
     );
     const credPublicKey = bufferToBase64URLString(
-      new Uint8Array(Buffer.from(credential.id)).buffer
+      new Uint8Array(Buffer.from(credential.publicKey)).buffer
     );
     const [insert] = await db
       .insert(devicesTable)

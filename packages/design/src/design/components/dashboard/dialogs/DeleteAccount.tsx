@@ -18,7 +18,13 @@ export default function DeleteAccount({ children }: { children: React.ReactNode 
             twoFaStore.setData({
                 type: "deleteAccount",
                 fields: { password },
-                options: ["app", "backup"]
+                options: ["app", "backup"],
+                mfa: req.data.mfa,
+                function: async () => {
+                    await deleteacc()
+                    logout();
+                    window.location.href = "/"
+                }
             })
             twoFaStore.setIsOpen(true)
         } else setErrors(req?.data?.errors || { password: ["Internal server error"] });

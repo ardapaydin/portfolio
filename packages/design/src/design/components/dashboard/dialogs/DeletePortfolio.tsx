@@ -24,9 +24,12 @@ export default function DeletePortfolio({
                 useTFactorStore.setData({
                     type: "deletePortfolio",
                     fields: { id },
-                    options: ["app", "backup"]
+                    options: ["app", "backup"],
+                    mfa: r.data.mfa,
+                    function: deleteportfolio
                 })
-                setIsOpen(false);
+                useTFactorStore.
+                    setIsOpen(false);
                 useTFactorStore.setIsOpen(true);
                 return
             }

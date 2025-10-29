@@ -126,7 +126,6 @@ router.post("/:id/save", requireAuth, async (req, res) => {
 
 router.delete("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
-  const { twoFactorType, code: twoFactorCode } = req.body || {};
   const [portfolio] = await db
     .select()
     .from(portfolioTable)

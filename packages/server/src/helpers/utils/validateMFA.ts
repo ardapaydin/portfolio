@@ -20,49 +20,33 @@ export async function validateMFA(
     .select()
     .from(devicesTable)
     .where(eq(devicesTable.userId, req.user!.id));
-  const mfa = req.headers["X-MFA-Authorization"];
+  const mfa = req.headers["x-mfa-authorization"];
   if (find || devices.length) {
+    const ticket = sign(
+      { userId: req.user!.id, type: "ticket", options },
+      process.env.MFA_JWT_SECRET as string
+    );
+
     if (!mfa) {
-      const ticket = sign(
-        { userId: req.user!.id, type: "ticket" },
-        process.env.MFA_JWT_SECRET as string
-      );
-      const mfaOptions = await Promise.all(
-        options.map(async (option) => {
-          let optionData;
-          if (option === "webauthn") {
-            optionData = await generateAuthenticationOptions({
-              allowCredentials: devices.map((device) => ({
-                id: device.credId,
-                type: "public-key",
-                transports: JSON.parse(device.transports as string),
-              })),
-              userVerification: "required",
-              rpID,
-            });
-          }
-
-          return {
-            type: option,
-            data: optionData,
-          };
-        })
-      );
-
       return {
         success: false,
         message: "2FA",
-        mfa: {
-          ticket,
-          options: mfaOptions,
-        },
+        mfa: { ticket, options: await createOptions(options, devices) },
       };
     }
-
-    const verifytoken = (await verify(
-      mfa,
-      process.env.MFA_JWT_SECRET as string
-    )) as JwtPayload;
+    let verifytoken;
+    try {
+      verifytoken = (await verify(
+        mfa,
+        process.env.MFA_JWT_SECRET as string
+      )) as JwtPayload;
+    } catch {
+      return {
+        success: false,
+        message: "2FA",
+        mfa: { ticket, options: await createOptions(options, devices) },
+      };
+    }
     if (!verifytoken.userId || verifytoken.userId != req.user!.id)
       return {
         success: false,
@@ -74,4 +58,31 @@ export async function validateMFA(
   }
 
   return { success: true };
+}
+
+async function createOptions(
+  options: string[],
+  devices: (typeof devicesTable.$inferSelect)[]
+) {
+  return await Promise.all(
+    options.map(async (option) => {
+      let optionData;
+      if (option === "webauthn") {
+        optionData = await generateAuthenticationOptions({
+          allowCredentials: devices.map((device) => ({
+            id: atob(device.credId),
+            type: "public-key",
+            transports: JSON.parse(device.transports as string),
+          })),
+          userVerification: "preferred",
+          rpID,
+        });
+      }
+
+      return {
+        type: option,
+        data: optionData,
+      };
+    })
+  );
 }

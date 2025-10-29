@@ -17,16 +17,10 @@ export async function UpdateUser(
   });
 }
 
-export async function DeleteUser(
-  password: string,
-  twoFactorType?: string,
-  code?: string
-) {
+export async function DeleteUser(password: string) {
   return await axios.delete("/user", {
     data: {
       password,
-      twoFactorType: twoFactorType ? twoFactorType : undefined,
-      code: code ? code : undefined,
     },
   });
 }

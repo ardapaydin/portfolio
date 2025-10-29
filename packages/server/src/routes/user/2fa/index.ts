@@ -12,8 +12,7 @@ import { toDataURL } from "qrcode";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import { twoFactorVerifySchema } from "../../../helpers/validations/user/2fa/verify";
 import createBackupCodes from "../../../helpers/utils/createBackupCodes";
-import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
-import { newBackupCodesSchema } from "../../../helpers/validations/user/2fa/backupCodes";
+import { validateMFA } from "../../../helpers/utils/validateMFA";
 const router = express.Router();
 
 router.post("/setup", requireAuth, async (req, res) => {
@@ -131,87 +130,70 @@ router.post(
   }
 );
 
-router.post(
-  "/disable",
-  requireAuth,
-  (req, res, next) =>
-    BodyValidationMiddleware(req, res, next, twoFactorVerifySchema),
-  async (req, res) => {
-    const [find] = await db
-      .select()
-      .from(twoFactorAuthenticationTable)
-      .where(
-        and(
-          eq(twoFactorAuthenticationTable.userId, req.user!.id),
-          eq(twoFactorAuthenticationTable.verified, true)
-        )
-      );
-
-    if (!find)
-      return res.status(400).json({ success: false, message: "not enabled" });
-
-    const { code } = req.body;
-
-    const twoFa = await validateTwoFA(req.user!.id, "app", code);
-
-    if (!twoFa?.success) return res.status(400).json(twoFa);
-
-    await db
-      .delete(twoFactorAuthenticationTable)
-      .where(eq(twoFactorAuthenticationTable.id, find.id));
-    await db
-      .delete(backupCodesTable)
-      .where(eq(backupCodesTable.userId, req.user!.id));
-    return res.status(200).json({ success: true });
-  }
-);
-
-router.post(
-  "/backup-codes",
-  requireAuth,
-  (req, res, next) =>
-    BodyValidationMiddleware(req, res, next, newBackupCodesSchema),
-  async (req, res) => {
-    const [find] = await db
-      .select()
-      .from(twoFactorAuthenticationTable)
-      .where(
-        and(
-          eq(twoFactorAuthenticationTable.userId, req.user!.id),
-          eq(twoFactorAuthenticationTable.verified, true)
-        )
-      );
-
-    if (!find)
-      return res.status(400).json({
-        success: false,
-        message: "Two factor authentication is not enabled",
-      });
-    const { code: twoFactorCode, twoFactorType } = req.body;
-    const verify = await validateTwoFA(
-      req.user!.id,
-      twoFactorType,
-      twoFactorCode,
-      ["app"]
+router.post("/disable", requireAuth, async (req, res) => {
+  const [find] = await db
+    .select()
+    .from(twoFactorAuthenticationTable)
+    .where(
+      and(
+        eq(twoFactorAuthenticationTable.userId, req.user!.id),
+        eq(twoFactorAuthenticationTable.verified, true)
+      )
     );
 
-    if (!verify?.success) return res.status(400).json(verify);
+  if (!find)
+    return res.status(400).json({ success: false, message: "not enabled" });
 
-    await db
-      .delete(backupCodesTable)
-      .where(eq(backupCodesTable.userId, req.user!.id));
+  const validate = await validateMFA(req as unknown as Express.Request, [
+    "totp",
+  ]);
+  if (!validate.success) return res.status(400).json(validate);
 
-    const generate = createBackupCodes();
+  await db
+    .delete(twoFactorAuthenticationTable)
+    .where(eq(twoFactorAuthenticationTable.id, find.id));
+  await db
+    .delete(backupCodesTable)
+    .where(eq(backupCodesTable.userId, req.user!.id));
+  return res.status(200).json({ success: true });
+});
 
-    await db.insert(backupCodesTable).values(
-      generate.map((key) => ({
-        userId: req.user!.id,
-        key,
-      }))
+router.post("/backup-codes", requireAuth, async (req, res) => {
+  const [find] = await db
+    .select()
+    .from(twoFactorAuthenticationTable)
+    .where(
+      and(
+        eq(twoFactorAuthenticationTable.userId, req.user!.id),
+        eq(twoFactorAuthenticationTable.verified, true)
+      )
     );
 
-    return res.status(200).json({ success: true, codes: generate });
-  }
-);
+  if (!find)
+    return res.status(400).json({
+      success: false,
+      message: "Two factor authentication is not enabled",
+    });
+  const validate = await validateMFA(req as unknown as Express.Request, [
+    "totp",
+  ]);
+
+  if (!validate?.success) return res.status(400).json(validate);
+
+  await db
+    .delete(backupCodesTable)
+    .where(eq(backupCodesTable.userId, req.user!.id));
+
+  const generate = createBackupCodes();
+
+  await db.insert(backupCodesTable).values(
+    generate.map((key) => ({
+      userId: req.user!.id,
+      key,
+    }))
+  );
+
+  return res.status(200).json({ success: true, codes: generate });
+});
 
 export default router;

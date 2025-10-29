@@ -1,5 +1,4 @@
 import express from "express";
-import { requireAuth } from "../../helpers/middlewares/auth";
 import { db } from "../../database/db";
 import {
   backupCodesTable,
@@ -10,14 +9,13 @@ import { and, eq } from "drizzle-orm";
 import speakeasy from "speakeasy";
 import { sign, verify, JwtPayload } from "jsonwebtoken";
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
-import { bufferToBase64URLString } from "@simplewebauthn/browser";
 const router = express.Router();
 const appUrl = process.env.DESIGN_APP_URL as string;
 const rpID = appUrl.includes("localhost")
   ? "localhost"
   : appUrl.replace(/^https?:\/\//, "");
 
-router.post("/mfa/finish", async (req, res) => {
+router.post("/finish", async (req, res) => {
   const { type, code, ticket, data } = req.body;
   const verifyTicket = verify(
     ticket,
@@ -28,8 +26,7 @@ router.post("/mfa/finish", async (req, res) => {
       success: false,
       message: "Invalid ticket",
     });
-
-  if (!verifyTicket.methods.includes(type))
+  if (!verifyTicket.options.includes(type))
     return res.status(400).json({
       success: false,
       message: "This type not supported for this ticket",
@@ -96,10 +93,8 @@ router.post("/mfa/finish", async (req, res) => {
       .where(
         and(
           eq(
-            devicesTable.id,
-            bufferToBase64URLString(
-              new Uint8Array(Buffer.from(data.assertionResponse.rawId)).buffer
-            )
+            devicesTable.credId,
+            btoa(data.assertionResponse.rawId).replace(/=+$/, "")
           ),
           eq(devicesTable.userId, verifyTicket.userId)
         )
@@ -108,16 +103,19 @@ router.post("/mfa/finish", async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "device not found" });
+    const challenge = JSON.parse(
+      atob(data.assertionResponse.response.clientDataJSON)
+    ).challenge;
 
     const verification = await verifyAuthenticationResponse({
       response: data.assertionResponse,
-      expectedChallenge: data.assertionResponse.response.challenge,
+      expectedChallenge: challenge,
       expectedOrigin: appUrl,
       expectedRPID: rpID,
-      requireUserVerification: false,
       credential: {
-        ...device,
+        id: device.id,
         publicKey: new Uint8Array(Buffer.from(device.publicKey, "base64")),
+        counter: device.counter,
         transports: JSON.parse(device.transports as string),
       },
     });

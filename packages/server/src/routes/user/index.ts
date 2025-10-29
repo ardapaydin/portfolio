@@ -15,9 +15,6 @@ import {
   EncryptPassword,
 } from "../../helpers/encryptions/password";
 import deleteDomain from "../../helpers/cloudflare/pages/deleteDomain";
-import { deleteUserSchema } from "../../helpers/validations/user/delete";
-import { validateTwoFA } from "../../helpers/utils/validateTwoFA";
-
 const router = express.Router();
 
 router.put(
@@ -94,39 +91,33 @@ router.put(
   }
 );
 
-router.delete(
-  "/",
-  requireAuth,
-  (req, res, next) =>
-    BodyValidationMiddleware(req, res, next, deleteUserSchema),
-  async (req, res) => {
-    const { password, code: twoFactorCode, twoFactorType } = req.body;
-    const [user] = await db
-      .select()
-      .from(usersTable)
-      .where(eq(usersTable.id, req.user!.id));
-    const isvalid = ComparePassword(password, user.password);
-    if (!isvalid)
-      return res.status(400).json({
-        success: false,
-        message: "invalid password",
-        errors: { password: ["Password is incorrect"] },
-      });
+router.delete("/", requireAuth, async (req, res) => {
+  const { password } = req.body;
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, req.user!.id));
+  const isvalid = ComparePassword(password, user.password);
+  if (!isvalid)
+    return res.status(400).json({
+      success: false,
+      message: "invalid password",
+      errors: { password: ["Password is incorrect"] },
+    });
 
-    const twofa = await validateTwoFA(
-      req.user!.id,
-      twoFactorType,
-      twoFactorCode
-    );
-    if (!twofa?.success) return res.status(400).json(twofa);
-    await db.delete(usersTable).where(eq(usersTable.id, req.user!.id));
+  const mfa = await validateMFA(req as unknown as Express.Request, [
+    "webauthn",
+    "totp",
+  ]);
+  if (!mfa?.success) return res.status(400).json(mfa);
+  await db.delete(usersTable).where(eq(usersTable.id, req.user!.id));
 
-    return res.status(200).json({ success: true });
-  }
-);
+  return res.status(200).json({ success: true });
+});
 
 import twoFactorAuthentication from "./2fa";
 import passkey from "./passkey";
+import { validateMFA } from "../../helpers/utils/validateMFA";
 router.use("/2fa", twoFactorAuthentication);
 router.use("/passkey", passkey);
 

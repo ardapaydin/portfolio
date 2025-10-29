@@ -65,7 +65,7 @@ router.get("/me", async (req, res) => {
         serviceUser: JSON.parse(x.serviceUser as string),
       };
     }),
-    twoFactor: twofa || false,
+    twoFactor: twofa?.verified || false,
     devices,
   });
 });

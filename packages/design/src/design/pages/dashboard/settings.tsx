@@ -10,10 +10,11 @@ import type { TypeUser } from "@/design/types/user";
 import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
-import BackupCodes from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";
+import BackupCodes, { useBackupCodesStore } from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";
 import { RegisterRequest } from "@/utils/api/passkey";
 import { startRegistration } from "@simplewebauthn/browser"
 import PassKeyName, { usePasskeyNameStore } from "@/design/components/dashboard/dialogs/PassKey/Name";
+import { Disable, newBackupCodes } from "@/utils/api/2fa";
 export default function Settings() {
     const user = useUser();
     const qc = useQueryClient();
@@ -24,6 +25,7 @@ export default function Settings() {
         newPassword: "",
         confirmPassword: ""
     });
+    const useBcodesStore = useBackupCodesStore()
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { setIsOpen, setData } = useTwoFactorStore()
@@ -53,7 +55,6 @@ export default function Settings() {
 
     const fileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        console.log(file)
         if (!file) return;
         const formdata = new FormData();
         formdata.append("file", file)
@@ -188,12 +189,25 @@ export default function Settings() {
                         </SetupTwoFactor>
 
                         <button
-                            onClick={() => {
-                                setData({
+                            onClick={async () => {
+                                const r = await Disable()
+                                if (r.status != 200) setData({
                                     type: "disableTwoFactor",
                                     fields: {},
-                                    options: ["app"]
+                                    options: ["app"],
+                                    mfa: r.data.mfa,
+                                    function: async () => {
+                                        await Disable()
+                                        qc.setQueryData(["user"], (old: any) => ({
+                                            ...old,
+                                            twoFactor: false
+                                        }))
+                                    }
                                 })
+                                else qc.setQueryData(["user"], (old: any) => ({
+                                    ...old,
+                                    twoFactor: false
+                                }))
                                 setIsOpen(true)
                             }}
                             hidden={!user.data?.twoFactor} className="border-b-2 rounded text-sm border-red-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-red-500 transition-all bg-red-500/50">
@@ -204,12 +218,24 @@ export default function Settings() {
                             <>
                                 <BackupCodes />
                                 <button
-                                    onClick={() => {
-                                        setData({
+                                    onClick={async () => {
+                                        let r = await newBackupCodes()
+
+                                        if (r.status !== 200) setData({
                                             type: "requestBackupCodes",
                                             fields: {},
-                                            options: ["app"]
+                                            mfa: r.data?.mfa,
+                                            options: ["app", "backup"],
+                                            function: async () => {
+                                                r = await newBackupCodes()
+                                                useBcodesStore.setBackupCodes(r.data.codes);
+                                                useBcodesStore.setIsOpen(true)
+                                            }
                                         })
+                                        else {
+                                            useBcodesStore.setBackupCodes(r.data.codes);
+                                            useBcodesStore.setIsOpen(true)
+                                        }
                                         setIsOpen(true)
                                     }}
                                     className="border-b-2 rounded text-sm border-blue-500 p-2 px-4 py-1 cursor-pointer hover:bg-blue-500 transition-all bg-blue-500/50">

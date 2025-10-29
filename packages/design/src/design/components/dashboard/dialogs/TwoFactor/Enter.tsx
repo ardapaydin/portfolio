@@ -1,43 +1,38 @@
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
 import { setToken } from "@/design/utils/user"
 import { useTwoFactorStore } from "@/store/twoFactorStore"
-import { BackupCodes, Disable } from "@/utils/api/2fa"
 import { LoginUser } from "@/utils/api/auth"
-import { useQueryClient } from "@tanstack/react-query"
 import { Lock } from "lucide-react"
 import { useState } from "react"
-import { useBackupCodesStore } from "./BackupCodes"
-import { DeleteUser } from "@/utils/api/user"
-import logout from "@/utils/auth/logout"
-import { deletePortfolio } from "@/utils/api/portfolio"
-import type { TypePortfolio } from "@/design/types/portfolio"
+import { FinishMFA } from "@/utils/api/mfa"
+import axios from "axios"
+import { startAuthentication } from "@simplewebauthn/browser"
+import { useUser } from "@/utils/api/queries"
 
 export default function EnterTwoFACode({ children }: {
     children: React.ReactNode
 }) {
     const { setIsOpen, isOpen, data } = useTwoFactorStore()
-    const [type, setType] = useState("app");
+    const [type, setType] = useState("totp");
     const [code, setCode] = useState("");
     const [errors, setErrors] = useState<Record<string, any>>()
-    const qc = useQueryClient();
+    const user = useUser();
     const validate = () => {
-        if (type === "app") return code.length === 6;
+        if (type === "totp") return code.length === 6;
         if (type === "backup") return code.trim().length === 14;
         return false;
     }
-    const useBcodesStore = useBackupCodesStore()
+    const success = (token: string) => {
+        axios.defaults.headers["X-MFA-Authorization"] = token
+        if (data.function) data.function()
+        setIsOpen(false)
+    }
+
     const send = async () => {
-        if (data.type == "disableTwoFactor") {
-            const r = await Disable(code);
-            if (r.status == 200) {
-                setIsOpen(false)
-                qc.setQueryData(["user"], (old: any) => ({
-                    ...old,
-                    twoFactor: false
-                }))
-            }
-            else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        }
+        const r = await FinishMFA(type, data.mfa!.ticket, code)
+        if (r.status == 200 && data.type != "login") success(r.data.token)
+        else setErrors(r?.data?.errors || { code: ["Internal server error"] })
+        return
         if (data.type == "login") {
             const r = await LoginUser(data.fields!.email, data.fields!.password, type, code)
             if (r.status == 200) {
@@ -46,33 +41,15 @@ export default function EnterTwoFACode({ children }: {
                 window.location.href = data.fields!.redirect || "/";
             } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
         }
+    }
 
-        if (data.type == "requestBackupCodes") {
-            const r = await BackupCodes(code, type);
-            if (r.status == 200) {
-                useBcodesStore.setBackupCodes(r.data.codes);
-                useBcodesStore.setIsOpen(true)
-                setIsOpen(false);
-            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        }
-
-        if (data.type == "deleteAccount") {
-            const r = await DeleteUser(data.fields!.password, type, code);
-            if (r.status == 200) {
-                logout();
-                setIsOpen(false);
-                window.location.href = "/"
-            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        }
-
-        if (data.type == "deletePortfolio") {
-            const r = await deletePortfolio(data.fields!.id, code, type)
-            if (r.status == 200) {
-                const filter = qc.getQueryData(["portfolios"]) as TypePortfolio[];
-                setIsOpen(false);
-                qc.setQueryData(["portfolios"], filter.filter(x => x.id != data.fields!.id))
-            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        }
+    const passkey = async () => {
+        const webautn = data.mfa?.options.find(x => x.type == "webauthn")
+        if (!webautn?.data) return;
+        const start = await startAuthentication(webautn.data as any)
+        const r = await FinishMFA("webauthn", data.mfa!.ticket, undefined, { assertionResponse: start })
+        if (r.status == 200) success(r.data.token);
+        else setErrors(r?.data?.errors || { code: ["Internal server error"] })
     }
 
     return (
@@ -84,14 +61,14 @@ export default function EnterTwoFACode({ children }: {
                         <Lock size={64} />
 
                         <h1 className="text-2xl font-semibold">
-                            Two Factor Authentication
+                            Multiple Factor Authentication
                         </h1>
                     </div>
                 </DialogHeader>
                 <div className="flex flex-col">
                     {errors?.code?.[0] && <p className="text-red-500">{errors.code[0]}</p>}
                     <div className="flex gap-4 items-center justify-center mt-4">
-                        {type === "app" && Array.from({ length: 6 }, (_, index) => (
+                        {(type === "totp" && data.mfa?.options.find(x => x.type == "totp") && user.data?.twoFactor) && Array.from({ length: 6 }, (_, index) => (
                             <input
                                 key={index}
                                 type="text"
@@ -142,15 +119,24 @@ export default function EnterTwoFACode({ children }: {
                         </div>}
                     </div>
                 </div>
-                {data.options?.includes("backup") &&
-                    <div className="flex px-4 mt-4">
-                        <p onClick={() => {
-                            setType(type == "app" ? "backup" : "app")
-                        }} className="text-sm text-green-500 font-semibold w-full hover:cursor-pointer">
-                            {type === "app" ? "Use a backup code" : "Use the authenticator app"}
-                        </p>
-                    </div>
-                }
+                <div className="flex justify-between items-center">
+                    {data.mfa?.options.find(x => x.type == "backup") &&
+                        <div className="flex px-4 mt-4">
+                            <p onClick={() => {
+                                setType(type == "totp" ? "backup" : "totp")
+                            }} className="text-sm text-green-500 font-semibold w-full hover:cursor-pointer">
+                                {type === "totp" ? "Use a backup code" : "Use the authenticator app"}
+                            </p>
+                        </div>
+                    }
+                    {data.mfa?.options.find(x => x.type == "webauthn") &&
+                        <div className="flex px-4 mt-4">
+                            <p onClick={() => passkey()} className="text-sm text-green-500 font-semibold w-full hover:cursor-pointer">
+                                Use secret key
+                            </p>
+                        </div>
+                    }
+                </div>
 
                 <div className="flex justify-end">
                     <button
