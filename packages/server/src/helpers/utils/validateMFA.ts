@@ -10,8 +10,11 @@ const rpID = appUrl.includes("localhost")
 
 export async function validateMFA(
   req: Express.Request,
-  options: ("backup" | "webauthn" | "totp")[] = ["totp", "backup", "webauthn"]
+  options: ("backup" | "webauthn" | "totp")[] = ["totp", "backup", "webauthn"],
+  userId?: string
 ) {
+  if (userId) req.user = { id: userId };
+  console.log(userId);
   const [find] = await db
     .select()
     .from(twoFactorAuthenticationTable)

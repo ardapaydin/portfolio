@@ -1,7 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog"
-import { setToken } from "@/design/utils/user"
 import { useTwoFactorStore } from "@/store/twoFactorStore"
-import { LoginUser } from "@/utils/api/auth"
 import { Lock } from "lucide-react"
 import { useState } from "react"
 import { FinishMFA } from "@/utils/api/mfa"
@@ -16,7 +14,6 @@ export default function EnterTwoFACode({ children }: {
     const [type, setType] = useState("totp");
     const [code, setCode] = useState("");
     const [errors, setErrors] = useState<Record<string, any>>()
-    const user = useUser();
     const validate = () => {
         if (type === "totp") return code.length === 6;
         if (type === "backup") return code.trim().length === 14;
@@ -30,17 +27,8 @@ export default function EnterTwoFACode({ children }: {
 
     const send = async () => {
         const r = await FinishMFA(type, data.mfa!.ticket, code)
-        if (r.status == 200 && data.type != "login") success(r.data.token)
+        if (r.status == 200) success(r.data.token)
         else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        return
-        if (data.type == "login") {
-            const r = await LoginUser(data.fields!.email, data.fields!.password, type, code)
-            if (r.status == 200) {
-                setIsOpen(false);
-                setToken(r.data.data.token)
-                window.location.href = data.fields!.redirect || "/";
-            } else setErrors(r?.data?.errors || { code: ["Internal server error"] })
-        }
     }
 
     const passkey = async () => {
@@ -68,7 +56,7 @@ export default function EnterTwoFACode({ children }: {
                 <div className="flex flex-col">
                     {errors?.code?.[0] && <p className="text-red-500">{errors.code[0]}</p>}
                     <div className="flex gap-4 items-center justify-center mt-4">
-                        {(type === "totp" && data.mfa?.options.find(x => x.type == "totp") && user.data?.twoFactor) && Array.from({ length: 6 }, (_, index) => (
+                        {(type === "totp" && data.mfa?.options.find(x => x.type == "totp")) && Array.from({ length: 6 }, (_, index) => (
                             <input
                                 key={index}
                                 type="text"

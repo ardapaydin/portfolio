@@ -37,7 +37,9 @@ export default function Login() {
                 useStoreTwoFa.setData({
                     type: "login",
                     fields: { ...form, redirect },
-                    options: ["app", "backup"]
+                    options: ["app", "backup"],
+                    mfa: response.data.mfa,
+                    function: request
                 })
                 useStoreTwoFa.setIsOpen(true);
                 return;

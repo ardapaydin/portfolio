@@ -6,6 +6,4 @@ export const loginSchema = z.object({
     .string("Password is required")
     .min(6, "Password must be between 6 and 30 characters")
     .max(30, "Password must be between 6 and 30 characters"),
-  twoFactorType: z.enum(["app", "backup"]).optional(),
-  code: z.string().min(6).max(14).optional(),
 });

@@ -10,7 +10,6 @@ import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import deleteDomain from "../../../helpers/cloudflare/pages/deleteDomain";
 import createDomain from "../../../helpers/cloudflare/pages/createDomain";
-import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
 import { validateMFA } from "../../../helpers/utils/validateMFA";
 
 router.get("/:id", requireAuth, async (req, res) => {

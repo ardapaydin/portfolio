@@ -19,7 +19,7 @@ import { signToken } from "../../helpers/jwt";
 import { createToken } from "../../helpers/email/verification";
 import { requireNoAuth } from "../../helpers/middlewares/auth";
 import resetpasswordrouter from "./resetpassword";
-import { validateTwoFA } from "../../helpers/utils/validateTwoFA";
+import { validateMFA } from "../../helpers/utils/validateMFA";
 const router = express.Router();
 
 router.get("/me", async (req, res) => {
@@ -108,8 +108,12 @@ router.post(
         },
       });
 
-    const twoFa = await validateTwoFA(user.id, twoFactorType, twoFactorCode);
-    if (!twoFa?.success) return res.status(400).json(twoFa);
+    const mfa = await validateMFA(
+      req as unknown as Express.Request,
+      ["backup", "webauthn", "totp"],
+      user.id
+    );
+    if (!mfa?.success) return res.status(400).json(mfa);
 
     res.json({
       success: true,
