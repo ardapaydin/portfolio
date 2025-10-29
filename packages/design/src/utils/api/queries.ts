@@ -8,6 +8,7 @@ import type { TypeAttachment } from "@/design/types/attachment";
 import type { TypePortfolio } from "@/design/types/portfolio";
 import type { TypeModule } from "@/design/types/module";
 import type { TypeConnection } from "@/design/types/connection";
+import type { TypeDevice } from "@/design/types/device";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -33,6 +34,7 @@ export function useUser() {
         user?: TypeUser;
         connections?: TypeConnection[];
         twoFactor?: boolean;
+        devices?: TypeDevice[];
       };
     },
     retry: false,

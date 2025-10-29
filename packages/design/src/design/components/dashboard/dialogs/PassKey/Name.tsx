@@ -20,12 +20,19 @@ export default function PassKeyName() {
     const { isOpen, setIsOpen, attestationResponse } = usePasskeyNameStore()
     const [name, setName] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string[] }>({})
-
+    const qc = useQueryClient();
     const submit = async () => {
         const req = await RegisterResponse(attestationResponse, name)
         if (req.status == 200) {
             setIsOpen(false);
             setName("");
+
+            qc.setQueryData(["user"], (old: any) => {
+                return {
+                    ...old,
+                    devices: [req.data.device, ...old.devices]
+                }
+            })
         }
     }
 

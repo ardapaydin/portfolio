@@ -1,7 +1,7 @@
 import UserAvatar from "@/design/components/user/avatar";
 import { useUser } from "../../../utils/api/queries";
 import Layout from "../../components/dashboard/layout";
-import { Mail, Upload } from "lucide-react";
+import { Mail, Pencil, Trash, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { UpdateUser } from "@/utils/api/user";
 import { UploadProfilePicture } from "@/utils/api/attachments";
@@ -220,17 +220,32 @@ export default function Settings() {
                     </div>
                 </div>
 
-                <div className="flex mt-8 gap-4 items-center">
-                    <h1 className="text-xl">
-                        Security Keys
-                    </h1>
-                    <PassKeyName />
-                    <button
-                        onClick={() => passkey()}
-                        className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"
-                    >
-                        Add
-                    </button>
+                <div className="flex flex-col">
+                    <div className="flex mt-8 gap-4 items-center">
+                        <h1 className="text-xl">
+                            Security Keys
+                        </h1>
+                        <PassKeyName />
+                        <button
+                            onClick={() => passkey()}
+                            className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"
+                        >
+                            Add
+                        </button>
+                    </div>
+
+                    <div className="flex flex-col gap-4 mt-2">
+                        {user.data?.devices?.map((device) => (
+                            <div className="bg-[#333] p-2 px-4 py-4 rounded font-bold flex justify-between">
+                                <span>{device.name}</span>
+
+                                <div className="flex items-center gap-2">
+                                    <Pencil />
+                                    <Trash />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="flex bg-[#222222] w-full p-2 mt-8 shadow-2xl rounded-lg justify-between">

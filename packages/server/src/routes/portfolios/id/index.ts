@@ -10,6 +10,8 @@ import { editPortfolioSchema } from "../../../helpers/validations/portfolio/edit
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import deleteDomain from "../../../helpers/cloudflare/pages/deleteDomain";
 import createDomain from "../../../helpers/cloudflare/pages/createDomain";
+import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
+import { validateMFA } from "../../../helpers/utils/validateMFA";
 
 router.get("/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
@@ -138,12 +140,8 @@ router.delete("/:id", requireAuth, async (req, res) => {
       message: "Portfolio not found or you do not have access to it",
     });
 
-  const twoFaVerify = await validateTwoFA(
-    req.user!.id,
-    twoFactorType,
-    twoFactorCode
-  );
-  if (!twoFaVerify.success) return res.status(400).json(twoFaVerify);
+  const validate = await validateMFA(req as unknown as Express.Request);
+  if (!validate.success) return res.status(400).json(validate);
 
   if (portfolio.isPublished)
     deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
@@ -156,7 +154,6 @@ import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
 import StatsRouter from "./stats";
 import ModuleRouter from "./modules";
-import { validateTwoFA } from "../../../helpers/utils/validateTwoFA";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
 router.use("/", PublishRouter);

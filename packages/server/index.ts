@@ -5,11 +5,11 @@ import expressWs from "express-ws";
 import cors from "cors";
 expressWs(app);
 app.use(cors({ origin: "*" }));
-
 declare global {
   namespace Express {
     interface Request {
       user?: { id: string };
+      headers: Record<string, string>;
     }
   }
 }

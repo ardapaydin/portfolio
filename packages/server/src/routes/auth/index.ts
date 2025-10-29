@@ -4,13 +4,13 @@ import { loginSchema } from "../../helpers/validations/auth/login";
 import { registerSchema } from "../../helpers/validations/auth/register";
 import { db } from "../../database/db";
 import {
-  backupCodesTable,
   connectionsTable,
+  devicesTable,
   emailVerificationTable,
   twoFactorAuthenticationTable,
   usersTable,
 } from "../../database";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {
   ComparePassword,
   EncryptPassword,
@@ -48,6 +48,14 @@ router.get("/me", async (req, res) => {
     .from(twoFactorAuthenticationTable)
     .where(eq(twoFactorAuthenticationTable.userId, user.id));
 
+  const devices = await db
+    .select({
+      id: devicesTable.id,
+      name: devicesTable.name,
+    })
+    .from(devicesTable)
+    .where(eq(devicesTable.userId, user.id));
+
   res.json({
     user,
     connections: connections.map((x) => {
@@ -58,6 +66,7 @@ router.get("/me", async (req, res) => {
       };
     }),
     twoFactor: twofa || false,
+    devices,
   });
 });
 
