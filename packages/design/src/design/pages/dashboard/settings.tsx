@@ -11,8 +11,9 @@ import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
 import BackupCodes from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";
-import { RegisterRequest, RegisterResponse } from "@/utils/api/passkey";
+import { RegisterRequest } from "@/utils/api/passkey";
 import { startRegistration } from "@simplewebauthn/browser"
+import PassKeyName, { usePasskeyNameStore } from "@/design/components/dashboard/dialogs/PassKey/Name";
 export default function Settings() {
     const user = useUser();
     const qc = useQueryClient();
@@ -69,14 +70,16 @@ export default function Settings() {
         }
     }
 
+    const usePasskeyName = usePasskeyNameStore()
+
     const passkey = async () => {
         const { data: options } = await RegisterRequest();
 
         const credential = await startRegistration(options);
         if (!credential) return;
 
-
-        await RegisterResponse(credential)
+        usePasskeyName.setAttestationResponse(credential);
+        usePasskeyName.setIsOpen(true);
     };
 
     return (
@@ -219,9 +222,9 @@ export default function Settings() {
 
                 <div className="flex mt-8 gap-4 items-center">
                     <h1 className="text-xl">
-                        Passkey
+                        Security Keys
                     </h1>
-
+                    <PassKeyName />
                     <button
                         onClick={() => passkey()}
                         className="border-b-2 rounded text-sm border-green-500 max-w-min p-2 px-4 py-1 cursor-pointer hover:bg-green-500 transition-all bg-green-500/50"

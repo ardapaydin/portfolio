@@ -7,6 +7,9 @@ import {
 import { db } from "../../../database/db";
 import { devicesTable, usersTable } from "../../../database";
 import { eq } from "drizzle-orm";
+import { bufferToBase64URLString } from "@simplewebauthn/browser";
+import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
+import { passkeyRegisterResponse } from "../../../helpers/validations/user/passkey/response";
 
 const router = express.Router();
 
@@ -34,7 +37,9 @@ router.post("/register-request", requireAuth, async (req, res) => {
     rpID,
     userID: new TextEncoder().encode(user.id),
     userName: user.id,
+    userDisplayName: user.name || "",
     attestationType: "none",
+    timeout: 60000,
     excludeCredentials: devices.map((d) => ({
       id: d.id,
       type: "public-key",
@@ -51,39 +56,61 @@ router.post("/register-request", requireAuth, async (req, res) => {
   res.json(options);
 });
 
-router.post("/register-response", requireAuth, async (req, res) => {
-  const { attestationResponse } = req.body;
+router.post(
+  "/register-response",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(req, res, next, passkeyRegisterResponse),
+  async (req, res) => {
+    const { attestationResponse, name } = req.body;
 
-  const expectedChallenge = challenges[req.user!.id];
-  if (!expectedChallenge)
-    return res
-      .status(400)
-      .json({ success: false, message: "No challenge found" });
-  const verification = await verifyRegistrationResponse({
-    response: attestationResponse,
-    expectedChallenge,
-    expectedOrigin: appUrl,
-    expectedRPID: rpID,
-  });
+    const expectedChallenge = challenges[req.user!.id];
+    if (!expectedChallenge)
+      return res
+        .status(400)
+        .json({ success: false, message: "No challenge found" });
+    const verification = await verifyRegistrationResponse({
+      response: attestationResponse,
+      expectedChallenge,
+      expectedOrigin: appUrl,
+      expectedRPID: rpID,
+      requireUserVerification: false,
+    });
 
-  if (!verification.verified)
-    return res
-      .status(400)
-      .json({ success: false, message: "Verification failed" });
+    if (!verification.verified)
+      return res
+        .status(400)
+        .json({ success: false, message: "Verification failed" });
 
-  const { credential } = verification.registrationInfo!;
+    const { credential } = verification.registrationInfo!;
+    const credId = bufferToBase64URLString(
+      new Uint8Array(Buffer.from(credential.id)).buffer
+    );
+    const credPublicKey = bufferToBase64URLString(
+      new Uint8Array(Buffer.from(credential.id)).buffer
+    );
+    const [insert] = await db
+      .insert(devicesTable)
+      .values({
+        credId,
+        userId: req.user!.id,
+        name,
+        publicKey: credPublicKey,
+        counter: credential.counter,
+        transports: credential.transports,
+      })
+      .$returningId();
 
-  await db.insert(devicesTable).values({
-    id: credential.id,
-    userId: req.user!.id,
-    publicKey: Buffer.from(credential.publicKey).toString("base64url"),
-    counter: credential.counter,
-    transports: JSON.stringify(credential.transports),
-  });
+    delete challenges[req.user!.id];
 
-  delete challenges[req.user!.id];
-
-  res.json({ success: true });
-});
+    res.json({
+      success: true,
+      device: {
+        id: insert.id,
+        name,
+      },
+    });
+  }
+);
 
 export default router;
