@@ -13,3 +13,11 @@ export async function RegisterResponse(
     name,
   });
 }
+
+export async function DeletePasskey(id: string) {
+  return await axios.delete("/user/passkey/" + id);
+}
+
+export async function UpdatePasskey(id: string, name: string) {
+  return await axios.put("/user/passkey/" + id, { name });
+}

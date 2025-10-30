@@ -15,6 +15,8 @@ import { RegisterRequest } from "@/utils/api/passkey";
 import { startRegistration } from "@simplewebauthn/browser"
 import PassKeyName, { usePasskeyNameStore } from "@/design/components/dashboard/dialogs/PassKey/Name";
 import { Disable, newBackupCodes } from "@/utils/api/2fa";
+import DeletePasskeyDialog from "@/design/components/dashboard/dialogs/PassKey/Delete";
+import EditPasskey from "@/design/components/dashboard/dialogs/PassKey/Edit";
 export default function Settings() {
     const user = useUser();
     const qc = useQueryClient();
@@ -262,12 +264,16 @@ export default function Settings() {
 
                     <div className="flex flex-col gap-4 mt-2">
                         {user.data?.devices?.map((device) => (
-                            <div className="bg-[#333] p-2 px-4 py-4 rounded font-bold flex justify-between">
+                            <div className="bg-[#333]/50 p-2 px-4 py-4 rounded-lg font-bold flex justify-between">
                                 <span>{device.name}</span>
 
                                 <div className="flex items-center gap-2">
-                                    <Pencil />
-                                    <Trash />
+                                    <EditPasskey device={device}>
+                                        <Pencil className="w-5 cursor-pointer text-muted-foreground hover:text-white transition" />
+                                    </EditPasskey>
+                                    <DeletePasskeyDialog id={device.id}>
+                                        <Trash className="w-5 cursor-pointer text-red-500/50 hover:text-red-500 transition" />
+                                    </DeletePasskeyDialog>
                                 </div>
                             </div>
                         ))}

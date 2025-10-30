@@ -14,7 +14,6 @@ export async function validateMFA(
   userId?: string
 ) {
   if (userId) req.user = { id: userId };
-  console.log(userId);
   const [find] = await db
     .select()
     .from(twoFactorAuthenticationTable)

@@ -6,11 +6,11 @@ import {
 } from "@simplewebauthn/server";
 import { db } from "../../../database/db";
 import { devicesTable, usersTable } from "../../../database";
-import { eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { bufferToBase64URLString } from "@simplewebauthn/browser";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import { passkeyRegisterResponse } from "../../../helpers/validations/user/passkey/response";
-
+import idRouter from "./id";
 const router = express.Router();
 
 const rpName = process.env.APP_NAME as string;
@@ -63,7 +63,18 @@ router.post(
     BodyValidationMiddleware(req, res, next, passkeyRegisterResponse),
   async (req, res) => {
     const { attestationResponse, name } = req.body;
-
+    const [sameName] = await db
+      .select({ count: count() })
+      .from(devicesTable)
+      .where(
+        and(eq(devicesTable.name, name), eq(devicesTable.userId, req.user!.id))
+      );
+    if (sameName.count)
+      return res.status(400).json({
+        success: false,
+        message: "Bad Request",
+        errors: { name: ["Security key with this name is already exists"] },
+      });
     const expectedChallenge = challenges[req.user!.id];
     if (!expectedChallenge)
       return res
@@ -112,5 +123,7 @@ router.post(
     });
   }
 );
+
+router.use(idRouter);
 
 export default router;
