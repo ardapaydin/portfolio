@@ -20,6 +20,7 @@ import { createToken } from "../../helpers/email/verification";
 import { requireNoAuth } from "../../helpers/middlewares/auth";
 import resetpasswordrouter from "./resetpassword";
 import { validateMFA } from "../../helpers/utils/validateMFA";
+import passKeyLogin from "./passkey";
 const router = express.Router();
 
 router.get("/me", async (req, res) => {
@@ -75,7 +76,7 @@ router.post(
   requireNoAuth,
   (req, res, next) => BodyValidationMiddleware(req, res, next, loginSchema),
   async (req, res) => {
-    const { email, password, twoFactorType, code: twoFactorCode } = req.body;
+    const { email, password } = req.body;
 
     const [user] = await db
       .select()
@@ -189,5 +190,6 @@ router.post("/verify-email", async (req, res) => {
   res.json({ success: true });
 });
 router.use(resetpasswordrouter);
+router.use(passKeyLogin);
 
 export default router;

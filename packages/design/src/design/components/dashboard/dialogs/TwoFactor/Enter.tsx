@@ -34,7 +34,7 @@ export default function EnterTwoFACode({ children }: {
         const webautn = data.mfa?.options.find(x => x.type == "webauthn")
         if (!webautn?.data) return;
         const start = await startAuthentication(webautn.data as any)
-        const r = await FinishMFA("webauthn", data.mfa!.ticket, undefined, { assertionResponse: start })
+        const r = await FinishMFA("webauthn", data.mfa!.ticket, undefined, { attestationResponse: start })
         if (r.status == 200) success(r.data.token);
         else setErrors(r?.data?.errors || { code: ["Internal server error"] })
     }

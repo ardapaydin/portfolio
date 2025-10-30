@@ -94,7 +94,7 @@ router.post("/finish", async (req, res) => {
         and(
           eq(
             devicesTable.credId,
-            btoa(data.assertionResponse.rawId).replace(/=+$/, "")
+            btoa(data.attestationResponse.rawId).replace(/=+$/, "")
           ),
           eq(devicesTable.userId, verifyTicket.userId)
         )
@@ -104,11 +104,11 @@ router.post("/finish", async (req, res) => {
         .status(400)
         .json({ success: false, message: "device not found" });
     const challenge = JSON.parse(
-      atob(data.assertionResponse.response.clientDataJSON)
+      atob(data.attestationResponse.response.clientDataJSON)
     ).challenge;
 
     const verification = await verifyAuthenticationResponse({
-      response: data.assertionResponse,
+      response: data.attestationResponse,
       expectedChallenge: challenge,
       expectedOrigin: appUrl,
       expectedRPID: rpID,

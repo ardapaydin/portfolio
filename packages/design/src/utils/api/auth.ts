@@ -35,3 +35,11 @@ export function RequestKey(email: string) {
 export function ChangePassword(key: string, password: string) {
   return axios.post("/auth/reset-password", { key, password });
 }
+
+export function PasskeyLoginStart() {
+  return axios.post("/auth/passkey/login/start");
+}
+
+export function PasskeyLoginFinish(attestationResponse: object) {
+  return axios.post("/auth/passkey/login/finish", { attestationResponse });
+}

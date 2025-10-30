@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { LoginUser } from "../../../utils/api/auth";
+import { LoginUser, PasskeyLoginFinish, PasskeyLoginStart } from "../../../utils/api/auth";
 import { setToken } from "../../utils/user";
 import ForgotPassword from "@/design/components/dashboard/dialogs/ForgotPassword";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 const validate = (form: { [key: string]: string }) => {
     const errors: { [key: string]: string[] } = {};
@@ -45,6 +46,19 @@ export default function Login() {
                 return;
             }
             setErrors(response?.data.errors || {})
+        }
+    }
+
+    const passkeylogin = async () => {
+        const start = await PasskeyLoginStart();
+
+        const startPasskey = await startAuthentication(start?.data?.data)
+
+        const finish = await PasskeyLoginFinish(startPasskey)
+        if (finish.status == 200) {
+            setToken(finish.data.data.token);
+            window.location.href = redirect || "/";
+
         }
     }
 
@@ -111,7 +125,11 @@ export default function Login() {
                         >
                             Login
                         </button>
-                        <div className="items-end justify-end flex text-sm -mb-2 -mt-4">
+                        <div className="items-end justify-between flex text-sm -mb-2 -mt-4">
+                            <span onClick={() => passkeylogin()} className="text-green-400 cursor-pointer">
+                                Login with passkey
+                            </span>
+
                             <ForgotPassword>
                                 <span className="text-green-400 cursor-pointer">
                                     Forgot Password?
