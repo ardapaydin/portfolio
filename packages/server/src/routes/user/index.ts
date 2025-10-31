@@ -110,6 +110,15 @@ router.delete("/", requireAuth, async (req, res) => {
     "totp",
   ]);
   if (!mfa?.success) return res.status(400).json(mfa);
+
+  const portfolios = await db
+    .select()
+    .from(portfolioTable)
+    .where(eq(portfolioTable.id, user.id));
+
+  for (const portfolio of portfolios)
+    await deleteDomain(portfolio.subdomain + "." + process.env.DOMAIN);
+
   await db.delete(usersTable).where(eq(usersTable.id, req.user!.id));
 
   return res.status(200).json({ success: true });
