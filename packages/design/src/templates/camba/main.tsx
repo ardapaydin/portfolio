@@ -3,7 +3,7 @@ import { BookOpen, Image, Locate, Mail } from "lucide-react";
 import { useParams } from "react-router-dom";
 import Markdown from 'react-markdown'
 import MarkdownComponents from "../global/Markdown";
-import Attachments from "@/design/components/dashboard/dialogs/Attachments";
+import Attachments from "@/design/components/dashboard/dialogs/Portfolio/Attachments";
 import { HeadProvider, Title, Link } from 'react-head';
 import CambaGitHubRepos from "./modules/GithubRepos";
 import CambaGitLabProjects from "./modules/GitlabProjects";

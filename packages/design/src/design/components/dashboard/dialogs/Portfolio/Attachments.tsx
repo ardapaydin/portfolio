@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import MainAttachments from "./Attachments/Main";
+import MainAttachments from "../Attachments/Main";
 import { ListCollapse, Plus } from "lucide-react";
-import UploadAttachment from "./Attachments/Upload";
+import UploadAttachment from "../Attachments/Upload";
 
 export default function Attachments({ children, onSelect }: { children: React.ReactNode, onSelect: (uuid: string) => void; }) {
     const [isOpen, setIsOpen] = useState(false);

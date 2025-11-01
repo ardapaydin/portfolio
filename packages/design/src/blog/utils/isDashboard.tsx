@@ -1,0 +1,1 @@
+export const isDashboard = () => window.location.pathname.includes("/dashboard")

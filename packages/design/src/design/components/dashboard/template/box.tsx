@@ -1,6 +1,6 @@
 import { Eye } from "lucide-react";
 import type { TypeTemplate } from "../../../types/template";
-import CreatePortfolio from "../dialogs/CreatePortfolio";
+import CreatePortfolio from "../dialogs/Portfolio/CreatePortfolio";
 
 export default function TemplateBox({ template }: { template: TypeTemplate }) {
     return (

@@ -15,7 +15,7 @@ export const blogPostTable = mysqlTable("blog_post", {
     .notNull()
     .references(() => blogTable.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
-  content: varchar("content", { length: 5028 }).notNull(),
+  content: varchar("content", { length: 4028 }).notNull(),
   isDraft: boolean("is_draft").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),

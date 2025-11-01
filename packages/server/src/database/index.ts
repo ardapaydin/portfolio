@@ -12,3 +12,5 @@ export * from "./schemas/modules";
 export * from "./schemas/2fa";
 export * from "./schemas/backupCodes";
 export * from "./schemas/devices";
+export * from "./schemas/blog";
+export * from "./schemas/blogPost";

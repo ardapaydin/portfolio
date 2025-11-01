@@ -10,6 +10,7 @@ import UserRouter from "./user";
 import EventRouter from "./event";
 import MfaRouter from "./mfa";
 import ModulesRouter from "./modules";
+import BlogRouter from "./blog";
 import { verifyToken } from "../helpers/jwt";
 import { db } from "../database/db";
 import { count, eq } from "drizzle-orm";
@@ -41,5 +42,6 @@ router.use("/modules", ModulesRouter);
 router.use("/user", UserRouter);
 router.use("/mfa", MfaRouter);
 router.use("/data", EventRouter);
+router.use("/blog", BlogRouter);
 
 export default router;

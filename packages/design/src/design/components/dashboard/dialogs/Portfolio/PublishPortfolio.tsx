@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { publish, save } from "@/utils/api/portfolio";
 import { Check, CheckCircle2, Copy, Facebook, Mail } from "lucide-react";
-import { LoadingSmall } from "../../loading";
+import { LoadingSmall } from "../../../loading";
 import { GetPortfolioState } from "@/utils/api/queries";
 import confetti from "canvas-confetti"
 export default function PublishPortfolio({ children }: { children: React.ReactNode }) {

@@ -2,14 +2,14 @@ import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChartArea, Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
 import { useParams } from "react-router-dom";
-import DraftDetails from "../dialogs/DraftDetails";
-import Attachments from "../dialogs/Attachments";
+import DraftDetails from "../dialogs/Portfolio/DraftDetails";
+import Attachments from "../dialogs/Portfolio/Attachments";
 import type { TypeDraft } from "@/design/types/draft";
-import UpdatePortfolio from "../dialogs/UpdatePortfolio";
+import UpdatePortfolio from "../dialogs/Portfolio/UpdatePortfolio";
 import { save } from "@/utils/api/portfolio";
 import { useState } from "react";
-import PublishPortfolio from "../dialogs/PublishPortfolio";
-import Analytics from "../dialogs/Analytics";
+import PublishPortfolio from "../dialogs/Portfolio/PublishPortfolio";
+import Analytics from "../dialogs/Portfolio/Analytics";
 
 export default function Topbar() {
     const { id } = useParams();

@@ -12,6 +12,8 @@ import Settings from "./pages/dashboard/settings";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Callback from "./pages/connection/callback";
 import EnterTwoFACode from "./components/dashboard/dialogs/TwoFactor/Enter";
+import Blogs from "./pages/dashboard/blogs";
+import Blog from "@/blog/main";
 
 function App() {
   const path = window.location.pathname;
@@ -27,6 +29,8 @@ function App() {
         <Route path="/dashboard/templates" element={user?.data?.user ? <Templates /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/dashboard/portfolio/:id/edit" element={user?.data?.user ? <EditPortfolio /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/dashboard/user" element={user?.data?.user ? <Settings /> : <Navigate to="/auth/login" replace={true} />} />
+        <Route path="/dashboard/blogs" element={user?.data?.user ? <Blogs /> : <Navigate to="/auth/login" replace={true} />} />
+        <Route path="/dashboard/blogs/:id" element={user?.data?.user ? <Blog /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/template" element={<DisplayTemplate />} />
         <Route path="/connections/:service/callback" element={<Callback />} />
         <Route path="/auth/register" element={user?.data?.user ? <Navigate to="/" replace={true} /> : <Register />} />

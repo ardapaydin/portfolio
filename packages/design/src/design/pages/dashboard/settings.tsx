@@ -7,7 +7,7 @@ import { UpdateUser } from "@/utils/api/user";
 import { UploadProfilePicture } from "@/utils/api/attachments";
 import { useQueryClient } from "@tanstack/react-query";
 import type { TypeUser } from "@/design/types/user";
-import DeleteAccount from "@/design/components/dashboard/dialogs/DeleteAccount";
+import DeleteAccount from "@/design/components/dashboard/dialogs/User/DeleteAccount";
 import SetupTwoFactor from "@/design/components/dashboard/dialogs/TwoFactor/Setup";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
 import BackupCodes, { useBackupCodesStore } from "@/design/components/dashboard/dialogs/TwoFactor/BackupCodes";

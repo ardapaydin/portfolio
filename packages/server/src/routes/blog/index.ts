@@ -8,6 +8,14 @@ import { createBlogSchema } from "../../helpers/validations/blog/create";
 import idRouter from "./id";
 const router = express.Router();
 
+router.get("/", requireAuth, async (req, res) => {
+  const blogs = await db
+    .select()
+    .from(blogTable)
+    .where(eq(blogTable.userId, req.user!.id));
+  return res.status(200).json(blogs);
+});
+
 router.post(
   "/",
   requireAuth,

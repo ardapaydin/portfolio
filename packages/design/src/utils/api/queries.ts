@@ -9,6 +9,8 @@ import type { TypePortfolio } from "@/design/types/portfolio";
 import type { TypeModule } from "@/design/types/module";
 import type { TypeConnection } from "@/design/types/connection";
 import type { TypeDevice } from "@/design/types/device";
+import type { TypeBlog } from "@/design/types/blog";
+import type { TypeBlogPost } from "@/design/types/blogPost";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -35,6 +37,7 @@ export function useUser() {
         connections?: TypeConnection[];
         twoFactor?: boolean;
         devices?: TypeDevice[];
+        blogs?: TypeBlog[];
       };
     },
     retry: false,
@@ -216,5 +219,25 @@ export function useTwoFactorSetup(enabled: boolean) {
       return res.data as { qr: string; secret: string };
     },
     enabled,
+  });
+}
+
+export function useBlogs() {
+  return useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const res = await axios.get("/blog");
+      return res.data as TypeBlog[];
+    },
+  });
+}
+
+export function useBlogPosts(id: string) {
+  return useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const res = await axios.get("/blog/" + id + "/posts");
+      return res.data as TypeBlogPost[];
+    },
   });
 }

@@ -1,8 +1,8 @@
 import { usePortfolios } from "@/utils/api/queries"
 import { Pencil, Projector, Settings, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import UpdatePortfolio from "./dialogs/UpdatePortfolio";
-import DeletePortfolio from "./dialogs/DeletePortfolio";
+import UpdatePortfolio from "./dialogs/Portfolio/UpdatePortfolio";
+import DeletePortfolio from "./dialogs/Portfolio/DeletePortfolio";
 
 export default function Portfolios() {
     const portfolios = usePortfolios();

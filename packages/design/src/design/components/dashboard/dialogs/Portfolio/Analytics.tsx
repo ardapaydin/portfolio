@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { useState } from "react"
-import ViewInsights from "./Analytics/ViewInsights";
+import ViewInsights from "../Analytics/ViewInsights";
 import { Glasses, ScanEye } from "lucide-react";
-import EngagementMetrics from "./Analytics/EngagementMetrics";
+import EngagementMetrics from "../Analytics/EngagementMetrics";
 
 export default function Analytics({ children }: {
     children: React.ReactNode

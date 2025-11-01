@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { LoginUser, PasskeyLoginFinish, PasskeyLoginStart } from "../../../utils/api/auth";
 import { setToken } from "../../utils/user";
-import ForgotPassword from "@/design/components/dashboard/dialogs/ForgotPassword";
+import ForgotPassword from "@/design/components/dashboard/dialogs/User/ForgotPassword";
 import { useTwoFactorStore } from "@/store/twoFactorStore";
 import { startAuthentication } from "@simplewebauthn/browser";
 
