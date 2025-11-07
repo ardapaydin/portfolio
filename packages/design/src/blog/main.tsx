@@ -62,11 +62,11 @@ export default function Blog() {
 
             <div className="flex flex-col z-20 gap-4">
                 {blog.data?.posts.map((post, i) => (
-                    <div onClick={() => nav("posts/" + post.id)} className={`flex p-2 gap-8 rounded w-full opacity-90 hover:opacity-100 transition-all cursor-pointer flex-row${i % 2 == 1 ? "-reverse" : ""} flex justify-between`}>
-                        <div className="w-2/4 h-72 bg-[#333] rounded-lg">
+                    <div onClick={() => nav("posts/" + post.id)} className={`flex flex-col p-2 gap-8 rounded w-full opacity-90 hover:opacity-100 transition-all cursor-pointer md:flex-row${i % 2 == 1 ? "-reverse" : ""} flex justify-between`}>
+                        <div className="md:w-2/4 h-72 bg-[#333] rounded-lg flex-row-reverse">
                             {post.image && <img src={`${import.meta.env.VITE_S3_URL}blogPostBanner/${post.image}`} className="object-cover w-full rounded h-full" />}
                         </div>
-                        <div className="w-1/2 gap-4 flex flex-col">
+                        <div className="md:w-1/2 gap-4 flex flex-col">
                             <PostInfo post={post} />
                         </div>
                     </div>
