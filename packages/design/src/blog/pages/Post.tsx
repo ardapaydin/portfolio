@@ -18,7 +18,7 @@ export default function PostPage() {
             <ArrowLeft onClick={() => window.history.back()} className="text-white/50 hover:text-white z-10 transition-all cursor-pointer mb-2" />
             <div className="flex flex-col gap-2 z-20">
                 <div className="w-full h-72 bg-[#333] rounded-lg">
-                    {post.image && <img src={`${import.meta.env.VITE_S3_URL}blogPostBanner/${post.image}`} className="object-cover w-full h-full" />}
+                    {post.image && <img src={`${import.meta.env.VITE_S3_URL}blogPostBanner/${post.image}`} className="object-cover rounded w-full h-full" />}
                 </div>
                 <div className="items-start justify-between flex">
                     <div className="flex flex-col">

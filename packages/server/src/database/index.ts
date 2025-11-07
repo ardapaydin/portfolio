@@ -14,3 +14,4 @@ export * from "./schemas/backupCodes";
 export * from "./schemas/devices";
 export * from "./schemas/blog";
 export * from "./schemas/blogPost";
+export * from "./schemas/blogAttachments";

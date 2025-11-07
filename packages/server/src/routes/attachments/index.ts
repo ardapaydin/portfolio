@@ -3,7 +3,12 @@ import { requireAuth } from "../../helpers/middlewares/auth";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fileUpload from "express-fileupload";
 import { db } from "../../database/db";
-import { portfolioTable, usersTable } from "../../database";
+import {
+  blogAttachmentsTable,
+  blogTable,
+  portfolioTable,
+  usersTable,
+} from "../../database";
 import { and, eq } from "drizzle-orm";
 import { attachmentsTable } from "../../database/schemas/attachments";
 const router = express.Router();
@@ -88,6 +93,56 @@ router.post("/", requireAuth, async (req, res) => {
     type,
     name: file.name,
   });
+  return res.status(200).json({ success: true, url: s3Key, id });
+});
+
+router.post("/blogPostImage", requireAuth, async (req, res) => {
+  const file = req.files?.file;
+  const { blogId } = req.body;
+  if (!file)
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
+
+  if (Array.isArray(file))
+    return res
+      .status(400)
+      .json({ success: false, message: "Multiple files uploaded." });
+
+  if (!file.mimetype.startsWith("image/"))
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid file type" });
+  if (file.size > 20 * 1024 * 1024)
+    return res
+      .status(400)
+      .json({ success: false, message: "File size exceeds 20MB limit" });
+
+  const [findBlog] = await db
+    .select()
+    .from(blogTable)
+    .where(and(eq(blogTable.id, blogId), eq(blogTable.userId, req.user!.id)));
+  if (!findBlog)
+    return res.status(404).json({ success: false, message: "blog not found" });
+  const id = crypto.randomUUID();
+  const s3Key = `blogPostBanner/${id}`;
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME!,
+      Key: s3Key,
+      Body: file.data,
+      ContentType: file.mimetype,
+      ACL: "public-read",
+    })
+  );
+
+  await db.insert(blogAttachmentsTable).values({
+    id,
+    relatedBlogId: blogId,
+    type: "image",
+    name: file.name,
+  });
+
   return res.status(200).json({ success: true, url: s3Key, id });
 });
 

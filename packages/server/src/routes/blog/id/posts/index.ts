@@ -42,7 +42,7 @@ router.post(
     BodyValidationMiddleware(req, res, next, createBlogPostSchema),
   async (req, res) => {
     const { id } = req.params;
-    const { title, content, isDraft } = req.body;
+    const { title, content, isDraft, tags, image } = req.body;
     const [blog] = await db
       .select()
       .from(blogTable)
@@ -53,17 +53,40 @@ router.post(
         .status(404)
         .json({ success: false, message: "Blog not found." });
 
-    const [post] = await db
+    const [{ id: postId }] = await db
       .insert(blogPostTable)
       .values({
         blogId: id,
         title,
         content,
+        tags,
         isDraft,
+        image,
       })
       .$returningId();
+    const [post] = await db
+      .select({
+        id: blogPostTable.id,
+        title: blogPostTable.title,
+        content: blogPostTable.content,
+        tags: blogPostTable.tags,
+        image: blogPostTable.image,
+        isDraft: blogPostTable.isDraft,
+        createdBy: {
+          name: usersTable.name,
+          profilePicture: usersTable.profilePicture,
+        },
+        createdAt: blogPostTable.createdAt,
+        updatedAt: blogPostTable.updatedAt,
+      })
+      .from(blogPostTable)
+      .leftJoin(usersTable, eq(usersTable.id, blog.userId))
+      .where(eq(blogPostTable.id, postId));
 
-    return res.status(200).json({ success: true, data: { id: post.id } });
+    return res.status(200).json({
+      success: true,
+      data: { ...post, tags: JSON.parse(post.tags as string) },
+    });
   }
 );
 

@@ -7,3 +7,20 @@ export async function NewBlog(name: string) {
 export async function DeleteBlog(id: string) {
   return await axios.delete("/blog/" + id);
 }
+
+export async function CreateBlogPost(
+  id: string,
+  title: string,
+  content: string,
+  tags: string[],
+  image: string | null,
+  isDraft: boolean
+) {
+  return await axios.post("/blog/" + id + "/posts", {
+    title,
+    content,
+    tags,
+    image,
+    isDraft,
+  });
+}

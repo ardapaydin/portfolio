@@ -13,9 +13,16 @@ export default function PostInfo({ post }: { post: TypeBlogPost }) {
                 ))}
             </div>
 
-            <h1 className="text-2xl font-bold">
-                {post.title}
-            </h1>
+            <div className="flex gap-2 items-start">
+                <h1 className="text-2xl font-bold">
+                    {post.title}
+                </h1>
+                {post.isDraft && (
+                    <div className="border-[#333] border-dashed border-2 flex text-xs px-2 py-1 rounded">
+                        Draft
+                    </div>
+                )}
+            </div>
 
             <div className="flex items-center gap-2">
                 <UserAvatar userData={post.createdBy} />

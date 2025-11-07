@@ -10,3 +10,7 @@ export async function UploadPicture(formData: FormData) {
 export async function UploadProfilePicture(formData: FormData) {
   return await axios.post("/attachments/avatar", formData);
 }
+
+export async function UploadBlogBanner(formData: FormData) {
+  return await axios.post("/attachments/blogPostImage", formData);
+}

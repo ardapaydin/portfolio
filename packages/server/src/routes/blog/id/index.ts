@@ -2,7 +2,7 @@ import express from "express";
 import { requireAuth } from "../../../helpers/middlewares/auth";
 import { db } from "../../../database/db";
 import { blogTable } from "../../../database/schemas/blog";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import BodyValidationMiddleware from "../../../helpers/middlewares/validation";
 import { createBlogSchema } from "../../../helpers/validations/blog/create";
 import postsRouter from "./posts";
@@ -24,6 +24,8 @@ router.get("/:id", requireAuth, async (req, res) => {
       title: blogPostTable.title,
       content: blogPostTable.content,
       tags: blogPostTable.tags,
+      image: blogPostTable.image,
+      isDraft: blogPostTable.isDraft,
       createdBy: {
         name: usersTable.name,
         profilePicture: usersTable.profilePicture,
@@ -33,7 +35,8 @@ router.get("/:id", requireAuth, async (req, res) => {
     })
     .from(blogPostTable)
     .leftJoin(usersTable, eq(usersTable.id, blog.userId))
-    .where(eq(blogPostTable.blogId, req.params.id));
+    .where(eq(blogPostTable.blogId, req.params.id))
+    .orderBy(desc(blogPostTable.createdAt));
   return res.status(200).json({
     success: true,
     name: blog.name,
