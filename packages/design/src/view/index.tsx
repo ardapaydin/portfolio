@@ -13,7 +13,7 @@ export default function View() {
         ? window.location.hostname.split('.')[0]
         : window.location.pathname.match(/\/view\/([^/]+)/)?.[1]!;
     const data = getSubdomain(subdomain!) as UseQueryResult & { data: { message: string, template: string, data: unknown } };
-    const isblog = (process.env.NODE_ENV == "production" ? window.location.pathname.split("/")[2] : window.location.pathname.split("/")?.[3]) == "blog";
+    const isblog = (process.env.NODE_ENV == "production" ? window.location.pathname.split("/")[1] : window.location.pathname.split("/")?.[3]) == "blog";
     useEffect(() => {
         if (!data.data) return;
         const createws = new WebSocket(`${import.meta.env.VITE_API_BASE_URL || "/api"}/portfolios/ws/${subdomain}`);
