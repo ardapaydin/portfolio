@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import TagInput from "../Post/TagInput";
-import { CreateBlogPost, EditBlogPost } from "@/utils/api/blog";
+import { EditBlogPost } from "@/utils/api/blog";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Delete, Image } from "lucide-react";

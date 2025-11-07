@@ -4,7 +4,7 @@ import TagInput from "../Post/TagInput";
 import { CreateBlogPost } from "@/utils/api/blog";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Delete, Image, Plus } from "lucide-react";
+import { Delete, Image } from "lucide-react";
 import { UploadBlogBanner } from "@/utils/api/attachments";
 
 export default function PostDialog({ children }: { children: React.ReactNode }) {
