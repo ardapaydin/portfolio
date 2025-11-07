@@ -24,3 +24,21 @@ export async function CreateBlogPost(
     isDraft,
   });
 }
+
+export async function EditBlogPost(
+  id: string,
+  postId: string,
+  title: string,
+  content: string,
+  tags: string[],
+  image: string | null,
+  isDraft: boolean
+) {
+  return await axios.put("/blog/" + id + "/posts/" + postId, {
+    title,
+    content,
+    tags,
+    image,
+    isDraft,
+  });
+}

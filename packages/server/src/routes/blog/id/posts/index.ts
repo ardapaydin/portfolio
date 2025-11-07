@@ -90,6 +90,80 @@ router.post(
   }
 );
 
+router.put(
+  "/:id/posts/:postId",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(req, res, next, createBlogPostSchema),
+  async (req, res) => {
+    const { id, postId } = req.params;
+    const { title, content, isDraft, tags, image } = req.body;
+
+    const [findBlog] = await db
+      .select()
+      .from(blogTable)
+      .where(and(eq(blogTable.id, id), eq(blogTable.userId, req.user!.id)));
+    if (!findBlog)
+      return res
+        .status(404)
+        .json({ success: false, message: "Blog not found." });
+
+    const [post] = await db
+      .select()
+      .from(blogPostTable)
+      .where(and(eq(blogPostTable.id, postId), eq(blogPostTable.blogId, id)));
+
+    if (!post)
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found." });
+
+    if (!post.isDraft && isDraft)
+      return res.status(400).json({
+        success: false,
+        message: "Cannot change a published post back to draft.",
+      });
+
+    const [update] = await db
+      .update(blogPostTable)
+      .set({
+        title,
+        content,
+        image,
+        tags,
+        isDraft,
+      })
+      .where(and(eq(blogPostTable.id, postId)));
+    if (!update.affectedRows)
+      return res
+        .status(500)
+        .json({ success: false, message: "unexpected error" });
+    const [updated] = await db
+      .select({
+        id: blogPostTable.id,
+        title: blogPostTable.title,
+        content: blogPostTable.content,
+        tags: blogPostTable.tags,
+        image: blogPostTable.image,
+        isDraft: blogPostTable.isDraft,
+        createdBy: {
+          name: usersTable.name,
+          profilePicture: usersTable.profilePicture,
+        },
+        createdAt: blogPostTable.createdAt,
+        updatedAt: blogPostTable.updatedAt,
+      })
+      .from(blogPostTable)
+      .leftJoin(usersTable, eq(usersTable.id, findBlog.userId))
+      .where(eq(blogPostTable.id, postId));
+
+    return res.status(200).json({
+      success: true,
+      data: { ...updated, tags: JSON.parse(updated.tags as string) },
+    });
+  }
+);
+
 router.delete("/:id/posts/:postId", requireAuth, async (req, res) => {
   const { id, postId } = req.params;
 

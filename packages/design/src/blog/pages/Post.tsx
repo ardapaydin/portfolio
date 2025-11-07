@@ -5,6 +5,7 @@ import { ArrowLeft, Pencil, TrashIcon } from "lucide-react";
 import Markdown from "react-markdown";
 import MarkdownComponents from "@/templates/global/Markdown";
 import { isDashboard } from "../utils/isDashboard";
+import EditDialog from "../components/Dialogs/Edit";
 
 export default function PostPage() {
     const { id, postId } = useParams();
@@ -27,7 +28,9 @@ export default function PostPage() {
 
                     {dashboard && (
                         <div className="flex gap-2 border-b border-white/50 rounded">
-                            <Pencil className="w-4 opacity-50 hover:opacity-100 mb-2 transition-all cursor-pointer h-4" />
+                            <EditDialog post={post}>
+                                <Pencil className="w-4 opacity-50 hover:opacity-100 mb-2 transition-all cursor-pointer h-4" />
+                            </EditDialog>
                             <TrashIcon className="w-4 opacity-50 hover:opacity-100 transition-all cursor-pointer h-4 text-red-400" />
                         </div>
                     )}
