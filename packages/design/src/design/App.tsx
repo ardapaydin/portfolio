@@ -31,6 +31,7 @@ function App() {
         <Route path="/dashboard/user" element={user?.data?.user ? <Settings /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/dashboard/blogs" element={user?.data?.user ? <Blogs /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/dashboard/blogs/:id" element={user?.data?.user ? <Blog /> : <Navigate to="/auth/login" replace={true} />} />
+        <Route path="/dashboard/blogs/:id/posts/:postId" element={user?.data?.user ? <Blog /> : <Navigate to="/auth/login" replace={true} />} />
         <Route path="/template" element={<DisplayTemplate />} />
         <Route path="/connections/:service/callback" element={<Callback />} />
         <Route path="/auth/register" element={user?.data?.user ? <Navigate to="/" replace={true} /> : <Register />} />
