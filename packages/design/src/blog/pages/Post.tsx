@@ -6,6 +6,7 @@ import Markdown from "react-markdown";
 import MarkdownComponents from "@/templates/global/Markdown";
 import { isDashboard } from "../utils/isDashboard";
 import EditDialog from "../components/Dialogs/Edit";
+import DeleteDialog from "../components/Dialogs/Delete";
 
 export default function PostPage() {
     const { id, postId } = useParams();
@@ -31,7 +32,9 @@ export default function PostPage() {
                             <EditDialog post={post}>
                                 <Pencil className="w-4 opacity-50 hover:opacity-100 mb-2 transition-all cursor-pointer h-4" />
                             </EditDialog>
-                            <TrashIcon className="w-4 opacity-50 hover:opacity-100 transition-all cursor-pointer h-4 text-red-400" />
+                            <DeleteDialog post={post}>
+                                <TrashIcon className="w-4 opacity-50 hover:opacity-100 transition-all cursor-pointer h-4 text-red-400" />
+                            </DeleteDialog>
                         </div>
                     )}
                 </div>

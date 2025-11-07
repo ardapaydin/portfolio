@@ -42,3 +42,7 @@ export async function EditBlogPost(
     isDraft,
   });
 }
+
+export async function DeletePost(id: string, postId: string) {
+  return await axios.delete("/blog/" + id + "/posts/" + postId);
+}
