@@ -152,10 +152,12 @@ import AttachmentRouter from "./attachments";
 import PublishRouter from "./publish";
 import StatsRouter from "./stats";
 import ModuleRouter from "./modules";
+import BlogRouter from "./blog";
 router.use("/", DraftRouter);
 router.use("/", AttachmentRouter);
 router.use("/", PublishRouter);
 router.use("/", StatsRouter);
 router.use("/", ModuleRouter);
+router.use("/", BlogRouter);
 
 export default router;
