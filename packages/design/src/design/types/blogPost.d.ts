@@ -5,6 +5,8 @@ export type TypeBlogPost = {
   title: string;
   content: string;
   isDraft: boolean;
+  tags: string[];
+  image: string;
   createdBy: TypeUser;
   createdAt: string;
   updatedAt: string;

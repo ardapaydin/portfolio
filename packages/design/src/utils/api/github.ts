@@ -11,7 +11,9 @@ export function getGithubRepos(
     queryFn: async () => {
       return (
         await axios.get(
-          "https://api.github.com/users/ardapaydin/repos?sort=" +
+          "https://api.github.com/users/" +
+            slug +
+            "/repos?sort=" +
             sort +
             "&per_page=" +
             per_page,

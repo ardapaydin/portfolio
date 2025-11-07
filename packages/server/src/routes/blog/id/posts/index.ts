@@ -67,4 +67,27 @@ router.post(
   }
 );
 
+router.delete("/:id/posts/:postId", requireAuth, async (req, res) => {
+  const { id, postId } = req.params;
+
+  const [blog] = await db
+    .select()
+    .from(blogTable)
+    .where(and(eq(blogTable.userId, req.user!.id), eq(blogTable.id, id)));
+
+  if (!blog)
+    return res.status(404).json({ success: false, message: "Blog not found." });
+
+  const [del] = await db
+    .delete(blogPostTable)
+    .where(and(eq(blogPostTable.blogId, id), eq(blogPostTable.id, postId)));
+
+  if (!del.affectedRows)
+    return res
+      .status(404)
+      .json({ success: false, message: "Blog post not found." });
+
+  return res.status(200).json({ success: false });
+});
+
 export default router;

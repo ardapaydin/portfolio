@@ -234,10 +234,24 @@ export function useBlogs() {
 
 export function useBlogPosts(id: string) {
   return useQuery({
-    queryKey: ["blogs"],
+    queryKey: ["blog", id, "posts"],
     queryFn: async () => {
       const res = await axios.get("/blog/" + id + "/posts");
       return res.data as TypeBlogPost[];
+    },
+  });
+}
+
+export function useBlog(id: string) {
+  return useQuery({
+    queryKey: ["blog", id],
+    queryFn: async () => {
+      const res = await axios.get("/blog/" + id);
+      return res.data as {
+        name: string;
+        success: boolean;
+        posts: TypeBlogPost[];
+      };
     },
   });
 }
