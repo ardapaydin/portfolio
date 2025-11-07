@@ -31,7 +31,9 @@ createRoot(document.getElementById('root')!).render(
     })}>
       {
         (() => {
-          const subdomain = process.env.NODE_ENV == "production" ? window.location.hostname.split('.')[0] : window.location.pathname.split("/view/")?.[1]
+          const subdomain = process.env.NODE_ENV === "production"
+            ? window.location.hostname.split('.')[0]
+            : window.location.pathname.match(/\/view\/([^/]+)/)?.[1];
           if (!subdomain || subdomain == "design") return <BrowserRouter>
             <App />
           </BrowserRouter>;

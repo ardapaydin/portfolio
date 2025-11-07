@@ -1,4 +1,4 @@
-import { useBlog } from "@/utils/api/queries"
+import { useBlog, useBlogFromSubdomain } from "@/utils/api/queries"
 import { useParams } from "react-router-dom"
 import PostInfo from "../components/Post/info";
 import { ArrowLeft, Pencil, TrashIcon } from "lucide-react";
@@ -9,9 +9,14 @@ import EditDialog from "../components/Dialogs/Edit";
 import DeleteDialog from "../components/Dialogs/Delete";
 
 export default function PostPage() {
-    const { id, postId } = useParams();
-    const blog = useBlog(id!)
-    const dashboard = isDashboard();
+    const { id, postId: postid } = useParams();
+    const subdomain = process.env.NODE_ENV === "production"
+        ? window.location.hostname.split('.')[0]
+        : window.location.pathname.match(/\/view\/([^/]+)/)?.[1]!;
+    const postId = subdomain ? window.location.pathname.match(/\/posts\/([^/]+)/)?.[1] : postid
+    const dashboard = isDashboard()
+    const blog = dashboard ? useBlog(id!) : useBlogFromSubdomain(subdomain!)
+
     const post = blog.data?.posts.find(post => post.id == postId);
     if (!post) return
     return (

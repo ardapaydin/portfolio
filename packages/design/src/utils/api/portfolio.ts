@@ -47,3 +47,11 @@ export function deletePortfolio(
     },
   });
 }
+
+export function setPortfolioBlog(id: string, blogId: string) {
+  return axios.post("/portfolios/" + id + "/blog/" + blogId);
+}
+
+export function deletePortfolioBlog(id: string) {
+  return axios.delete("/portfolios/" + id + "/blog");
+}

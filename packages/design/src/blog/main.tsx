@@ -1,4 +1,4 @@
-import { useBlog } from "@/utils/api/queries"
+import { useBlog, useBlogFromSubdomain } from "@/utils/api/queries"
 import { isDashboard } from "./utils/isDashboard"
 import { useNavigate, useParams } from "react-router-dom"
 import Loading from "@/design/components/loading";
@@ -8,10 +8,16 @@ import PostPage from "./pages/Post";
 import PostDialog from "./components/Dialogs/Post";
 
 export default function Blog() {
-    const { id, postId } = useParams();
+    const { id, postId: postid } = useParams();
+    const subdomain = process.env.NODE_ENV === "production"
+        ? window.location.hostname.split('.')[0]
+        : window.location.pathname.match(/\/view\/([^/]+)/)?.[1]!;
+    const postId = subdomain ? window.location.pathname.match(/\/posts\/([^/]+)/)?.[1] : postid
     const dashboard = isDashboard()
-    const blog = useBlog(id!)
-    const nav = useNavigate();
+    const blog = dashboard ? useBlog(id!) : useBlogFromSubdomain(subdomain!)
+    const nav = dashboard ? useNavigate() : (x: string) => {
+        window.location.href = "blog/" + x;
+    }
     if (blog.isLoading) return <Loading />
     if (!blog.data?.success) return (
         <div className="h-screen px-2 text-center w-screen flex flex-col justify-center border-2 border-dashed border-muted-foreground/50 rounded items-center">

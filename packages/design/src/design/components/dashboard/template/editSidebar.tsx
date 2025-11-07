@@ -1,7 +1,7 @@
 import type { TypeTemplate } from "@/design/types/template";
 import { useModules, usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Puzzle } from "lucide-react";
+import { ArrowRight, Notebook, Puzzle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
@@ -10,6 +10,7 @@ import Modules from "../dialogs/Modules/Modules";
 import z from "zod";
 import { validZod } from "@/design/utils/zod";
 import { useValidationErrorStore } from "@/store/validationErrorStore";
+import SetBlog from "../dialogs/Blog/SetBlog";
 export default function EditSidebar() {
     const { id } = useParams();
     const [selectedList, setSelectedList] = useState(null as { key: string, mode: "edit" | "create", index?: number, value?: { name: string, url: string } } | null);
@@ -164,6 +165,14 @@ export default function EditSidebar() {
                                 <span className="font-medium text-gray-300">Modules</span>
                             </div>
                         </Modules>
+
+                        <SetBlog>
+                            <div className="flex items-center gap-2.5 cursor-pointer bg-[#333]/80 hover:bg-[#333] border-[#262626] border-2 p-3 rounded-lg transition-all duration-200 mt-6">
+                                <Notebook className="w-5 h-5 text-gray-400" />
+                                <span className="font-medium text-gray-300">Blog</span>
+                            </div>
+                        </SetBlog>
+
                     </>
                 ) || null}
             </div>

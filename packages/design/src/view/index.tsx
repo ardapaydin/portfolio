@@ -1,3 +1,4 @@
+import Blog from "@/blog/main";
 import Loading from "@/design/components/loading";
 import TemplateCamba from "@/templates/camba/main";
 import TemplateEon from "@/templates/eon/main";
@@ -8,8 +9,11 @@ import { FileWarning } from "lucide-react";
 import { useEffect } from "react";
 
 export default function View() {
-    const subdomain = process.env.NODE_ENV == "production" ? window.location.hostname.split('.')[0] : window.location.pathname.split("/view/")?.[1]
-    const data = getSubdomain(subdomain) as UseQueryResult & { data: { message: string, template: string, data: unknown } };
+    const subdomain = process.env.NODE_ENV === "production"
+        ? window.location.hostname.split('.')[0]
+        : window.location.pathname.match(/\/view\/([^/]+)/)?.[1]!;
+    const data = getSubdomain(subdomain!) as UseQueryResult & { data: { message: string, template: string, data: unknown } };
+    const isblog = (process.env.NODE_ENV == "production" ? window.location.pathname.split("/")[2] : window.location.pathname.split("/")?.[3]) == "blog";
     useEffect(() => {
         if (!data.data) return;
         const createws = new WebSocket(`${import.meta.env.VITE_API_BASE_URL || "/api"}/portfolios/ws/${subdomain}`);
@@ -43,6 +47,7 @@ export default function View() {
             </p>
         </div>
     )
+    if (isblog) return <Blog />
     switch (data.data.template) {
         case "wai": return <TemplateWai d={data.data.data} />
         case "camba": return <TemplateCamba d={data.data.data} />

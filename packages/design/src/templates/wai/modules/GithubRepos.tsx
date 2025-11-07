@@ -5,7 +5,9 @@ import { getGithubRepos } from "@/utils/api/github";
 import CustomLink from "@/templates/global/Link";
 
 export default function WaiGitHubRepos({ data }: { data: Record<string, any> }) {
-    const subdomain = process.env.NODE_ENV == "production" ? window.location.hostname.split('.')[0] : window.location.pathname.split("/view/")?.[1]
+    const subdomain = process.env.NODE_ENV === "production"
+        ? window.location.hostname.split('.')[0]
+        : window.location.pathname.match(/\/view\/([^/]+)/)?.[1]!;
     const { id } = useParams();
 
     const module = getPortfolioModule(id || subdomain, 1);

@@ -222,13 +222,14 @@ export function useTwoFactorSetup(enabled: boolean) {
   });
 }
 
-export function useBlogs() {
+export function useBlogs(enabled: boolean = true) {
   return useQuery({
     queryKey: ["blogs"],
     queryFn: async () => {
       const res = await axios.get("/blog");
       return res.data as TypeBlog[];
     },
+    enabled,
   });
 }
 
@@ -247,6 +248,20 @@ export function useBlog(id: string) {
     queryKey: ["blog", id],
     queryFn: async () => {
       const res = await axios.get("/blog/" + id);
+      return res.data as {
+        name: string;
+        success: boolean;
+        posts: TypeBlogPost[];
+      };
+    },
+  });
+}
+
+export function useBlogFromSubdomain(subdomain: string) {
+  return useQuery({
+    queryKey: ["blog", subdomain],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios/view/" + subdomain + "/blog");
       return res.data as {
         name: string;
         success: boolean;
