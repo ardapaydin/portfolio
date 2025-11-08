@@ -76,6 +76,7 @@ router.get("/:idOrSubdomain/modules/:moduleId", async (req, res) => {
       );
     return res.status(200).json({
       slug: jsoncon.slug,
+      id: jsoncon.id,
       config: config ? JSON.parse(config.config as string) : r.config.default,
     });
   }

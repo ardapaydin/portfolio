@@ -4,6 +4,7 @@ export const Module = {
   GithubRepositories: 1,
   GithubReadMe: 2,
   GitLabProjects: 3,
+  DiscordRPC: 4,
 };
 
 export default [
@@ -74,5 +75,11 @@ export default [
         sort: z.enum(["star_count", "created_at", "updated_at"]),
       }),
     },
+  },
+  {
+    id: Module.DiscordRPC,
+    name: "Discord RPC",
+    require: "oauth:discord",
+    config: { fields: {}, default: {}, validation: z.object({}) },
   },
 ];

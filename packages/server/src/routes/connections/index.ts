@@ -29,6 +29,16 @@ router.get("/:service", requireAuth, async (req, res) => {
         "&scope=" +
         "read_user",
     });
+  } else if (service.toLowerCase() == "discord") {
+    return res.json({
+      success: true,
+      url:
+        "https://discord.com/oauth2/authorize?response_type=code&client_id=" +
+        process.env.DISCORD_CLIENT_ID +
+        "&scope=identify&redirect_uri=" +
+        process.env.DISCORD_REDIRECT_URI +
+        "&prompt=consent&integration_type=0",
+    });
   }
 
   return res
@@ -86,14 +96,22 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
       );
 
     if (f)
-      await db.update(connectionsTable).set({
-        serviceUser: {
-          id: userjson.id,
-          slug: userjson.login,
-          name: userjson.name,
-        },
-        accessToken: d.access_token,
-      });
+      await db
+        .update(connectionsTable)
+        .set({
+          serviceUser: {
+            id: userjson.id,
+            slug: userjson.login,
+            name: userjson.name,
+          },
+          accessToken: d.access_token,
+        })
+        .where(
+          and(
+            eq(connectionsTable.userId, req.user!.id),
+            eq(connectionsTable.service, service)
+          )
+        );
     else
       await db.insert(connectionsTable).values({
         serviceUser: {
@@ -147,14 +165,22 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
       );
 
     if (f)
-      await db.update(connectionsTable).set({
-        serviceUser: {
-          id: userjson.id,
-          slug: userjson.username,
-          name: userjson.name,
-        },
-        accessToken: d.access_token,
-      });
+      await db
+        .update(connectionsTable)
+        .set({
+          serviceUser: {
+            id: userjson.id,
+            slug: userjson.username,
+            name: userjson.name,
+          },
+          accessToken: d.access_token,
+        })
+        .where(
+          and(
+            eq(connectionsTable.userId, req.user!.id),
+            eq(connectionsTable.service, service)
+          )
+        );
     else
       await db.insert(connectionsTable).values({
         serviceUser: {
@@ -165,6 +191,70 @@ router.get("/:service/callback", requireAuth, async (req, res) => {
         accessToken: d.access_token,
         userId: req.user!.id,
         service: "gitlab",
+      });
+  } else if (service == "discord") {
+    const formdata = new URLSearchParams();
+    formdata.append("client_id", process.env.DISCORD_CLIENT_ID!);
+    formdata.append("client_secret", process.env.DISCORD_CLIENT_SECRET!);
+    formdata.append("grant_type", "authorization_code");
+    formdata.append("code", code as string);
+    formdata.append("redirect_uri", process.env.DISCORD_REDIRECT_URI!);
+    const r = await fetch("https://discord.com/api/v10/oauth2/token", {
+      method: "POST",
+      headers: {
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      body: formdata.toString(),
+    });
+
+    const jr = await r.json();
+    if (!jr.access_token)
+      return res
+        .status(500)
+        .json({ success: false, message: "An error occurred." });
+
+    const me = await fetch("https://discord.com/api/v10/users/@me", {
+      headers: {
+        authorization: jr.token_type + " " + jr.access_token,
+      },
+    });
+
+    const mej = await me.json();
+
+    if (!me.ok)
+      return res
+        .status(500)
+        .json({ success: false, message: "An error occurred." });
+
+    const [f] = await db
+      .select()
+      .from(connectionsTable)
+      .where(
+        and(
+          eq(connectionsTable.userId, req.user!.id),
+          eq(connectionsTable.service, service)
+        )
+      );
+    if (f)
+      await db
+        .update(connectionsTable)
+        .set({})
+        .where(
+          and(
+            eq(connectionsTable.userId, req.user!.id),
+            eq(connectionsTable.service, service)
+          )
+        );
+    else
+      await db.insert(connectionsTable).values({
+        serviceUser: {
+          id: mej.id,
+          slug: mej.username,
+          name: mej.global_name,
+        },
+        accessToken: jr.access_token,
+        userId: req.user!.id,
+        service: "discord",
       });
   }
 

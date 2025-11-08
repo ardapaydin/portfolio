@@ -1,18 +1,18 @@
 import Loading from "@/design/components/loading";
 import { ServiceCallback } from "@/utils/api/connection";
 import { useParams } from "react-router-dom"
-
+const services = ["github", "gitlab", "discord"]
 export default function Callback() {
     const { service } = useParams();
     const code = new URLSearchParams(window.location.search).get("code");
-    const r = ServiceCallback(service ?? "", code ?? "", service ? ["github", "gitlab"].includes(service) : false)
+    const r = ServiceCallback(service ?? "", code ?? "", service ? services.includes(service) : false)
     if (r.isLoading) return <Loading />
     return (
         <div className="w-screen h-screen flex items-center justify-center bg-[#242424]/50 backdrop-blur-sm">
-            {((!service || !["github", "gitlab"].includes(service)) || !r.data?.success) && (
+            {((!service || !services.includes(service)) || !r.data?.success) && (
                 <div className="flex flex-col gap-4 text-center">
                     <div className="text-red-500 bg-[#313131] flex-col flex border border-red-500/50 font-bold px-8 py-5 rounded-lg shadow-lg">
-                        {(!service || !["github"].includes(service))
+                        {(!service || !services.includes(service))
                             ? "Invalid Service"
                             : "An error occurred while processing your request"}
                         <button

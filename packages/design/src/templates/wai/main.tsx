@@ -9,6 +9,7 @@ import CustomLink from "../global/Link";
 import WaiGitHubRepos from "./modules/GithubRepos";
 import GitHubReadme from "../global/Modules/GitHubReadMe";
 import WaiGitLabProjects from "./modules/GitlabProjects";
+import DiscordRPC from "../global/Modules/DiscordRPC";
 
 export default function TemplateWai({ d }: { d?: any }) {
     const queryState = useQuery({
@@ -116,6 +117,8 @@ export default function TemplateWai({ d }: { d?: any }) {
 
                     {data?.modules?.find((x: number) => x == 1) && <WaiGitHubRepos data={data} />}
                     {data?.modules?.find((x: number) => x == 3) && <WaiGitLabProjects data={data} />}
+                    {data?.modules?.find((x: number) => x == 4) && <DiscordRPC data={data} />}
+
                 </div>
             </div>
         </div>
