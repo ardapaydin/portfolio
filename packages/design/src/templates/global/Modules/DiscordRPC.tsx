@@ -17,7 +17,7 @@ export default function DiscordRPC({ data }: { data: Record<string, any> }) {
     const module = getPortfolioModule(id || subdomain, 4);
     const d = GetUser(module.data?.id);
 
-    const user = d.data?.data.data;
+    const user = d.data?.data?.data;
 
     if (!user) return
 

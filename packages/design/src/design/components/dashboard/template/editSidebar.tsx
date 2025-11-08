@@ -1,7 +1,7 @@
 import type { TypeTemplate } from "@/design/types/template";
 import { useModules, usePortfolio, usePortfolioDraft, useTemplate } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Notebook, Puzzle } from "lucide-react";
+import { ArrowRight, Notebook, Puzzle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ListSidebar from "./list";
@@ -11,10 +11,22 @@ import z from "zod";
 import { validZod } from "@/design/utils/zod";
 import { useValidationErrorStore } from "@/store/validationErrorStore";
 import SetBlog from "../dialogs/Blog/SetBlog";
+
+import { create } from "zustand";
+
+export const useSidebarOpenState = create<{
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+}>((set) => ({
+    isOpen: false,
+    setIsOpen: (isOpen) => set({ isOpen }),
+}));
+
 export default function EditSidebar() {
     const { id } = useParams();
     const [selectedList, setSelectedList] = useState(null as { key: string, mode: "edit" | "create", index?: number, value?: { name: string, url: string } } | null);
     const portfolio = usePortfolio(id!);
+    const { isOpen, setIsOpen } = useSidebarOpenState()
     const template = useTemplate(portfolio?.data?.template!) as { data: TypeTemplate | undefined, isLoading: boolean };
     const modules = useModules(portfolio?.data?.template);
     const qc = useQueryClient();
@@ -71,8 +83,15 @@ export default function EditSidebar() {
 
     const keys = Object.keys(template.data.fields).filter((key) => template.data?.fields[key].type != "image");
     return (
-        <div className="p-4">
+        <div
+            className={`md:p-4 transition-all duration-300 ${isOpen ? "flex absolute h-full z-10 opacity-100 translate-x-0" : "hidden md:flex md:opacity-100 opacity-0 md:translate-x-0 -translate-x-full"}`}
+        >
             <div className="w-96 h-full border-[#262626] border-2 bg-[#222222] px-8 py-8 rounded-lg shadow-lg overflow-y-auto">
+                <div className="flex md:hidden ">
+                    <div className="absolute right-4 z-20" onClick={() => setIsOpen(false)}>
+                        <X />
+                    </div>
+                </div>
                 {selectedList && <ListSidebar keyName={selectedList.key} mode={selectedList.mode} index={selectedList.index} setSelectedList={setSelectedList} />}
                 {!selectedList && (
                     <>

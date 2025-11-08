@@ -1,6 +1,6 @@
 import { usePortfolio, usePortfolioDraft } from "@/utils/api/queries";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChartArea, Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
+import { ArrowLeft, ChartArea, Check, Cloud, Image, Loader, Save, Settings, Share } from "lucide-react";
 import { useParams } from "react-router-dom";
 import DraftDetails from "../dialogs/Portfolio/DraftDetails";
 import Attachments from "../dialogs/Portfolio/Attachments";
@@ -10,6 +10,7 @@ import { save } from "@/utils/api/portfolio";
 import { useState } from "react";
 import PublishPortfolio from "../dialogs/Portfolio/PublishPortfolio";
 import Analytics from "../dialogs/Portfolio/Analytics";
+import { useSidebarOpenState } from "./editSidebar";
 
 export default function Topbar() {
     const { id } = useParams();
@@ -17,10 +18,14 @@ export default function Topbar() {
     const [[saving, setSaving], [saved, setSaved]] = [useState(false), useState(false)]
     const qc = useQueryClient();
     const draft = usePortfolioDraft(id!);
+    const { setIsOpen } = useSidebarOpenState();
     const data = useQuery({ queryKey: ["data"], queryFn: () => { } }) as unknown as TypeDraft;
     return (
         <div className="flex items-center h-12 rounded-t-lg bg-[#0e0d0d] border-b border-black px-6 shadow-sm">
-            <div className="flex space-x-2 mr-6">
+            <div className="flex md:hidden">
+                <ArrowLeft onClick={() => setIsOpen(true)} />
+            </div>
+            <div className="md:flex space-x-2 mr-6 hidden">
                 <span className="w-3 h-3 rounded-full bg-red-500 shadow-md" />
                 <span className="w-3 h-3 rounded-full bg-yellow-400 shadow-md" />
                 <span className="w-3 h-3 rounded-full bg-green-500 shadow-md" />
@@ -73,17 +78,17 @@ export default function Topbar() {
                                 {draft.data?.updating ? (
                                     <div className="flex items-center gap-1">
                                         <Cloud className="w-4 h-4 animate-pulse" />
-                                        Saving Draft...
+                                        <p className="hidden md:flex">Saving Draft...</p>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-1">
                                         <Cloud className="w-4 h-4 inline-block" />
-                                        Saved Draft
+                                        <p className="hidden md:flex">Saved Draft</p>
                                     </div>
                                 )}
                             </DraftDetails>
                         </div>
-                        <hr className="w-3" />
+                        <hr className="w-3 hidden md:flex" />
                     </>
                 )}
 
