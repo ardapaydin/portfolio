@@ -9,6 +9,7 @@ import CustomLink from "../global/Link";
 import "./index.css"
 import EonGitHubRepos from "./modules/GithubRepos";
 import EonGitLabProjects from "./modules/GitlabProjects";
+import DiscordRPC from "../global/Modules/DiscordRPC";
 export default function TemplateEon({ d }: { d?: any }) {
     const queryState = useQuery({
         queryKey: ["data"],
@@ -173,6 +174,10 @@ export default function TemplateEon({ d }: { d?: any }) {
                                 </CustomLink>
                             </li>
                         ))}
+
+                        {data.modules?.find((x: number) => x == 4) && <div className="flex w-1/3">
+                            <DiscordRPC data={data} />
+                        </div>}
                     </ul>
 
                 </div>

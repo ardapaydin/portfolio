@@ -11,6 +11,7 @@ export default {
     Module.GithubRepositories,
     Module.GithubReadMe,
     Module.GitLabProjects,
+    Module.DiscordRPC,
   ],
   data: {
     fields: {
