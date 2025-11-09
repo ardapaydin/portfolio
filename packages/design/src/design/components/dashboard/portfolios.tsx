@@ -1,8 +1,10 @@
 import { usePortfolios } from "@/utils/api/queries"
-import { Pencil, Projector, Settings, Trash } from "lucide-react";
+import { Earth, Pencil, Projector, Settings, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UpdatePortfolio from "./dialogs/Portfolio/UpdatePortfolio";
 import DeletePortfolio from "./dialogs/Portfolio/DeletePortfolio";
+import Tippy from '@tippyjs/react';
+import PortfolioDiscoveryState from "./dialogs/Portfolio/Discovery";
 
 export default function Portfolios() {
     const portfolios = usePortfolios();
@@ -17,7 +19,7 @@ export default function Portfolios() {
                                 <h1 className="font-bold">
                                     {portfolio.name}
                                 </h1>
-                                <div className="flex">
+                                <div className="flex gap-2">
                                     {portfolio.isPublished && (
                                         <div className="bg-green-500/10 border border-green-500/50 px-2 py-0.5 rounded-lg">
                                             Published
@@ -27,6 +29,14 @@ export default function Portfolios() {
                                                 Draft
                                             </div>
                                         )}
+
+                                    {!portfolio.discoverable && (
+                                        <Tippy content="Discoverable" className="bg-[#333] p-2 rounded-lg text-xs">
+                                            <PortfolioDiscoveryState portfolio={portfolio}>
+                                                <Earth className="text-green-500 w-5 cursor-pointer" />
+                                            </PortfolioDiscoveryState>
+                                        </Tippy>
+                                    )}
                                 </div>
                             </div>
 

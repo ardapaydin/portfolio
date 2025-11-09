@@ -2,9 +2,11 @@ import express from "express";
 import { requireAuth } from "../../../../helpers/middlewares/auth";
 import { db } from "../../../../database/db";
 import { portfolioTable, usersTable } from "../../../../database";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import getDomain from "../../../../helpers/cloudflare/pages/getDomain";
 import createDomain from "../../../../helpers/cloudflare/pages/createDomain";
+import BodyValidationMiddleware from "../../../../helpers/middlewares/validation";
+import z from "zod";
 
 const router = express.Router();
 
@@ -55,7 +57,7 @@ router.post("/:id/publish", requireAuth, async (req, res) => {
     .json({ success: true, domain, isNew: !domainSetup.result });
 });
 
-router.get("/:id/state", async (req, res) => {
+router.get("/:id/state", requireAuth, async (req, res) => {
   const { id } = req.params;
   const [portfolio] = await db
     .select()
@@ -82,5 +84,41 @@ router.get("/:id/state", async (req, res) => {
     method: active.result.validation_data.method,
   });
 });
+
+router.post(
+  "/:id/discovery",
+  requireAuth,
+  (req, res, next) =>
+    BodyValidationMiddleware(
+      req,
+      res,
+      next,
+      z.object({ discoverable: z.boolean() })
+    ),
+  async (req, res) => {
+    const { discoverable } = req.body;
+    const { id } = req.params;
+    const [portfolio] = await db
+      .select()
+      .from(portfolioTable)
+      .where(
+        and(eq(portfolioTable.userId, req.user!.id), eq(portfolioTable.id, id))
+      );
+    if (!portfolio)
+      return res
+        .status(404)
+        .json({ success: false, message: "Portfolio not found." });
+    if (!portfolio.isPublished)
+      return res
+        .status(400)
+        .json({ success: false, message: "Portfolio is not published yet." });
+    await db
+      .update(portfolioTable)
+      .set({ discoverable })
+      .where(eq(portfolioTable.id, id));
+
+    return res.status(200).json({ success: true });
+  }
+);
 
 export default router;

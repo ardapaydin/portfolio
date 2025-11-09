@@ -87,6 +87,7 @@ router.get("/", requireAuth, async (req, res) => {
       subdomain: portfolioTable.subdomain,
       template: portfolioTable.template,
       isPublished: portfolioTable.isPublished,
+      discoverable: portfolioTable.discoverable,
     })
     .from(portfolioTable)
     .where(eq(portfolioTable.userId, req.user!.id));

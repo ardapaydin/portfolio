@@ -27,6 +27,7 @@ export const portfolioTable = mysqlTable("portfolios", {
     onDelete: "set null",
   }),
   isPublished: boolean("is_published").default(false).notNull(),
+  discoverable: boolean("discoverable").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

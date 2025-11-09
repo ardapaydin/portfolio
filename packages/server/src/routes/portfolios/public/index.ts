@@ -196,4 +196,8 @@ router.ws("/ws/:subdomain", async (ws, req) => {
     });
   });
 });
+
+import discoveryRouter from "./discovery";
+router.use(discoveryRouter);
+
 export default router;

@@ -55,3 +55,7 @@ export function setPortfolioBlog(id: string, blogId: string) {
 export function deletePortfolioBlog(id: string) {
   return axios.delete("/portfolios/" + id + "/blog");
 }
+
+export function discovery(id: string, discoverable: boolean) {
+  return axios.post("/portfolios/" + id + "/discovery", { discoverable });
+}

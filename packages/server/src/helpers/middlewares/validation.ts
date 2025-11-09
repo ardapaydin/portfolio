@@ -27,3 +27,17 @@ export default async function BodyValidationMiddleware(
 
   next();
 }
+
+export async function QueryValidationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  schema: ZodObject
+) {
+  const validation = await schema.safeParseAsync(req.query);
+
+  if (!validation.success)
+    return res.status(400).json(ErrorStyle(validation.error));
+
+  next();
+}

@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { publish, save } from "@/utils/api/portfolio";
+import { discovery, publish, save } from "@/utils/api/portfolio";
 import { Check, CheckCircle2, Copy, Facebook, Mail } from "lucide-react";
 import { LoadingSmall } from "../../../loading";
 import { GetPortfolioState } from "@/utils/api/queries";
@@ -26,6 +26,13 @@ export default function PublishPortfolio({ children }: { children: React.ReactNo
             setIsOpen(true);
         }
     };
+
+    const handleDiscoverable = async (discoverable: boolean) => {
+        if (!id) return;
+
+        const req = await discovery(id, discoverable);
+        if (req.status == 200) { }
+    }
 
     const handleCopy = () => {
         if (siteUrl) {

@@ -5,6 +5,7 @@ export type TypePortfolio = {
   template: string;
   data: any;
   isPublished: boolean;
+  discoverable: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
