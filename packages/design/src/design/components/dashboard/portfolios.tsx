@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import UpdatePortfolio from "./dialogs/Portfolio/UpdatePortfolio";
 import DeletePortfolio from "./dialogs/Portfolio/DeletePortfolio";
 import Tippy from '@tippyjs/react';
-import PortfolioDiscoveryState from "./dialogs/Portfolio/Discovery";
 
 export default function Portfolios() {
     const portfolios = usePortfolios();
@@ -32,9 +31,7 @@ export default function Portfolios() {
 
                                     {portfolio.discoverable && (
                                         <Tippy content="Discoverable" className="bg-[#333] p-2 rounded-lg text-xs">
-                                            <PortfolioDiscoveryState portfolio={portfolio}>
-                                                <Earth className="text-green-500 w-5 cursor-pointer" />
-                                            </PortfolioDiscoveryState>
+                                            <Earth className="text-green-500 w-5" />
                                         </Tippy>
                                     )}
                                 </div>
