@@ -3,7 +3,7 @@ import Layout from "@/design/components/dashboard/layout";
 import { LoadingSmall } from "@/design/components/loading";
 import UserAvatar from "@/design/components/user/avatar";
 import { useDiscovery } from "@/utils/api/queries";
-import { Eye, FileWarning, Search } from "lucide-react";
+import { FileWarning, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Discovery() {
@@ -11,7 +11,6 @@ export default function Discovery() {
     const [query, setQuery] = useState("");
     const portoflios = useDiscovery(query, page, 10);
     useEffect(() => { setPage(1) }, [query])
-
     return (
         <Layout>
             <div className="flex flex-col">
@@ -49,12 +48,14 @@ export default function Discovery() {
                                             <span>{portfolio.createdBy.name}</span>
                                         </div>
 
-                                        <ViewPortfolio portfolio={portfolio}>
-                                            <button
-                                                className="py-0.5 flex items-center gap-1 px-2 rounded-lg bg-green-500 border-b-8 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition">
-                                                View
-                                            </button>
-                                        </ViewPortfolio>
+                                        <div className="flex gap-2 items-center">
+                                            <ViewPortfolio portfolio={portfolio}>
+                                                <button
+                                                    className="py-0.5 flex items-center gap-1 px-2 rounded-lg bg-green-500 border-b-8 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition">
+                                                    View
+                                                </button>
+                                            </ViewPortfolio>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

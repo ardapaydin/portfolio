@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/:id/comments", requireAuth, async (req, res, next) => {
   const { id } = req.params;
-  const portfolio = await db
+  const [portfolio] = await db
     .select()
     .from(portfolioTable)
     .where(

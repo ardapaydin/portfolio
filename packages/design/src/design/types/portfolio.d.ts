@@ -6,6 +6,7 @@ export type TypePortfolio = {
   data: any;
   isPublished: boolean;
   discoverable: boolean;
+  liked: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

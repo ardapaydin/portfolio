@@ -1,7 +1,11 @@
 import express from "express";
 import { requireAuth } from "../../../../helpers/middlewares/auth";
 import { db } from "../../../../database/db";
-import { portfolioTable, usersTable } from "../../../../database";
+import {
+  portfolioLikesTable,
+  portfolioTable,
+  usersTable,
+} from "../../../../database";
 import { and, eq, like, count } from "drizzle-orm";
 import { QueryValidationMiddleware } from "../../../../helpers/middlewares/validation";
 import z from "zod";
@@ -72,12 +76,27 @@ router.get(
       .limit(Number(limit))
       .offset(offset);
 
-    return res.status(200).json({
-      data: portfolios.map((x) => ({
+    const enrichedPortfolios = await Promise.all(
+      portfolios.map(async (x) => ({
         ...x,
         data: JSON.parse(x.data as string),
         url: x.subdomain + "." + process.env.DOMAIN,
-      })),
+        liked: !!(
+          await db
+            .select()
+            .from(portfolioLikesTable)
+            .where(
+              and(
+                eq(portfolioLikesTable.userId, req.user!.id),
+                eq(portfolioLikesTable.portfolioId, x.id)
+              )
+            )
+        )?.[0],
+      }))
+    );
+
+    return res.status(200).json({
+      data: enrichedPortfolios,
       pagination: {
         page: Number(page),
         limit: Number(limit),
