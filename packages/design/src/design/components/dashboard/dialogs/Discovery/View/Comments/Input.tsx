@@ -1,6 +1,8 @@
+import type { TypeComment } from "@/design/types/comment";
 import type { TypePortfolio } from "@/design/types/portfolio"
 import type { TypeUser } from "@/design/types/user"
 import { createComment } from "@/utils/api/comments";
+import { useQueryClient } from "@tanstack/react-query";
 import { Send } from "lucide-react";
 import { useState } from "react"
 
@@ -8,11 +10,12 @@ export default function CommentInput({ portfolio }: {
     portfolio: (TypePortfolio & { createdBy: TypeUser, url: string })
 }) {
     const [value, setValue] = useState("");
-
+    const qc = useQueryClient();
     const postComment = async () => {
         const create = await createComment(portfolio.id, value);
         if (create.status == 200) {
             setValue("");
+            qc.setQueryData(["portfolio", portfolio.id, "comments"], (old: TypeComment[]) => ([...old, create.data.data]))
         }
     }
 

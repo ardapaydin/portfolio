@@ -1,5 +1,6 @@
 import type { TypePortfolio } from "@/design/types/portfolio";
 import type { TypeUser } from "@/design/types/user";
+import { Eye } from "lucide-react";
 
 export default function Browser({ portfolio }: {
     portfolio: (TypePortfolio & { createdBy: TypeUser, url: string })

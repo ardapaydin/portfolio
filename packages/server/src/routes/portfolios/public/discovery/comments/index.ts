@@ -33,6 +33,7 @@ router.get("/:id/comments", requireAuth, async (req, res, next) => {
       content: portfolioCommentsTable.content,
       userId: portfolioCommentsTable.userId,
       createdBy: {
+        id: usersTable.id,
         name: usersTable.name,
         profilePicture: usersTable.profilePicture,
       },
@@ -80,12 +81,13 @@ router.post(
       })
       .$returningId();
 
-    const comment = await db
+    const [comment] = await db
       .select({
         id: portfolioCommentsTable.id,
         content: portfolioCommentsTable.content,
         userId: portfolioCommentsTable.userId,
         createdBy: {
+          id: usersTable.id,
           name: usersTable.name,
           profilePicture: usersTable.profilePicture,
         },
@@ -99,5 +101,8 @@ router.post(
     return res.status(200).json({ success: true, data: comment });
   }
 );
+
+import idRouter from "./id";
+router.use(idRouter);
 
 export default router;
