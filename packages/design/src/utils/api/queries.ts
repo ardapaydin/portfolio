@@ -11,6 +11,7 @@ import type { TypeConnection } from "@/design/types/connection";
 import type { TypeDevice } from "@/design/types/device";
 import type { TypeBlog } from "@/design/types/blog";
 import type { TypeBlogPost } from "@/design/types/blogPost";
+import type { TypeComment } from "@/design/types/comment";
 
 const auth = getToken();
 if (auth) axios.defaults.headers.common["Authorization"] = `Bearer ${auth}`;
@@ -283,7 +284,7 @@ export function useDiscovery(query: string, page: number, limit: number) {
         params: { query, page, limit },
       });
       return res.data as {
-        data: TypePortfolio[];
+        data: (TypePortfolio & { createdBy: TypeUser; url: string })[];
         pagination: {
           page: Number;
           limit: Number;
@@ -291,6 +292,16 @@ export function useDiscovery(query: string, page: number, limit: number) {
           totalPages: Number;
         };
       };
+    },
+  });
+}
+
+export function usePortfolioComments(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ["portfolio", id, "comments"],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios/" + id + "/comments");
+      return res.data as TypeComment[];
     },
   });
 }

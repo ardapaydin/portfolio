@@ -46,9 +46,11 @@ router.get(
 
     const portfolios = await db
       .select({
+        id: portfolioTable.id,
         name: portfolioTable.name,
         template: portfolioTable.template,
         subdomain: portfolioTable.subdomain,
+        data: portfolioTable.data,
         createdBy: {
           name: usersTable.name,
           profilePicture: usersTable.profilePicture,
@@ -71,7 +73,11 @@ router.get(
       .offset(offset);
 
     return res.status(200).json({
-      data: portfolios,
+      data: portfolios.map((x) => ({
+        ...x,
+        data: JSON.parse(x.data as string),
+        url: x.subdomain + "." + process.env.DOMAIN,
+      })),
       pagination: {
         page: Number(page),
         limit: Number(limit),
@@ -81,5 +87,9 @@ router.get(
     });
   }
 );
+
+import comments from "./comments";
+
+router.use(comments);
 
 export default router;
