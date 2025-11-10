@@ -62,12 +62,10 @@ router.put(
         .json({ success: false, message: "Comment not found." });
 
     if (comment.userId != req.user!.id)
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Comment is not created by this user",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Comment is not created by this user",
+      });
 
     await db
       .update(portfolioCommentsTable)
@@ -76,7 +74,7 @@ router.put(
       })
       .where(eq(portfolioCommentsTable.id, commentId));
 
-    return res.status(200).json({ success: false });
+    return res.status(200).json({ success: true });
   }
 );
 

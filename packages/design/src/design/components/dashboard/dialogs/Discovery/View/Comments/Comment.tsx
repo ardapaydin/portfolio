@@ -49,8 +49,8 @@ export default function Comment({ portfolio, comment }: {
                                 />
 
                                 <button
-                                    onClick={() => updComment}
-                                    disabled={!(content.trim().length)}
+                                    onClick={() => updComment()}
+                                    disabled={!(content.trim().length) || content.trim().length > 2048}
                                     className="py-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 px-2 rounded-lg bg-green-500 border-b-8 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
                                 >
                                     <Send className="w-4 mt-2 h-4" />

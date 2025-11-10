@@ -11,8 +11,8 @@ export default function ViewPortfolio({ children, portfolio }: { children: React
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>{children}</DialogTrigger>
             <DialogContent className="h-screen p-0 min-w-screen overflow-auto">
-                <div className="flex">
-                    <div className="w-2/3">
+                <div className="flex md:flex-row flex-col">
+                    <div className="md:w-4/5">
                         <Browser portfolio={portfolio} />
                     </div>
                     <Comments portfolio={portfolio} enabled={isOpen} />

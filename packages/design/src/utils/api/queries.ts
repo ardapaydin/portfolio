@@ -286,10 +286,10 @@ export function useDiscovery(query: string, page: number, limit: number) {
       return res.data as {
         data: (TypePortfolio & { createdBy: TypeUser; url: string })[];
         pagination: {
-          page: Number;
-          limit: Number;
-          total: Number;
-          totalPages: Number;
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
         };
       };
     },
@@ -303,5 +303,6 @@ export function usePortfolioComments(id: string, enabled: boolean) {
       const res = await axios.get("/portfolios/" + id + "/comments");
       return res.data as TypeComment[];
     },
+    enabled,
   });
 }

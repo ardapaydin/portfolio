@@ -31,7 +31,7 @@ export default function CommentInput({ portfolio }: {
             />
 
             <button
-                disabled={!(value.trim().length)}
+                disabled={!(value.trim().length) || value.trim().length > 2048}
                 onClick={() => postComment()}
                 className="py-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 px-2 rounded-lg bg-green-500 border-b-8 border-gray-400/50 hover:translate-y-0.5 hover:bg-green-600 text-white cursor-pointer font-semibold transition"
             >
