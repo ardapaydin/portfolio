@@ -30,7 +30,7 @@ export default function Portfolios() {
                                             </div>
                                         )}
 
-                                    {!portfolio.discoverable && (
+                                    {portfolio.discoverable && (
                                         <Tippy content="Discoverable" className="bg-[#333] p-2 rounded-lg text-xs">
                                             <PortfolioDiscoveryState portfolio={portfolio}>
                                                 <Earth className="text-green-500 w-5 cursor-pointer" />

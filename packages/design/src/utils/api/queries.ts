@@ -274,3 +274,23 @@ export function useBlogFromSubdomain(subdomain: string) {
     },
   });
 }
+
+export function useDiscovery(query: string, page: number, limit: number) {
+  return useQuery({
+    queryKey: ["discovery", query, page, limit],
+    queryFn: async () => {
+      const res = await axios.get("/portfolios/discovery", {
+        params: { query, page, limit },
+      });
+      return res.data as {
+        data: TypePortfolio[];
+        pagination: {
+          page: Number;
+          limit: Number;
+          total: Number;
+          totalPages: Number;
+        };
+      };
+    },
+  });
+}

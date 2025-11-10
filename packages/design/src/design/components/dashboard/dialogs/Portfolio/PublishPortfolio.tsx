@@ -4,15 +4,18 @@ import { useParams } from "react-router-dom";
 import { discovery, publish, save } from "@/utils/api/portfolio";
 import { Check, CheckCircle2, Copy, Facebook, Mail } from "lucide-react";
 import { LoadingSmall } from "../../../loading";
-import { GetPortfolioState } from "@/utils/api/queries";
+import { GetPortfolioState, usePortfolio } from "@/utils/api/queries";
 import confetti from "canvas-confetti"
+import { useQueryClient } from "@tanstack/react-query";
 export default function PublishPortfolio({ children }: { children: React.ReactNode }) {
     const { id } = useParams();
     const [isOpen, setIsOpen] = useState(false);
     const [siteUrl, setSiteUrl] = useState<string>("");
     const [copied, setCopied] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const state = GetPortfolioState(id!, !isLoading && isOpen)
+    const qc = useQueryClient();
+    const state = GetPortfolioState(id!, !isLoading && isOpen);
+    const portfolio = usePortfolio(id!);
     useEffect(() => {
         if (isOpen) save(id!);
     }, [isOpen])
@@ -31,7 +34,9 @@ export default function PublishPortfolio({ children }: { children: React.ReactNo
         if (!id) return;
 
         const req = await discovery(id, discoverable);
-        if (req.status == 200) { }
+        if (req.status == 200) {
+            qc.setQueryData(["portfolio", id], (old: any) => ({ ...old, discoverable }))
+        }
     }
 
     const handleCopy = () => {
@@ -160,6 +165,31 @@ export default function PublishPortfolio({ children }: { children: React.ReactNo
                                     ? "Active"
                                     : "Validating..."}
                             </span>
+
+                            <div className="flex justify-between w-full bg-[#222] p-2 rounded-lg px-3 items-center">
+                                <div className="flex flex-col text-start">
+                                    <h1 className="text-sm font-semibold">Enable Discovery</h1>
+                                    <p className="text-xs text-muted-foreground">
+                                        Make your portfolio discoverable to others on the discovery page.
+                                    </p>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="sr-only peer"
+                                        onChange={() => handleDiscoverable(!portfolio.data.discoverable)}
+                                        checked={portfolio.data.discoverable}
+                                    />
+                                    <div className="w-14 h-7 rounded-full bg-[#4d4b4b] peer-checked:bg-green-500 
+                                        after:content-[''] after:absolute after:top-0.5 after:left-0.5 
+                                        after:bg-white after:rounded-full after:h-6 after:w-6 
+                                        after:transition-all peer-checked:after:translate-x-7 
+                                        hover:ring-2 hover:ring-offset-2 hover:ring-green-500/50 
+                                        transition-all duration-200"
+                                    />
+                                </label>
+                            </div>
+
                             <a
                                 href={"https://" + siteUrl}
                                 target="_blank"

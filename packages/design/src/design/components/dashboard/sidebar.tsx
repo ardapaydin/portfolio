@@ -1,4 +1,4 @@
-import { Home, LayoutTemplate, Menu, NotebookText, Settings } from "lucide-react";
+import { Earth, Home, LayoutTemplate, Menu, NotebookText, Settings } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import User from "./user";
@@ -29,6 +29,7 @@ export default function Sidebar() {
                         { name: "Portfolios", href: "/dashboard", icon: <Home /> },
                         { name: "Templates", href: "/dashboard/templates", icon: <LayoutTemplate /> },
                         { name: "Blogs", href: "/dashboard/blogs", icon: <NotebookText /> },
+                        { name: "Discovery", href: "/dashboard/discovery", icon: <Earth /> },
                         { name: "Settings", href: "/dashboard/user", icon: <Settings /> }
                     ].map((item) => (
                         <Link
