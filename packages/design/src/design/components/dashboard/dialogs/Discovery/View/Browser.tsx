@@ -19,7 +19,7 @@ export default function Browser({ portfolio }: {
 
                 <div></div>
             </div>
-            <iframe src={portfolio.url} className="h-full w-full" />
+            <iframe src={"https://" + portfolio.url} className="h-full w-full" />
         </div>
 
     )
